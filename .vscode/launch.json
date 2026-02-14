@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-UniInternPortalApplication<uniintern>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.uniintern.portal.UniInternPortalApplication",
+            "projectName": "uniintern",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
