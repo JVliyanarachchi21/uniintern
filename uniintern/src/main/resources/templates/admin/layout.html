@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content, pageTitle, active)">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${pageTitle} ?: 'Admin - UniIntern'">Admin - UniIntern</title>
+  <link rel="stylesheet" th:href="@{/admin/css/admin.css}">
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-icon">🎓</span>
+      <span class="brand-text">UniIntern</span>
+    </div>
+
+    <nav class="nav">
+      <a th:href="@{/admin/dashboard}" th:classappend="${active=='dashboard'} ? 'active' : ''">Dashboard</a>
+      <a th:href="@{/admin/companies}" th:classappend="${active=='companies'} ? 'active' : ''">Company Approvals</a>
+      <a th:href="@{/admin/internships}" th:classappend="${active=='internships'} ? 'active' : ''">Internship Approvals</a>
+      <a th:href="@{/admin/filtering}" th:classappend="${active=='filtering'} ? 'active' : ''">Filtering Results</a>
+      <a th:href="@{/admin/scheduling}" th:classappend="${active=='scheduling'} ? 'active' : ''">Interview Scheduling</a>
+      <a th:href="@{/admin/reports}" th:classappend="${active=='reports'} ? 'active' : ''">System Reports</a>
+      <a th:href="@{/admin/audit}" th:classappend="${active=='audit'} ? 'active' : ''">Audit Logs</a>
+      <a th:href="@{/admin/settings}" th:classappend="${active=='settings'} ? 'active' : ''">Settings</a>
+    </nav>
+
+    <div class="logout">
+      <a th:href="@{/}">Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="back">←</div>
+      <div class="top-right">
+        <div class="bell">🔔 <span class="badge">4</span></div>
+        <div class="user"><span>Admin</span></div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div th:replace="${content}"></div>
+    </section>
+  </main>
+
+</div>
+
+</body>
+</html>
