@@ -1,0 +1,75 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Audit Logs</h1>
+  <p class="subtitle">Track important actions performed in the system.</p>
+
+  <div class="panel">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+      <h3 style="margin:0;">Recent System Activities</h3>
+
+      <div style="display:flex;gap:10px;">
+        <select class="input">
+          <option>All Users</option>
+          <option>Admin</option>
+          <option>Company</option>
+          <option>Student</option>
+        </select>
+
+        <select class="input">
+          <option>All Actions</option>
+          <option>Approve</option>
+          <option>Reject</option>
+          <option>Schedule</option>
+        </select>
+      </div>
+    </div>
+
+    <table class="table" style="margin-top:14px;">
+      <thead>
+        <tr>
+          <th>Date & Time</th>
+          <th>User</th>
+          <th>Role</th>
+          <th>Action</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2026-02-15 10:24</td>
+          <td>Admin</td>
+          <td>ADMIN</td>
+          <td>Approved Company</td>
+          <td>TechVentures Inc.</td>
+        </tr>
+
+        <tr>
+          <td>2026-02-15 11:05</td>
+          <td>Admin</td>
+          <td>ADMIN</td>
+          <td>Approved Internship</td>
+          <td>Frontend Developer Intern</td>
+        </tr>
+
+        <tr>
+          <td>2026-02-16 09:10</td>
+          <td>Admin</td>
+          <td>ADMIN</td>
+          <td>Scheduled Interview</td>
+          <td>Janithi Perera - 02 Mar 2026</td>
+        </tr>
+
+        <tr>
+          <td>2026-02-16 11:42</td>
+          <td>Filtering Engine</td>
+          <td>SYSTEM</td>
+          <td>Generated Shortlist</td>
+          <td>Data Analyst Intern</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
