@@ -123,3 +123,16 @@ body{margin:0;background:var(--bg);color:var(--text);}
   background: #EF4444;
   color: white;
 }
+
+.badge{
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  display:inline-block;
+}
+
+.badge-pending{
+  background:#FEF3C7;
+  color:#92400E;
+}

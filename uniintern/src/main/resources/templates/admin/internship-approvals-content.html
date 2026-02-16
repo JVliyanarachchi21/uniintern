@@ -1,0 +1,49 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Internship Approvals</h1>
+  <p class="subtitle">Approve or reject internships posted by companies.</p>
+
+  <div class="panel">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Company</th>
+          <th>Location</th>
+          <th>Min GPA</th>
+          <th>Deadline</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Frontend Developer Intern</td>
+          <td>TechVentures Inc.</td>
+          <td>Colombo</td>
+          <td>3.0</td>
+          <td>2026-03-10</td>
+          <td><span class="badge badge-pending">Pending</span></td>
+          <td>
+            <button class="btn btn-approve">Approve</button>
+            <button class="btn btn-reject">Reject</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Data Analyst Intern</td>
+          <td>DataStream Analytics</td>
+          <td>Remote</td>
+          <td>2.8</td>
+          <td>2026-03-05</td>
+          <td><span class="badge badge-pending">Pending</span></td>
+          <td>
+            <button class="btn btn-approve">Approve</button>
+            <button class="btn btn-reject">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
