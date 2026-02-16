@@ -1,0 +1,95 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Interview Scheduling</h1>
+  <p class="subtitle">Schedule interviews for candidates approved from filtering.</p>
+
+  <div class="panel">
+
+    <h3 style="margin-bottom:12px;">Schedule New Interview</h3>
+
+    <form style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <div>
+        <label>Candidate</label>
+        <select class="input">
+          <option>Janithi Perera - Frontend Developer</option>
+          <option>Kasun Silva - Data Analyst</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Internship</label>
+        <select class="input">
+          <option>Frontend Developer Intern</option>
+          <option>Data Analyst Intern</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Date & Time</label>
+        <input type="datetime-local" class="input"/>
+      </div>
+
+      <div>
+        <label>Mode</label>
+        <select class="input">
+          <option>ONLINE</option>
+          <option>ONSITE</option>
+        </select>
+      </div>
+
+      <div style="grid-column:span 2;">
+        <label>Location / Meeting Link</label>
+        <input type="text" class="input" placeholder="Enter location or Zoom/Meet link"/>
+      </div>
+
+      <div style="grid-column:span 2;text-align:right;">
+        <button type="button" class="btn btn-approve">Schedule Interview</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="panel" style="margin-top:18px;">
+    <h3>Upcoming Interviews (Mock)</h3>
+
+    <table class="table" style="margin-top:12px;">
+      <thead>
+        <tr>
+          <th>Candidate</th>
+          <th>Internship</th>
+          <th>Date</th>
+          <th>Mode</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Janithi Perera</td>
+          <td>Frontend Developer Intern</td>
+          <td>2026-03-02 10:00</td>
+          <td>ONLINE</td>
+          <td><span class="badge badge-pending">Scheduled</span></td>
+          <td>
+            <button class="btn btn-reject">Cancel</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Kasun Silva</td>
+          <td>Data Analyst Intern</td>
+          <td>2026-03-05 14:00</td>
+          <td>ONSITE</td>
+          <td><span class="badge badge-pending">Scheduled</span></td>
+          <td>
+            <button class="btn btn-reject">Cancel</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
