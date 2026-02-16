@@ -147,3 +147,16 @@ body{margin:0;background:var(--bg);color:var(--text);}
 .input:focus{
   border-color:#CBD5E1;
 }
+.form-row{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:12px;
+}
+.form-row label{
+  font-weight:600;
+}
+.hint{
+  color:#6B7280;
+  font-size:12px;
+}

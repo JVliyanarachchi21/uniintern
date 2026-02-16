@@ -1,0 +1,62 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Settings</h1>
+  <p class="subtitle">Manage verification rules, notifications, and system configuration.</p>
+
+  <div class="grid-2">
+
+    <div class="panel">
+      <h3>Verification Rules</h3>
+
+      <div class="form-row">
+        <label>Allowed Student Email Domains</label>
+        <input class="input" type="text" value="sliit.lk, uni.edu, ac.lk" />
+        <small class="hint">Students must register with these domains to pass OTP verification.</small>
+      </div>
+
+      <div class="form-row">
+        <label>Allowed Company Email Domains</label>
+        <input class="input" type="text" value="company.com, org.lk" />
+        <small class="hint">Companies should register with official domains.</small>
+      </div>
+
+      <div class="form-row">
+        <label>OTP Expiry (minutes)</label>
+        <input class="input" type="number" value="10" min="1" max="60" />
+      </div>
+
+      <div style="text-align:right;margin-top:12px;">
+        <button class="btn btn-approve" type="button">Save Verification Settings</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Notification Settings</h3>
+
+      <div class="form-row">
+        <label>Enable Email Notifications</label>
+        <select class="input">
+          <option selected>Enabled</option>
+          <option>Disabled</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Default Email Sender</label>
+        <input class="input" type="text" value="no-reply@uniintern.com" />
+      </div>
+
+      <div class="form-row">
+        <label>Session Timeout (minutes)</label>
+        <input class="input" type="number" value="30" min="5" max="240" />
+      </div>
+
+      <div style="text-align:right;margin-top:12px;">
+        <button class="btn btn-approve" type="button">Save Notification Settings</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
