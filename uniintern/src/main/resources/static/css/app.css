@@ -1,0 +1,164 @@
+:root{
+  --blue:#1E3A8A;
+  --green:#10B981;
+  --orange:#F59E0B;
+  --bg:#F3F4F6;
+  --text:#111827;
+  --muted:#6B7280;
+  --card:#ffffff;
+  --border:#E5E7EB;
+}
+
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Roboto,system-ui,Arial,sans-serif;color:var(--text);background:var(--bg)}
+a{text-decoration:none;color:inherit}
+
+.app{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{
+  width:260px;
+  background:var(--blue);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  padding:14px 12px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:8px 8px 16px}
+.logo-dot{width:18px;height:18px;border-radius:6px;background:var(--orange)}
+.brand-text{font-weight:700;letter-spacing:.2px}
+
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.nav-item{
+  padding:10px 12px;
+  border-radius:10px;
+  color:rgba(255,255,255,.92);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.nav-item:hover{background:rgba(255,255,255,.10)}
+.nav-item.active{background:rgba(255,255,255,.14);font-weight:600}
+
+.pill{
+  background:rgba(255,255,255,.16);
+  padding:2px 10px;
+  border-radius:999px;
+  font-size:12px;
+}
+
+.sidebar-footer{margin-top:auto;padding-top:12px}
+.logout{opacity:.9}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* Topbar */
+.topbar{
+  height:56px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+}
+.icon-btn{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:10px;
+  height:36px;
+  width:36px;
+  cursor:pointer;
+}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.user{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:34px;height:34px;border-radius:999px;
+  background:var(--blue);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;
+}
+.user-name{font-size:14px}
+.chev{color:var(--muted)}
+
+/* Content */
+.content{padding:18px}
+.page-title h1{margin:4px 0 2px;font-size:22px}
+.page-title p{margin:0;color:var(--muted);font-size:13px}
+
+.cards{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap:14px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+}
+.card-label{color:var(--muted);font-size:12px;margin-bottom:8px}
+.card-value{font-size:22px;font-weight:800}
+
+.progress{height:8px;background:#E5E7EB;border-radius:999px;overflow:hidden;margin-top:10px}
+.progress-bar{height:100%;background:var(--green);width:0}
+
+.actions{margin:12px 0 18px;display:flex;gap:10px}
+.btn{
+  border:1px solid var(--border);
+  background:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:13px;
+}
+.btn.primary{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:14px;
+}
+.panel{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  min-height:260px;
+}
+.panel-title{font-weight:800;font-size:14px;margin-bottom:10px}
+
+.list{display:flex;flex-direction:column;gap:12px}
+.list-item{display:flex;gap:12px;align-items:flex-start}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--green);margin-top:6px}
+.list-main{font-size:13px}
+.list-sub{font-size:12px;color:var(--muted);margin-top:3px}
+
+.intern-list{display:flex;flex-direction:column;gap:10px}
+.intern-item{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#FAFAFB;
+}
+.intern-title{font-weight:800;font-size:13px}
+.intern-sub{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.intern-deadline{font-size:12px;color:var(--muted)}
+.panel-footer{margin-top:10px;text-align:right}
+.link{color:var(--blue);font-weight:700;font-size:13px}
+
+@media (max-width: 1100px){
+  .cards{grid-template-columns:1fr 1fr}
+  .grid-2{grid-template-columns:1fr}
+  .sidebar{width:220px}
+}

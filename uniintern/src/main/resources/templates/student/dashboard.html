@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Dashboard | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<body class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-dot"></div>
+      <div class="brand-text">UniIntern</div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item active" th:href="@{/student/dashboard}">Dashboard</a>
+      <a class="nav-item" href="#">My Profile</a>
+      <a class="nav-item" href="#">Browse Companies</a>
+      <a class="nav-item" href="#">Browse Internships</a>
+      <a class="nav-item" href="#">My Applications</a>
+      <a class="nav-item" href="#">Interviews</a>
+      <a class="nav-item" href="#">Notifications <span class="pill" th:text="${notificationCount}">3</span></a>
+      <a class="nav-item" href="#">Settings</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a class="nav-item logout" href="#">Logout</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" title="Close">✕</button>
+      </div>
+
+      <div class="topbar-right">
+        <button class="icon-btn" title="Notifications">🔔</button>
+        <div class="user">
+          <div class="avatar">A</div>
+          <div class="user-name">Ashan Perera</div>
+          <div class="chev">▾</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <section class="content">
+      <div class="page-title">
+        <h1>Welcome back, <span th:text="${studentName}">Ashan</span>!</h1>
+        <p>Here’s your internship overview.</p>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="cards">
+        <div class="card">
+          <div class="card-top">
+            <div class="card-label">Profile</div>
+          </div>
+          <div class="card-value">
+            <span th:text="${profileCompletion}">85</span>%
+          </div>
+          <div class="progress">
+            <div class="progress-bar" th:style="'width:' + ${profileCompletion} + '%'"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Active Applications</div>
+          <div class="card-value" th:text="${activeApplications}">8</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Interviews</div>
+          <div class="card-value" th:text="${interviews}">2</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Notifications</div>
+          <div class="card-value" th:text="${notificationCount}">3</div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="actions">
+        <button class="btn">Complete Profile</button>
+        <button class="btn primary">Browse Internships</button>
+      </div>
+
+      <!-- Two panels -->
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Latest Notifications</div>
+          <div class="list">
+            <div class="list-item" th:each="n : ${latestNotifications}">
+              <div class="dot"></div>
+              <div class="list-text">
+                <div class="list-main" th:text="${n.text}">Notification text</div>
+                <div class="list-sub" th:text="${n.date}">date</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Recent Internships</div>
+          <div class="intern-list">
+            <div class="intern-item" th:each="i : ${recentInternships}">
+              <div class="intern-main">
+                <div class="intern-title" th:text="${i.title}">Title</div>
+                <div class="intern-sub">
+                  <span th:text="${i.company}">Company</span>
+                  <span>•</span>
+                  <span th:text="${i.location}">Location</span>
+                </div>
+              </div>
+              <div class="intern-deadline" th:text="${i.deadline}">2026-04-15</div>
+            </div>
+          </div>
+
+          <div class="panel-footer">
+            <a class="link" href="#">View All →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
