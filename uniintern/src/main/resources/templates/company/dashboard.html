@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Dashboard',
+        content=~{::section})">
+
+<section>
+  <h1 class="page-title">Dashboard</h1>
+  <p class="page-sub">Welcome back! Here's an overview of your recruitment activities.</p>
+
+  <!-- Cards -->
+  <div class="cards">
+    <div class="card">
+      <div class="value" th:text="${activeInternships}">2</div>
+      <div class="label">Active Internships</div>
+    </div>
+
+    <div class="card">
+      <div class="value" th:text="${pendingApproval}">1</div>
+      <div class="label">Pending Approval</div>
+    </div>
+
+    <div class="card">
+      <div class="value" th:text="${totalApplicants}">25</div>
+      <div class="label">Total Applicants</div>
+    </div>
+
+    <div class="card">
+      <div class="value" th:text="${shortlisted}">5</div>
+      <div class="label">Shortlisted</div>
+    </div>
+
+    <div class="card">
+      <div class="value" th:text="${activePromotions}">1</div>
+      <div class="label">Active Promotions</div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <a class="btn primary" th:href="@{/company/internships/new}">+ Post Internship</a>
+    <a class="btn" th:href="@{/company/promotions}">Request Featured</a>
+    <a class="btn" th:href="@{/company/applicants}">View Applicants</a>
+  </div>
+
+  <!-- Panels -->
+  <div class="panels">
+    <!-- Recent Applicants -->
+    <div class="panel">
+      <div class="panel-title">Recent Applicants</div>
+
+      <div th:each="a : ${recentApplicants}" class="applicant-row">
+        <div>
+          <div class="applicant-name" th:text="${a.name}">Ashan Fernando</div>
+          <div class="applicant-uni" th:text="${a.uni}">University of Colombo</div>
+        </div>
+        <div class="pill" th:text="${a.status}">Shortlisted</div>
+      </div>
+    </div>
+
+    <!-- Recent Notifications -->
+    <div class="panel">
+      <div class="panel-title">Recent Notifications</div>
+
+      <div th:each="n : ${notifications}" class="note">
+        <div class="msg" th:text="${n.message}">Your internship has been approved!</div>
+        <div class="date" th:text="${n.date}">2/24/2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</html>

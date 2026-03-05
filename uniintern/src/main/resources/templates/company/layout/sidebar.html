@@ -1,0 +1,73 @@
+<div th:fragment="sidebar" class="sidebar">
+
+    <div class="logo">
+        <span class="logo-text">UniIntern</span>
+    </div>
+
+    <ul class="menu">
+
+        <li>
+            <a th:href="@{/company/dashboard}"
+               th:classappend="${page != null and page == 'dashboard'} ? 'active'">
+               Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/profile}"
+               th:classappend="${page != null and page == 'profile'} ? 'active'">
+               Company Profile
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/internships/new}"
+               th:classappend="${page != null and page == 'new-internship'} ? 'active'">
+               Post Internship
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/internships}"
+               th:classappend="${page != null and page == 'internships'} ? 'active'">
+               My Internships
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/applicants}"
+               th:classappend="${page != null and page == 'applicants'} ? 'active'">
+               Applicants
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/promotions}"
+               th:classappend="${page != null and page == 'promotions'} ? 'active'">
+               Promotions
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/payments/history}"
+               th:classappend="${page != null and page == 'payments'} ? 'active'">
+               Payments
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/settings}"
+               th:classappend="${page != null and page == 'settings'} ? 'active'">
+               Settings
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/logout}">
+               Logout
+            </a>
+        </li>
+
+    </ul>
+
+</div>

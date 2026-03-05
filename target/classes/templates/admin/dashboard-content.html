@@ -1,0 +1,63 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Dashboard</h1>
+  <p class="subtitle">Welcome back, Admin. Here's your overview.</p>
+
+  <div class="cards">
+    <div class="card c-blue">
+      <div>
+        <div class="card-label">Pending Companies</div>
+        <div class="card-value">3</div>
+      </div>
+      <div class="card-icon">📄</div>
+    </div>
+
+    <div class="card c-orange">
+      <div>
+        <div class="card-label">Pending Internships</div>
+        <div class="card-value">6</div>
+      </div>
+      <div class="card-icon">🧳</div>
+    </div>
+
+    <div class="card c-green">
+      <div>
+        <div class="card-label">Filtering Awaiting</div>
+        <div class="card-value">5</div>
+      </div>
+      <div class="card-icon">🔻</div>
+    </div>
+
+    <div class="card c-red">
+      <div>
+        <div class="card-label">Interviews Today</div>
+        <div class="card-value">0</div>
+      </div>
+      <div class="card-icon">📅</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3>Latest Activity</h3>
+      <ul class="activity">
+        <li>⭐ New company registered: TechVentures Inc.</li>
+        <li>⭐ Internship submitted: Frontend Developer Intern</li>
+        <li>⭐ Filtering completed for Data Analyst Intern</li>
+        <li>⭐ Interview scheduled: Alice Johnson</li>
+        <li>⭐ Company approved: DataStream Analytics</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3>Quick Actions</h3>
+      <div class="quick-actions">
+        <a class="qa" th:href="@{/admin/companies}">Review Companies</a>
+        <a class="qa" th:href="@{/admin/internships}">Review Internships</a>
+        <a class="qa" th:href="@{/admin/filtering}">Review Candidates</a>
+        <a class="qa" th:href="@{/admin/scheduling}">Schedule Interviews</a>
+      </div>
+    </div>
+  </div>
+
+</div>
