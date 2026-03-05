@@ -5,6 +5,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -71,10 +73,38 @@ public class CompanyController {
 
     // ✅ My Internships list page
     @GetMapping("/internships")
-    public String internships(Model model) {
-        model.addAttribute("page", "internships");
-        return "company/internships";
-    }
+public String internships(Model model) {
+
+    model.addAttribute("companyName", "TechCorp Lanka");
+
+    // Mock internships list (replace with DB later)
+    List<Map<String, Object>> internships = List.of(
+            Map.of("title", "Software Engineering Intern",
+                   "status", "APPROVED",
+                   "deadline", "2026-04-01",
+                   "applicants", 25),
+            Map.of("title", "Data Science Trainee",
+                   "status", "PENDING",
+                   "deadline", "2026-04-05",
+                   "applicants", 12),
+            Map.of("title", "QA Engineering Intern",
+                   "status", "REJECTED",
+                   "deadline", "2026-03-20",
+                   "applicants", 7),
+            Map.of("title", "UI/UX Intern",
+                   "status", "DRAFT",
+                   "deadline", "2026-04-10",
+                   "applicants", 0),
+            Map.of("title", "Marketing Intern",
+                   "status", "CLOSED",
+                   "deadline", "2026-02-15",
+                   "applicants", 40)
+    );
+
+    model.addAttribute("internships", internships);
+
+    return "company/internships";
+}
 
     // ✅ Applicants page
     @GetMapping("/applicants")
@@ -117,4 +147,27 @@ public class CompanyController {
         model.addAttribute("page", "settings");
         return "company/settings";
     }
+
+    @PostMapping("/internships/new")
+public String submitNewInternship(
+        @RequestParam String title,
+        @RequestParam String description,
+        @RequestParam String location,
+        @RequestParam String duration,
+        @RequestParam String deadline,
+        @RequestParam(required = false) String minGpa,
+        @RequestParam int vacancies,
+        @RequestParam(required = false) String workType,
+        @RequestParam(required = false) String skills,
+        @RequestParam(required = false) Integer wSkills,
+        @RequestParam(required = false) Integer wGpa,
+        @RequestParam(required = false) Integer wExp,
+        @RequestParam(required = false) Integer wCert,
+        @RequestParam(required = false) Integer topN,
+        @RequestParam(required = false) String status
+) {
+    // UI phase: just redirect back to internships list
+    // Later: save to DB and set status DRAFT/PENDING
+    return "redirect:/company/internships";
+}
 }

@@ -1,11 +1,77 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
-      pageTitle='My Internships',
-      content=~{::section})">
+        pageTitle='My Internships',
+        content=~{::section})">
 
+<body>
 <section>
-    <h1>My Internships</h1>
-</section>
+  <h1 class="page-title">My Internships</h1>
+  <p class="page-sub">Manage your internship posts and track applicants.</p>
 
+  <div class="table-card">
+
+    <div class="table-tools">
+      <div style="font-weight:900;">Internship List</div>
+
+      <div style="display:flex; gap:10px; align-items:center;">
+        <input class="search" type="text" placeholder="Search by title (UI only)">
+        <a class="btn primary" th:href="@{/company/internships/new}">+ Post Internship</a>
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Deadline</th>
+        <th>Applicants</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr th:each="i : ${internships}">
+        <td th:text="${i.title}">Software Engineering Intern</td>
+
+        <td>
+          <span class="badge-status"
+                th:classappend="${i.status=='APPROVED'} ? ' st-approved' :
+                                (${i.status=='PENDING'} ? ' st-pending' :
+                                (${i.status=='REJECTED'} ? ' st-rejected' :
+                                (${i.status=='DRAFT'} ? ' st-draft' : ' st-closed')))"
+                th:text="${i.status}">
+            APPROVED
+          </span>
+        </td>
+
+        <td th:text="${i.deadline}">2026-04-01</td>
+        <td th:text="${i.applicants}">25</td>
+
+        <td>
+          <div class="action-group">
+            <a href="#" class="action-btn">View</a>
+
+            <!-- Edit only if Draft or Pending -->
+            <a href="#" class="action-btn"
+               th:if="${i.status=='DRAFT' or i.status=='PENDING'}">Edit</a>
+
+            <!-- Close only if Approved -->
+            <a href="#" class="action-btn danger"
+               th:if="${i.status=='APPROVED'}">Close</a>
+
+            <!-- Request Featured only if Approved -->
+            <a th:href="@{/company/promotions}" class="action-btn primary"
+               th:if="${i.status=='APPROVED'}">Request Featured</a>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</section>
+</body>
 </html>

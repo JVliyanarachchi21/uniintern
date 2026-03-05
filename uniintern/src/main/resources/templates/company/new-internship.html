@@ -1,11 +1,140 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
-      pageTitle='Post Internship',
-      content=~{::section})">
+        pageTitle='Post Internship',
+        content=~{::section})">
 
+<body>
 <section>
-    <h1>Post New Internship</h1>
-</section>
 
+  <h1 class="page-title">Post Internship</h1>
+  <p class="page-sub">Create a new internship and submit it for admin approval.</p>
+
+  <div class="alert">
+    Note: This is UI phase. “Save Draft” and “Submit for Approval” can be connected to database later.
+  </div>
+
+  <div class="form-card">
+    <form th:action="@{/company/internships/new}" method="post">
+
+      <div class="section-title">Internship Details</div>
+
+      <div class="field">
+        <label>Title *</label>
+        <input type="text" name="title" placeholder="Software Engineering Intern" required>
+      </div>
+
+      <div class="field">
+        <label>Description *</label>
+        <textarea name="description" placeholder="Write internship responsibilities, requirements, benefits..." required></textarea>
+        <div class="hint">Tip: Add responsibilities, required skills, and what the intern will learn.</div>
+      </div>
+
+      <div class="grid-3">
+        <div class="field">
+          <label>Location *</label>
+          <input type="text" name="location" placeholder="Colombo / Remote" required>
+        </div>
+
+        <div class="field">
+          <label>Duration *</label>
+          <select name="duration" required>
+            <option value="">Select</option>
+            <option>3 Months</option>
+            <option>6 Months</option>
+            <option>12 Months</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Deadline *</label>
+          <input type="date" name="deadline" required>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="field">
+          <label>Minimum GPA</label>
+          <input type="number" name="minGpa" step="0.01" min="0" max="4" placeholder="e.g., 3.00">
+        </div>
+
+        <div class="field">
+          <label>Vacancies *</label>
+          <input type="number" name="vacancies" min="1" placeholder="e.g., 2" required>
+        </div>
+
+        <div class="field">
+          <label>Work Type</label>
+          <select name="workType">
+            <option>On-site</option>
+            <option>Remote</option>
+            <option>Hybrid</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="section-title">Required Skills</div>
+      <div class="field">
+        <label>Skills (comma separated)</label>
+        <input type="text" name="skills" placeholder="Java, Spring Boot, PostgreSQL, Git">
+        <div class="hint">Example: Java, Spring Boot, PostgreSQL, Git</div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="section-title">Marking / Ranking Settings</div>
+      <div class="hint" style="margin-bottom:10px;">
+        Weights should add up to 100. (Can validate in backend later.)
+      </div>
+
+      <div class="weight-row">
+        <div class="field">
+          <label>Skills Weight (%)</label>
+          <input class="small-input" type="number" name="wSkills" min="0" max="100" value="40">
+        </div>
+
+        <div class="field">
+          <label>GPA Weight (%)</label>
+          <input class="small-input" type="number" name="wGpa" min="0" max="100" value="30">
+        </div>
+
+        <div class="field">
+          <label>Experience Weight (%)</label>
+          <input class="small-input" type="number" name="wExp" min="0" max="100" value="20">
+        </div>
+
+        <div class="field">
+          <label>Certificates Weight (%)</label>
+          <input class="small-input" type="number" name="wCert" min="0" max="100" value="10">
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:10px;">
+        <div class="field">
+          <label>Top N Candidates</label>
+          <input type="number" name="topN" min="1" value="10">
+          <div class="hint">How many candidates to shortlist automatically (later).</div>
+        </div>
+
+        <div class="field">
+          <label>Status (UI only)</label>
+          <select name="status">
+            <option value="DRAFT">Draft</option>
+            <option value="PENDING">Submit for Approval</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn" onclick="alert('Saved as Draft (UI only)')">Save Draft</button>
+        <button type="submit" class="btn primary">Submit for Approval</button>
+      </div>
+
+    </form>
+  </div>
+
+</section>
+</body>
 </html>
