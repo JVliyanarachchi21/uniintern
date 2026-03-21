@@ -14,29 +14,25 @@
           <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr>
-          <td>TechVentures Inc.</td>
-          <td>hr@techventures.com</td>
-          <td>Software</td>
-          <td><span class="badge badge-pending">Pending</span></td>
-          <td>
-            <button class="btn btn-approve">Approve</button>
-            <button class="btn btn-reject">Reject</button>
-          </td>
+        <tr th:if="${#lists.isEmpty(companies)}">
+          <td colspan="5" style="color:#6B7280;">No pending companies.</td>
         </tr>
 
-        <tr>
-          <td>DataStream Analytics</td>
-          <td>contact@datastream.com</td>
-          <td>Data Science</td>
-          <td><span class="badge badge-pending">Pending</span></td>
-          <td>
-            <button class="btn btn-approve">Approve</button>
-            <button class="btn btn-reject">Reject</button>
+        <tr th:each="c : ${companies}">
+          <td th:text="${c.companyName}">Company Name</td>
+          <td th:text="${c.email}">Email</td>
+          <td th:text="${c.industry}">Industry</td>
+          <td><span class="badge badge-pending" th:text="${c.status}">PENDING</span></td>
+
+          <td style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a th:href="@{|/admin/companies/${c.id}/approve|}" class="btn btn-approve">Approve</a>
+            <a th:href="@{|/admin/companies/${c.id}/reject|}" class="btn btn-reject">Reject</a>
           </td>
         </tr>
       </tbody>
+
     </table>
   </div>
 

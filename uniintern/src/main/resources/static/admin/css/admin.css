@@ -160,3 +160,23 @@ body{margin:0;background:var(--bg);color:var(--text);}
   color:#6B7280;
   font-size:12px;
 }
+.table{width:100%;border-collapse:collapse;}
+.table th,.table td{padding:12px;border-bottom:1px solid #E5E7EB;text-align:left;}
+
+.btn{
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid #E5E7EB;
+  background:#F9FAFB;
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+}
+.btn:hover{background:#fff;border-color:#CBD5E1;}
+.btn-active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;}
+.badge-pending{background:#FEF3C7;color:#92400E;}
+.badge-approved{background:#D1FAE5;color:#065F46;}
+.badge-rejected{background:#FEE2E2;color:#991B1B;}

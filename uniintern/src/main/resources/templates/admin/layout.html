@@ -19,6 +19,7 @@
     <nav class="nav">
       <a th:href="@{/admin/dashboard}" th:classappend="${active=='dashboard'} ? 'active' : ''">Dashboard</a>
       <a th:href="@{/admin/companies}" th:classappend="${active=='companies'} ? 'active' : ''">Company Approvals</a>
+      <a th:href="@{/admin/companies/all}" th:classappend="${active=='companies'} ? 'active' : ''">Company History</a>
       <a th:href="@{/admin/internships}" th:classappend="${active=='internships'} ? 'active' : ''">Internship Approvals</a>
       <a th:href="@{/admin/filtering}" th:classappend="${active=='filtering'} ? 'active' : ''">Filtering Results</a>
       <a th:href="@{/admin/scheduling}" th:classappend="${active=='scheduling'} ? 'active' : ''">Interview Scheduling</a>

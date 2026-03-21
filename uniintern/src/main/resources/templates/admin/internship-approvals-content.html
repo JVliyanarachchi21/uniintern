@@ -8,7 +8,6 @@
       <thead>
         <tr>
           <th>Title</th>
-          <th>Company</th>
           <th>Location</th>
           <th>Min GPA</th>
           <th>Deadline</th>
@@ -16,30 +15,22 @@
           <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr>
-          <td>Frontend Developer Intern</td>
-          <td>TechVentures Inc.</td>
-          <td>Colombo</td>
-          <td>3.0</td>
-          <td>2026-03-10</td>
-          <td><span class="badge badge-pending">Pending</span></td>
-          <td>
-            <button class="btn btn-approve">Approve</button>
-            <button class="btn btn-reject">Reject</button>
-          </td>
+        <tr th:if="${#lists.isEmpty(internships)}">
+          <td colspan="6" style="color:#6B7280;">No pending internships.</td>
         </tr>
 
-        <tr>
-          <td>Data Analyst Intern</td>
-          <td>DataStream Analytics</td>
-          <td>Remote</td>
-          <td>2.8</td>
-          <td>2026-03-05</td>
+        <tr th:each="i : ${internships}">
+          <td th:text="${i.title}">Title</td>
+          <td th:text="${i.location}">Location</td>
+          <td th:text="${i.minGpa}">Min GPA</td>
+          <td th:text="${i.deadline}">Deadline</td>
           <td><span class="badge badge-pending">Pending</span></td>
-          <td>
-            <button class="btn btn-approve">Approve</button>
-            <button class="btn btn-reject">Reject</button>
+
+          <td style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a th:href="@{|/admin/internships/${i.id}/approve|}" class="btn btn-approve">Approve</a>
+            <a th:href="@{|/admin/internships/${i.id}/reject|}" class="btn btn-reject">Reject</a>
           </td>
         </tr>
       </tbody>
