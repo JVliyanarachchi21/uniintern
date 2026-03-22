@@ -1,11 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
-      pageTitle='Applicants',
-      content=~{::section})">
+        pageTitle='Applicants',
+        content=~{::section})">
 
+<body>
 <section>
-    <h1>Applicants</h1>
-</section>
 
+  <h1 class="page-title">Applicants</h1>
+  <p class="page-sub">Manage and review student applications.</p>
+
+  <div class="table-card">
+
+    <div class="table-tools">
+      <div style="font-weight:900;">Applicant List</div>
+      <input class="search" type="text" placeholder="Search (UI only)">
+    </div>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>GPA</th>
+        <th>Score</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr th:each="a : ${applicants}">
+        <td th:text="${a.name}">Name</td>
+        <td th:text="${a.gpa}">3.5</td>
+        <td th:text="${a.score}">85</td>
+
+        <td>
+          <span class="badge-status"
+                th:classappend="${a.status=='SHORTLISTED'} ? ' st-approved' :
+                                (${a.status=='PENDING'} ? ' st-pending' :
+                                ' st-rejected')"
+                th:text="${a.status}">
+          </span>
+        </td>
+
+        <td>
+          <div class="action-group">
+
+            <button class="action-btn primary"
+                    onclick="shortlist(this)">
+              Shortlist
+            </button>
+
+            <button class="action-btn danger"
+                    onclick="reject(this)">
+              Reject
+            </button>
+
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <script src="/js/company.js"></script>
+
+</section>
+</body>
 </html>

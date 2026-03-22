@@ -2,11 +2,76 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
       pageTitle='Company Profile',
-      content=~{::section})">
+      content=~{::body/content()})">
 
-<section>
-    <h1>Company Profile</h1>
-    <p>Company details will appear here.</p>
+<body>
+<section class="page-shell">
+    <h1 class="page-title">Company Profile</h1>
+    <p class="page-sub">Manage your company information and keep your profile up to date.</p>
+
+    <div class="form-card">
+        <form onsubmit="return saveCompanyProfile()">
+
+            <div class="section-title">Basic Information</div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label for="companyName">Company Name</label>
+                    <input type="text" id="companyName" name="companyName" value="TechCorp Lanka" required>
+                </div>
+
+                <div class="field">
+                    <label for="industry">Industry</label>
+                    <input type="text" id="industry" name="industry" value="Information Technology" required>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label for="email">Company Email</label>
+                    <input type="email" id="email" name="email" value="hr@techcorp.lk" required>
+                </div>
+
+                <div class="field">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone" value="+94 77 123 4567" required>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label for="website">Website</label>
+                    <input type="text" id="website" name="website" value="www.techcorp.lk">
+                </div>
+
+                <div class="field">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" value="Colombo, Sri Lanka" required>
+                </div>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="section-title">Company Description</div>
+
+            <div class="field">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required>TechCorp Lanka is a growing technology company focused on software engineering, innovation, and digital transformation. We provide internship opportunities for students to gain practical industry experience.</textarea>
+            </div>
+
+            <div class="field">
+                <label for="logo">Company Logo</label>
+                <input type="file" id="logo" name="logo">
+                <div class="hint">You can upload your company logo here. (UI only for now)</div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
 </section>
 
+<script src="/js/company.js"></script>
+</body>
 </html>

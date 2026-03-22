@@ -2,13 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
         pageTitle='Dashboard',
-        content=~{::section})">
+        content=~{::body/content()})">
 
+<body>
 <section>
   <h1 class="page-title">Dashboard</h1>
   <p class="page-sub">Welcome back! Here's an overview of your recruitment activities.</p>
 
-  <!-- Cards -->
   <div class="cards">
     <div class="card">
       <div class="value" th:text="${activeInternships}">2</div>
@@ -36,16 +36,13 @@
     </div>
   </div>
 
-  <!-- Actions -->
   <div class="actions">
     <a class="btn primary" th:href="@{/company/internships/new}">+ Post Internship</a>
     <a class="btn" th:href="@{/company/promotions}">Request Featured</a>
     <a class="btn" th:href="@{/company/applicants}">View Applicants</a>
   </div>
 
-  <!-- Panels -->
   <div class="panels">
-    <!-- Recent Applicants -->
     <div class="panel">
       <div class="panel-title">Recent Applicants</div>
 
@@ -58,7 +55,6 @@
       </div>
     </div>
 
-    <!-- Recent Notifications -->
     <div class="panel">
       <div class="panel-title">Recent Notifications</div>
 
@@ -69,5 +65,5 @@
     </div>
   </div>
 </section>
-
+</body>
 </html>

@@ -59,10 +59,11 @@ public class CompanyController {
 
     // ✅ Company Profile
     @GetMapping("/profile")
-    public String profile(Model model) {
-        model.addAttribute("page", "profile");
-        return "company/profile";
-    }
+public String profile(Model model) {
+    model.addAttribute("page", "profile");
+    model.addAttribute("companyName", "TechCorp Lanka");
+    return "company/profile";
+}
 
     // ✅ Post Internship page
     @GetMapping("/internships/new")
@@ -72,46 +73,43 @@ public class CompanyController {
     }
 
     // ✅ My Internships list page
-    @GetMapping("/internships")
+   @GetMapping("/internships")
 public String internships(Model model) {
-
+    model.addAttribute("page", "internships");
     model.addAttribute("companyName", "TechCorp Lanka");
 
-    // Mock internships list (replace with DB later)
     List<Map<String, Object>> internships = List.of(
-            Map.of("title", "Software Engineering Intern",
-                   "status", "APPROVED",
-                   "deadline", "2026-04-01",
-                   "applicants", 25),
-            Map.of("title", "Data Science Trainee",
-                   "status", "PENDING",
-                   "deadline", "2026-04-05",
-                   "applicants", 12),
-            Map.of("title", "QA Engineering Intern",
-                   "status", "REJECTED",
-                   "deadline", "2026-03-20",
-                   "applicants", 7),
-            Map.of("title", "UI/UX Intern",
-                   "status", "DRAFT",
-                   "deadline", "2026-04-10",
-                   "applicants", 0),
-            Map.of("title", "Marketing Intern",
-                   "status", "CLOSED",
-                   "deadline", "2026-02-15",
-                   "applicants", 40)
+            Map.of("title", "Software Engineering Intern", "status", "Approved", "deadline", "2026-04-30", "applicants", 12, "featured", "Yes"),
+            Map.of("title", "Data Science Trainee", "status", "Approved", "deadline", "2026-05-15", "applicants", 8, "featured", "No"),
+            Map.of("title", "UI/UX Design Intern", "status", "Pending", "deadline", "2026-03-31", "applicants", 5, "featured", "No"),
+            Map.of("title", "DevOps Intern", "status", "Draft", "deadline", "2026-06-30", "applicants", 0, "featured", "No"),
+            Map.of("title", "QA Engineering Intern", "status", "Rejected", "deadline", "2026-04-15", "applicants", 0, "featured", "No")
     );
 
     model.addAttribute("internships", internships);
-
+    model.addAttribute("page", "internships");
     return "company/internships";
 }
 
     // ✅ Applicants page
     @GetMapping("/applicants")
-    public String applicants(Model model) {
-        model.addAttribute("page", "applicants");
-        return "company/applicants";
-    }
+public String applicants(Model model) {
+
+    List<Map<String, Object>> applicants = List.of(
+            Map.of("name", "Ashan Fernando", "gpa", 3.5, "score", 85, "status", "PENDING"),
+            Map.of("name", "Dilini Wickramasinghe", "gpa", 3.8, "score", 90, "status", "SHORTLISTED"),
+            Map.of("name", "Nuwan Bandara", "gpa", 3.2, "score", 70, "status", "PENDING"),
+            Map.of("name", "Sachini Rathnayake", "gpa", 3.9, "score", 95, "status", "SHORTLISTED"),
+            Map.of("name", "Tharaka Jayasuriya", "gpa", 3.1, "score", 65, "status", "REJECTED")
+    );
+
+    model.addAttribute("applicants", applicants);
+    model.addAttribute("page", "applicants");
+
+    return "company/applicants";
+}
+
+   
 
     // ✅ Promotions page
     @GetMapping("/promotions")
