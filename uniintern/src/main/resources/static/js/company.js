@@ -157,3 +157,32 @@ function proceedToPayment() {
 function payNow() {
   alert("Payment completed successfully! Promotion activated.");
 }
+
+
+//company history
+function openReceiptModal(button) {
+  const id = button.getAttribute("data-id");
+  const date = button.getAttribute("data-date");
+  const plan = button.getAttribute("data-plan");
+  const amount = button.getAttribute("data-amount");
+  const status = button.getAttribute("data-status");
+
+  document.getElementById("receiptId").textContent = id;
+  document.getElementById("receiptDate").textContent = date;
+  document.getElementById("receiptPlan").textContent = plan;
+  document.getElementById("receiptAmount").textContent = amount;
+
+  const statusBadge = document.getElementById("receiptStatus");
+  statusBadge.textContent = status;
+  statusBadge.className = "badge-status " + (status === "Active" ? "st-approved" : "st-expired");
+
+  document.getElementById("receiptModal").style.display = "flex";
+}
+
+function closeReceiptModal() {
+  document.getElementById("receiptModal").style.display = "none";
+}
+
+function printReceipt() {
+  window.print();
+}

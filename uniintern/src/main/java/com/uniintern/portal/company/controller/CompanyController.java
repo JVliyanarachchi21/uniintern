@@ -133,11 +133,32 @@ public String checkout(Model model) {
 }
 
     // ✅ Payment history page
-    @GetMapping("/payments/history")
-    public String paymentHistory(Model model) {
-        model.addAttribute("page", "payments");
-        return "company/payment-history";
-    }
+ @GetMapping("/payments/history")
+public String paymentHistory(Model model) {
+    model.addAttribute("page", "payments");
+    model.addAttribute("companyName", "TechCorp Lanka");
+
+    List<Map<String, Object>> payments = List.of(
+            Map.of(
+                    "id", "PAY-001",
+                    "date", "2026-01-20",
+                    "plan", "Featured Internship — 7 Days",
+                    "amount", "LKR 5,000",
+                    "status", "Active"
+            ),
+            Map.of(
+                    "id", "PAY-002",
+                    "date", "2025-12-01",
+                    "plan", "Featured Internship — 14 Days",
+                    "amount", "LKR 8,500",
+                    "status", "Expired"
+            )
+    );
+
+    model.addAttribute("payments", payments);
+
+    return "company/payment-history";
+}
 
     // ✅ Notifications page
     @GetMapping("/notifications")

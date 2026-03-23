@@ -1015,3 +1015,223 @@ select:focus {
   background: #1f4ed8;
   color: white;
 }
+
+/* ===== Payment History Page ===== */
+.payments-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.payment-history-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.payment-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.payment-history-table th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: #7a8599;
+  padding: 18px 16px;
+  border-bottom: 1px solid #e8edf5;
+  background: #ffffff;
+}
+
+.payment-history-table td {
+  padding: 18px 16px;
+  border-bottom: 1px solid #edf2f7;
+  font-size: 14px;
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+.payment-history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.amount-cell {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.st-expired {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+.receipt-btn {
+  border: 1px solid #d8e2ef;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.receipt-btn:hover {
+  background: #f8fafc;
+}
+
+/* ===== Receipt Modal ===== */
+.receipt-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.58);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.receipt-modal-content {
+  width: 100%;
+  max-width: 450px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(2, 16, 36, 0.22);
+  padding: 24px;
+  position: relative;
+}
+
+.receipt-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.receipt-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.receipt-title-wrap h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-dark);
+}
+
+.receipt-icon {
+  font-size: 22px;
+}
+
+.receipt-close {
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  color: #6b7280;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.receipt-brand {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.receipt-brand h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #22418c;
+  font-weight: 800;
+}
+
+.receipt-brand p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.receipt-divider {
+  border-top: 1px solid #e5e7eb;
+  margin: 14px 0;
+}
+
+.receipt-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.receipt-row strong {
+  color: var(--text-dark);
+  font-weight: 500;
+  text-align: right;
+}
+
+.receipt-total-box {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #1f2937;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.receipt-total-box span {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.receipt-total-box strong {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.receipt-note {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 22px 0 16px;
+}
+
+.receipt-actions {
+  display: grid;
+  grid-template-columns: 1fr 56px;
+  gap: 10px;
+}
+
+.receipt-print-btn {
+  min-height: 40px;
+}
+
+.receipt-cancel-btn {
+  min-height: 40px;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .payment-history-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .receipt-modal-content {
+    max-width: 100%;
+    padding: 18px;
+  }
+}
