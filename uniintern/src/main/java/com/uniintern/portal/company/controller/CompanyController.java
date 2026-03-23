@@ -169,10 +169,11 @@ public String paymentHistory(Model model) {
 
     // ✅ Settings page
     @GetMapping("/settings")
-    public String settings(Model model) {
-        model.addAttribute("page", "settings");
-        return "company/settings";
-    }
+public String settings(Model model) {
+    model.addAttribute("page", "settings");
+    model.addAttribute("companyName", "TechCorp Lanka");
+    return "company/settings";
+}
 
     @PostMapping("/internships/new")
 public String submitNewInternship(

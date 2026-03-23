@@ -186,3 +186,26 @@ function closeReceiptModal() {
 function printReceipt() {
   window.print();
 }
+
+//secuirity js
+function updatePassword() {
+  const currentPassword = document.getElementById("currentPassword").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    alert("Please fill in all password fields.");
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    alert("New password and confirm password do not match.");
+    return;
+  }
+
+  alert("Password updated successfully. (UI only)");
+}
+
+function saveSecurityPreferences() {
+  alert("Security preferences saved successfully. (UI only)");
+}
