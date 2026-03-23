@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body class="auth-body">
+
+<div class="otp-shell">
+    <div class="otp-card">
+        <div class="brand-row center">
+            <div class="brand-logo">U</div>
+            <div class="brand-text dark">UniIntern</div>
+        </div>
+
+        <div class="otp-header">
+            <h2>Verify your email</h2>
+            <p>An OTP has been sent to</p>
+            <div class="otp-email" th:text="${email}">student@university.edu</div>
+        </div>
+
+        <form method="post" th:action="@{/verify-otp/student}" class="auth-form">
+            <div class="form-group">
+                <label for="otp">Enter OTP</label>
+                <input id="otp" type="text" name="otp" placeholder="Enter 6-digit code" maxlength="6" required>
+            </div>
+
+            <button type="submit" class="auth-btn">Verify and Continue</button>
+        </form>
+
+        <div class="otp-actions">
+            <a href="#">Resend OTP</a>
+            <span>•</span>
+            <a th:href="@{/register/student}">Back to registration</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

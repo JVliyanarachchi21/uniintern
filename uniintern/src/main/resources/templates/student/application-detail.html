@@ -8,84 +8,59 @@
 </head>
 
 <body class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo-dot"></div>
-      <div class="brand-text">UniIntern</div>
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('applications')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar('Ashan Perera')"></div>
+
+  <section class="content">
+    <div class="page-title">
+      <h1>Application #<span th:text="${applicationId}">101</span></h1>
+      <p>
+        <strong th:text="${title}">Internship</strong> •
+        <span th:text="${company}">Company</span>
+      </p>
     </div>
 
-    <nav class="nav">
-      <a class="nav-item" th:href="@{/student/dashboard}">Dashboard</a>
-      <a class="nav-item" th:href="@{/student/applications}">My Applications</a>
-      <a class="nav-item" th:href="@{/student/internships}">Browse Internships</a>
-      <a class="nav-item" href="#">Interviews</a>
-      <a class="nav-item" href="#">Notifications</a>
-      <a class="nav-item" href="#">Settings</a>
-    </nav>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Summary</div>
 
-    <div class="sidebar-footer">
-      <a class="nav-item logout" href="#">Logout</a>
+        <div class="kv">
+          <div class="k">Status</div>
+          <div class="v">
+            <span class="badge badge-green" th:text="${status}">SHORTLISTED</span>
+          </div>
+
+          <div class="k">Score</div>
+          <div class="v"><strong th:text="${score}">82</strong></div>
+        </div>
+
+        <div class="actions" style="margin-top:14px;">
+          <a class="btn" th:href="@{/student/applications}">Back</a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Status Timeline</div>
+
+        <div class="timeline">
+          <div class="t-item" th:each="t : ${timeline}">
+            <div class="t-dot" th:classappend="${t.done} ? ' t-dot-done' : ''"></div>
+            <div class="t-body">
+              <div class="t-step" th:text="${t.step}">Applied</div>
+              <div class="t-date" th:text="${t.date}">2026-02-14</div>
+            </div>
+          </div>
+        </div>
+
+        <small class="hint">UI phase: timeline updates will come from Admin + Scheduling module later.</small>
+      </div>
     </div>
-  </aside>
+  </section>
+</main>
 
-  <main class="main">
-    <header class="topbar">
-      <div></div>
-      <div class="topbar-right">
-        <button class="icon-btn" title="Notifications">🔔</button>
-        <div class="user">
-          <div class="avatar">A</div>
-          <div class="user-name">Ashan Perera</div>
-          <div class="chev">▾</div>
-        </div>
-      </div>
-    </header>
-
-    <section class="content">
-      <div class="page-title">
-        <h1>Application #<span th:text="${applicationId}">101</span></h1>
-        <p>
-          <strong th:text="${title}">Internship</strong> •
-          <span th:text="${company}">Company</span>
-        </p>
-      </div>
-
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">Summary</div>
-
-          <div class="kv">
-            <div class="k">Status</div>
-            <div class="v">
-              <span class="badge badge-green" th:text="${status}">SHORTLISTED</span>
-            </div>
-
-            <div class="k">Score</div>
-            <div class="v"><strong th:text="${score}">82</strong></div>
-          </div>
-
-          <div class="actions" style="margin-top:14px;">
-            <a class="btn" th:href="@{/student/applications}">Back</a>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title">Status Timeline</div>
-
-          <div class="timeline">
-            <div class="t-item" th:each="t : ${timeline}">
-              <div class="t-dot" th:classappend="${t.done} ? ' t-dot-done' : ''"></div>
-              <div class="t-body">
-                <div class="t-step" th:text="${t.step}">Applied</div>
-                <div class="t-date" th:text="${t.date}">2026-02-14</div>
-              </div>
-            </div>
-          </div>
-
-          <small class="hint">UI phase: timeline updates will come from Admin + Scheduling module later.</small>
-        </div>
-      </div>
-    </section>
-  </main>
 </body>
 </html>

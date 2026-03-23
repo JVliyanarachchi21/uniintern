@@ -8,97 +8,70 @@
 </head>
 
 <body class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo-dot"></div>
-      <div class="brand-text">UniIntern</div>
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('applications')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar('Ashan Perera')"></div>
+
+  <section class="content">
+    <div class="page-title">
+      <h1>My Applications</h1>
+      <p>Track your internship applications and statuses.</p>
     </div>
 
-    <nav class="nav">
-      <a class="nav-item" th:href="@{/student/dashboard}">Dashboard</a>
-      <a class="nav-item" th:href="@{/student/profile}">My Profile</a>
-      <a class="nav-item" th:href="@{/student/internships}">Browse Internships</a>
-      <a class="nav-item active" th:href="@{/student/applications}">My Applications</a>
-      <a class="nav-item" href="#">Interviews</a>
-      <a class="nav-item" href="#">Notifications</a>
-      <a class="nav-item" href="#">Settings</a>
-    </nav>
+    <div class="panel">
+      <div class="panel-title">Applications</div>
 
-    <div class="sidebar-footer">
-      <a class="nav-item logout" href="#">Logout</a>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Internship</th>
+              <th>Company</th>
+              <th>Applied</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr th:each="a : ${applications}">
+              <td th:text="${a.title}">Title</td>
+              <td th:text="${a.company}">Company</td>
+              <td th:text="${a.appliedDate}">Date</td>
+
+              <td>
+                <span th:if="${a.score > 0}" th:text="${a.score}">82</span>
+                <span th:if="${a.score == 0}" class="muted">—</span>
+              </td>
+
+              <td>
+                <span class="badge"
+                      th:classappend="${a.status == 'APPLIED'} ? ' badge-gray' :
+                                      (${a.status == 'SCORED'} ? ' badge-blue' :
+                                      (${a.status == 'SHORTLISTED'} ? ' badge-green' :
+                                      (${a.status == 'REJECTED'} ? ' badge-red' : ' badge-gray')))"
+                      th:text="${a.status}">
+                  APPLIED
+                </span>
+              </td>
+
+              <td style="text-align:right;">
+                <a class="btn" th:href="@{'/student/applications/' + ${a.id}}">
+                  View
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
-  </aside>
+  </section>
+</main>
 
-  <main class="main">
-    <header class="topbar">
-      <div></div>
-      <div class="topbar-right">
-        <button class="icon-btn" title="Notifications">🔔</button>
-        <div class="user">
-          <div class="avatar">A</div>
-          <div class="user-name">Ashan Perera</div>
-          <div class="chev">▾</div>
-        </div>
-      </div>
-    </header>
-
-    <section class="content">
-      <div class="page-title">
-        <h1>My Applications</h1>
-        <p>Track your internship applications and statuses.</p>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Applications</div>
-
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Internship</th>
-                <th>Company</th>
-                <th>Applied</th>
-                <th>Score</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr th:each="a : ${applications}">
-                <td th:text="${a.title}">Title</td>
-                <td th:text="${a.company}">Company</td>
-                <td th:text="${a.appliedDate}">Date</td>
-
-                <td>
-                  <span th:if="${a.score > 0}" th:text="${a.score}">82</span>
-                  <span th:if="${a.score == 0}" class="muted">—</span>
-                </td>
-
-                <td>
-                  <span class="badge"
-                        th:classappend="${a.status == 'APPLIED'} ? ' badge-gray' :
-                                        (${a.status == 'SCORED'} ? ' badge-blue' :
-                                        (${a.status == 'SHORTLISTED'} ? ' badge-green' :
-                                        (${a.status == 'REJECTED'} ? ' badge-red' : ' badge-gray')))"
-                        th:text="${a.status}">
-                    APPLIED
-                  </span>
-                </td>
-
-                <td style="text-align:right;">
-                  <a class="btn"
-                     th:href="@{'/student/applications/' + ${a.id}}">
-                    View
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-    </section>
-  </main>
 </body>
 </html>
