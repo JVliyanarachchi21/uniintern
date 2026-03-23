@@ -209,3 +209,30 @@ function updatePassword() {
 function saveSecurityPreferences() {
   alert("Security preferences saved successfully. (UI only)");
 }
+
+
+//topbar profile js
+function toggleProfileMenu() {
+  const menu = document.getElementById("profileMenu");
+  menu.classList.toggle("show");
+}
+
+window.addEventListener("click", function (e) {
+  const dropdown = document.querySelector(".profile-dropdown");
+  const menu = document.getElementById("profileMenu");
+
+  if (!dropdown || !menu) return;
+
+  if (!dropdown.contains(e.target)) {
+    menu.classList.remove("show");
+  }
+});
+
+
+//notificayion
+
+function markAsRead(btn) {
+  const item = btn.closest(".notification-item");
+  item.classList.remove("unread");
+  btn.remove();
+}

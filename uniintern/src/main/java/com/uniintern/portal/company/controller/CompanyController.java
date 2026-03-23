@@ -162,10 +162,23 @@ public String paymentHistory(Model model) {
 
     // ✅ Notifications page
     @GetMapping("/notifications")
-    public String notifications(Model model) {
-        model.addAttribute("page", "notifications");
-        return "company/notifications";
-    }
+public String notifications(Model model) {
+    model.addAttribute("page", "notifications");
+    model.addAttribute("companyName", "TechCorp Lanka");
+
+    List<Map<String, String>> notifications = List.of(
+            Map.of("date", "2/24/2026, 10:30:00 AM", "message", "Your internship 'Software Engineering Intern' has been approved!"),
+            Map.of("date", "2/23/2026, 2:00:00 PM", "message", "Featured promotion for 'Software Engineering Intern' is now active."),
+            Map.of("date", "2/22/2026, 9:15:00 AM", "message", "5 new applicants for 'Data Science Trainee'."),
+            Map.of("date", "2/20/2026, 4:45:00 PM", "message", "Your internship 'QA Engineering Intern' was rejected. Reason: Incomplete description."),
+            Map.of("date", "1/15/2026, 8:00:00 AM", "message", "Welcome to UniIntern! Complete your company profile to attract more candidates.")
+    );
+
+    model.addAttribute("notifications", notifications);
+    model.addAttribute("unreadCount", 0);
+
+    return "company/notifications";
+}
 
     // ✅ Settings page
     @GetMapping("/settings")
