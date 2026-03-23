@@ -94,3 +94,32 @@ function copyInternship() {
 function featureInternship() {
   alert("Request featured promotion (UI only)");
 }
+
+//applicants validations 
+function updateScoreValue(value) {
+  document.getElementById("scoreValue").textContent = value;
+}
+
+function exportShortlisted() {
+  alert("Shortlisted applicants exported successfully. (UI only)");
+}
+
+function viewApplicant() {
+  alert("View applicant details. (UI only)");
+}
+
+function shortlistApplicant(button) {
+  const row = button.closest("tr");
+  const statusBadge = row.querySelector(".badge-status");
+  statusBadge.textContent = "Shortlisted";
+  statusBadge.className = "badge-status st-approved";
+  alert("Applicant shortlisted successfully.");
+}
+
+function rejectApplicant(button) {
+  const row = button.closest("tr");
+  const statusBadge = row.querySelector(".badge-status");
+  statusBadge.textContent = "Rejected";
+  statusBadge.className = "badge-status st-rejected";
+  alert("Applicant rejected.");
+}

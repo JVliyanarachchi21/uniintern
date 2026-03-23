@@ -94,20 +94,24 @@ public String internships(Model model) {
     // ✅ Applicants page
     @GetMapping("/applicants")
 public String applicants(Model model) {
+    model.addAttribute("page", "applicants");
+    model.addAttribute("companyName", "TechCorp Lanka");
 
     List<Map<String, Object>> applicants = List.of(
-            Map.of("name", "Ashan Fernando", "gpa", 3.5, "score", 85, "status", "PENDING"),
-            Map.of("name", "Dilini Wickramasinghe", "gpa", 3.8, "score", 90, "status", "SHORTLISTED"),
-            Map.of("name", "Nuwan Bandara", "gpa", 3.2, "score", 70, "status", "PENDING"),
-            Map.of("name", "Sachini Rathnayake", "gpa", 3.9, "score", 95, "status", "SHORTLISTED"),
-            Map.of("name", "Tharaka Jayasuriya", "gpa", 3.1, "score", 65, "status", "REJECTED")
+            Map.of("name", "Ashan Fernando", "university", "University of Colombo", "gpa", 3.25, "skillMatch", "71%", "score", 79, "status", "Shortlisted"),
+            Map.of("name", "Dilini Wickramasinghe", "university", "University of Moratuwa", "gpa", 3.81, "skillMatch", "62%", "score", 73, "status", "Shortlisted"),
+            Map.of("name", "Nuwan Bandara", "university", "University of Peradeniya", "gpa", 3.42, "skillMatch", "68%", "score", 96, "status", "Shortlisted"),
+            Map.of("name", "Sachini Rathnayake", "university", "SLIIT", "gpa", 2.53, "skillMatch", "51%", "score", 46, "status", "Shortlisted"),
+            Map.of("name", "Tharaka Jayasuriya", "university", "NSBM", "gpa", 3.24, "skillMatch", "97%", "score", 42, "status", "Shortlisted"),
+            Map.of("name", "Maneesha De Silva", "university", "IIT Sri Lanka", "gpa", 2.61, "skillMatch", "71%", "score", 78, "status", "Scored"),
+            Map.of("name", "Ravindu Lakshan", "university", "University of Colombo", "gpa", 3.09, "skillMatch", "84%", "score", 53, "status", "Scored")
     );
 
     model.addAttribute("applicants", applicants);
-    model.addAttribute("page", "applicants");
 
     return "company/applicants";
 }
+ 
 
    
 

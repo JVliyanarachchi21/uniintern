@@ -699,3 +699,107 @@ select:focus {
     text-align: center;
   }
 }
+
+/* ===== Applicants Page ===== */
+.applicants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.export-btn {
+  background: #ffffff;
+  border: 1px solid #d8e2ef;
+  color: #374151;
+}
+
+.filter-card {
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 16px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 1.2fr;
+  gap: 16px;
+  align-items: end;
+}
+
+.slider-field input[type="range"] {
+  min-height: auto;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.applicants-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.applicants-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.applicants-table th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7a8599;
+  padding: 16px 18px;
+  border-bottom: 1px solid #e8edf5;
+  background: #ffffff;
+}
+
+.applicants-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid #edf2f7;
+  font-size: 14px;
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+.applicants-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.st-scored {
+  background: #dbeafe;
+  color: #4f46e5;
+}
+
+.approve-btn {
+  color: #16a34a;
+}
+
+.reject-btn {
+  color: #ef4444;
+}
+
+@media (max-width: 900px) {
+  .applicants-header,
+  .filter-grid {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .applicants-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .applicants-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
