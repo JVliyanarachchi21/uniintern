@@ -8,63 +8,36 @@
 </head>
 
 <body class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo-dot"></div>
-      <div class="brand-text">UniIntern</div>
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('notifications')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar('Ashan Perera')"></div>
+
+  <section class="content">
+    <div class="page-title">
+      <h1>Notifications</h1>
+      <p>Stay updated with your application and interview activity.</p>
     </div>
 
-    <nav class="nav">
-      <a class="nav-item" th:href="@{/student/dashboard}">Dashboard</a>
-      <a class="nav-item" th:href="@{/student/profile}">My Profile</a>
-      <a class="nav-item" th:href="@{/student/internships}">Browse Internships</a>
-      <a class="nav-item" th:href="@{/student/applications}">My Applications</a>
-      <a class="nav-item" th:href="@{/student/interviews}">Interviews</a>
-      <a class="nav-item active" th:href="@{/student/notifications}">Notifications</a>
-      <a class="nav-item" href="#">Settings</a>
-    </nav>
+    <div class="panel">
+      <div class="panel-title">All Notifications</div>
 
-    <div class="sidebar-footer">
-      <a class="nav-item logout" href="#">Logout</a>
+      <div class="notif-list">
+        <div class="notif" th:each="n : ${notifications}" th:classappend="${n.read} ? ' notif-read' : ''">
+          <div class="notif-type" th:text="${n.type}">Type</div>
+          <div class="notif-text" th:text="${n.text}">Text</div>
+          <div class="notif-date" th:text="${n.date}">Date</div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:12px;">
+        <button class="btn" type="button">Mark all as read (UI)</button>
+      </div>
     </div>
-  </aside>
+  </section>
+</main>
 
-  <main class="main">
-    <header class="topbar">
-      <div></div>
-      <div class="topbar-right">
-        <button class="icon-btn" title="Notifications">🔔</button>
-        <div class="user">
-          <div class="avatar">A</div>
-          <div class="user-name">Ashan Perera</div>
-          <div class="chev">▾</div>
-        </div>
-      </div>
-    </header>
-
-    <section class="content">
-      <div class="page-title">
-        <h1>Notifications</h1>
-        <p>Stay updated with your application and interview activity.</p>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">All Notifications</div>
-
-        <div class="notif-list">
-          <div class="notif" th:each="n : ${notifications}"
-               th:classappend="${n.read} ? ' notif-read' : ''">
-            <div class="notif-type" th:text="${n.type}">Type</div>
-            <div class="notif-text" th:text="${n.text}">Text</div>
-            <div class="notif-date" th:text="${n.date}">Date</div>
-          </div>
-        </div>
-
-        <div class="actions" style="margin-top:12px;">
-          <button class="btn" type="button">Mark all as read (UI)</button>
-        </div>
-      </div>
-    </section>
-  </main>
 </body>
 </html>
