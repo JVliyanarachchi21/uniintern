@@ -116,18 +116,21 @@ public String applicants(Model model) {
    
 
     // ✅ Promotions page
-    @GetMapping("/promotions")
-    public String promotions(Model model) {
-        model.addAttribute("page", "promotions");
-        return "company/promotions";
-    }
+  @GetMapping("/promotions")
+public String promotions(Model model) {
+    model.addAttribute("page", "promotions");
+    model.addAttribute("companyName", "TechCorp Lanka");
+    return "company/promotions";
+}
+
 
     // ✅ Payments checkout page
-    @GetMapping("/payments/checkout")
-    public String checkout(Model model) {
-        model.addAttribute("page", "payments");
-        return "company/payments-checkout";
-    }
+   @GetMapping("/payments/checkout")
+public String checkout(Model model) {
+    model.addAttribute("page", "payments");
+    model.addAttribute("companyName", "TechCorp Lanka");
+    return "company/payments-checkout";
+}
 
     // ✅ Payment history page
     @GetMapping("/payments/history")

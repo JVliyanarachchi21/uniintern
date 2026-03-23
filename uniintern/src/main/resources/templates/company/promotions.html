@@ -1,11 +1,81 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
-      pageTitle='Promotions',
-      content=~{::section})">
+        pageTitle='Promotions',
+        content=~{::body/content()})">
 
-<section>
-    <h1>Promotions</h1>
+<body>
+<section class="page-shell">
+
+    <div class="promotions-header">
+        <div>
+            <h1 class="page-title">Promotions</h1>
+            <p class="page-sub">Boost your internship visibility with featured promotions</p>
+        </div>
+    </div>
+
+    <div class="promo-cards-grid">
+
+        <div class="promo-card" onclick="selectPromoCard(this, 'Featured Internship — 7 Days', 5000)">
+            <div class="promo-icon-circle"><span>☆</span></div>
+            <h3>Featured Internship — 7 Days</h3>
+            <div class="promo-price">LKR 5,000</div>
+            <div class="promo-duration">7 days</div>
+
+            <ul class="promo-feature-list">
+                <li>Appear at top of search</li>
+                <li>Highlighted badge</li>
+                <li>2x more views</li>
+            </ul>
+        </div>
+
+        <div class="promo-card" onclick="selectPromoCard(this, 'Featured Internship — 14 Days', 8500)">
+            <div class="promo-icon-circle"><span>⚡</span></div>
+            <h3>Featured Internship — 14 Days</h3>
+            <div class="promo-price">LKR 8,500</div>
+            <div class="promo-duration">14 days</div>
+
+            <ul class="promo-feature-list">
+                <li>Appear at top of search</li>
+                <li>Highlighted badge</li>
+                <li>3x more views</li>
+                <li>Email blast to students</li>
+            </ul>
+        </div>
+
+        <div class="promo-card active" onclick="selectPromoCard(this, 'Homepage Banner — 7 Days', 15000)">
+            <div class="promo-icon-circle"><span>♕</span></div>
+            <h3>Homepage Banner — 7 Days</h3>
+            <div class="promo-price">LKR 15,000</div>
+            <div class="promo-duration">7 days</div>
+
+            <ul class="promo-feature-list">
+                <li>Homepage banner placement</li>
+                <li>Maximum visibility</li>
+                <li>5x more views</li>
+                <li>Priority support</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="promo-select-box">
+        <label for="promoInternship">Select Internship to Promote</label>
+        <select id="promoInternship">
+            <option value="">Choose an approved internship</option>
+            <option>Software Engineering Intern</option>
+            <option>Data Science Trainee</option>
+        </select>
+
+        <div class="promo-bottom-actions">
+            <button type="button" class="btn primary promo-pay-btn" onclick="window.location.href='/company/payments/checkout'">
+                 Proceed to Payment
+            </button>
+        </div>
+    </div>
+
 </section>
 
+<script src="/js/company.js"></script>
+</body>
 </html>

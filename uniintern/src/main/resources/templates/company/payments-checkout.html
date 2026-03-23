@@ -1,11 +1,86 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
-      pageTitle='payments-checkout',
-      content=~{::section})">
+        pageTitle='Payment Checkout',
+        content=~{::body/content()})">
 
-<section>
-<h1>Checkout</h1>
+<body>
+<section class="page-shell">
+
+    <div class="payments-page">
+
+        <h1 class="page-title">Payment Checkout</h1>
+
+        <div class="payment-box">
+            <div class="section-title">Order Summary</div>
+
+            <div class="summary-row">
+                <span>Promotion</span>
+                <strong>Homepage Banner — 7 Days</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Internship</span>
+                <strong>Software Engineering Intern</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Duration</span>
+                <strong>7 days</strong>
+            </div>
+
+            <div class="summary-total">
+                <span>Total</span>
+                <strong>LKR 15,000</strong>
+            </div>
+        </div>
+
+        <div class="payment-box">
+            <div class="section-title">Payment Method</div>
+
+            <div class="payment-method-tabs">
+                <button type="button" class="method-tab active">💳 Card</button>
+                <button type="button" class="method-tab">📱 Mobile</button>
+                <button type="button" class="method-tab">🏦 Bank</button>
+            </div>
+
+            <div class="field">
+                <label for="cardName">Cardholder Name</label>
+                <input type="text" id="cardName">
+            </div>
+
+            <div class="field">
+                <label for="cardNumber">Card Number</label>
+                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label for="expiry">Expiry (MM/YY)</label>
+                    <input type="text" id="expiry" placeholder="MM/YY">
+                </div>
+
+                <div class="field">
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" placeholder="123">
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="billingEmail">Billing Email</label>
+                <input type="email" id="billingEmail">
+            </div>
+        </div>
+
+        <div class="payment-actions">
+            <button type="button" class="btn cancel-btn" onclick="window.location.href='/company/promotions'">Cancel</button>
+            <button type="button" class="btn primary pay-btn" onclick="payNow()">Pay LKR 15,000</button>
+        </div>
+
+    </div>
+
 </section>
 
+<script src="/js/company.js"></script>
+</body>
 </html>

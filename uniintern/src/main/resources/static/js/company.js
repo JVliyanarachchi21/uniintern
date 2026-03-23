@@ -123,3 +123,37 @@ function rejectApplicant(button) {
   statusBadge.className = "badge-status st-rejected";
   alert("Applicant rejected.");
 }
+
+
+//promotion ui js 
+let selectedPromotionPlan = "Homepage Banner — 7 Days";
+let selectedPromotionAmount = 15000;
+
+function selectPromoCard(card, planName, amount) {
+  document.querySelectorAll(".promo-card").forEach(c => c.classList.remove("active"));
+  card.classList.add("active");
+
+  selectedPromotionPlan = planName;
+  selectedPromotionAmount = amount;
+}
+
+function proceedToPayment() {
+  const internship = document.getElementById("promoInternship").value;
+
+  if (internship === "") {
+    alert("Please select an internship first.");
+    return;
+  }
+
+  alert(
+    "Proceeding to payment for:\n" +
+    internship +
+    "\nPlan: " + selectedPromotionPlan +
+    "\nAmount: LKR " + selectedPromotionAmount.toLocaleString()
+  );
+}
+
+//promotion checkout js
+function payNow() {
+  alert("Payment completed successfully! Promotion activated.");
+}
