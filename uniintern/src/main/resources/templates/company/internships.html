@@ -29,42 +29,38 @@
             </tr>
             </thead>
 
-            <tbody>
-            <tr th:each="internship : ${internships}">
-                <td class="internship-title" th:text="${internship.title}">Software Engineering Intern</td>
+ <tbody>
+<tr th:each="internship : ${internships}">
+    <td th:text="${internship.title}">Software Engineering Intern</td>
 
-                <td>
-                    <span class="badge-status"
-                          th:classappend="${internship.status == 'Approved'} ? ' st-approved' :
-                                          (${internship.status == 'Pending'} ? ' st-pending' :
-                                          (${internship.status == 'Draft'} ? ' st-draft' :
-                                          (${internship.status == 'Rejected'} ? ' st-rejected' : ' st-closed')))"
-                          th:text="${internship.status}">
-                        Approved
-                    </span>
-                </td>
+    <td>
+        <span class="badge-status"
+              th:classappend="${internship.status == 'APPROVED'} ? ' st-approved' :
+                              (${internship.status == 'PENDING_ADMIN_APPROVAL'} ? ' st-pending' :
+                              (${internship.status == 'REJECTED'} ? ' st-rejected' :
+                              ' st-draft'))"
+              th:text="${internship.status}">
+            PENDING_ADMIN_APPROVAL
+        </span>
+    </td>
 
-                <td th:text="${internship.deadline}">2026-04-30</td>
-                <td th:text="${internship.applicants}">12</td>
+    <td th:text="${internship.deadline}">2026-04-30</td>
+    <td>0</td>
 
-                <td>
-                    <span class="featured-pill"
-                          th:classappend="${internship.featured == 'Yes'} ? ' featured-yes' : ' featured-no'"
-                          th:text="${internship.featured}">
-                        Yes
-                    </span>
-                </td>
+    <td>
+        <span class="featured-pill featured-no">No</span>
+    </td>
 
-                <td>
-                    <div class="icon-actions">
-                        <button type="button" class="icon-btn" title="View" onclick="viewInternship()">👁</button>
-                        <button type="button" class="icon-btn" title="Edit" onclick="editInternship()">✎</button>
-                        <button type="button" class="icon-btn" title="Copy" onclick="copyInternship()">⧉</button>
-                        <button type="button" class="icon-btn" title="Feature" onclick="featureInternship()">☆</button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
+    <td>
+        <div class="icon-actions">
+            <button type="button" class="icon-btn" title="View" onclick="viewInternship()">👁</button>
+            <button type="button" class="icon-btn" title="Edit" onclick="editInternship()">✎</button>
+            <button type="button" class="icon-btn" title="Copy" onclick="copyInternship()">⧉</button>
+            <button type="button" class="icon-btn" title="Feature" onclick="featureInternship()">☆</button>
+        </div>
+    </td>
+</tr>
+</tbody>
         </table>
     </div>
 
