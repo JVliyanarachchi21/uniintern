@@ -7,7 +7,7 @@
     <div class="card c-blue">
       <div>
         <div class="card-label">Pending Companies</div>
-        <div class="card-value">3</div>
+<div class="card-value" th:text="${pendingCompanies}">0</div>
       </div>
       <div class="card-icon">📄</div>
     </div>
@@ -15,8 +15,7 @@
     <div class="card c-orange">
       <div>
         <div class="card-label">Pending Internships</div>
-        <div class="card-value">6</div>
-      </div>
+<div class="card-value" th:text="${pendingInternships}">0</div>      </div>
       <div class="card-icon">🧳</div>
     </div>
 
@@ -31,7 +30,7 @@
     <div class="card c-red">
       <div>
         <div class="card-label">Interviews Today</div>
-        <div class="card-value">0</div>
+<div class="card-value" th:text="${interviewsToday}">0</div>
       </div>
       <div class="card-icon">📅</div>
     </div>
@@ -39,15 +38,21 @@
 
   <div class="grid-2">
     <div class="panel">
-      <h3>Latest Activity</h3>
-      <ul class="activity">
-        <li>⭐ New company registered: TechVentures Inc.</li>
-        <li>⭐ Internship submitted: Frontend Developer Intern</li>
-        <li>⭐ Filtering completed for Data Analyst Intern</li>
-        <li>⭐ Interview scheduled: Alice Johnson</li>
-        <li>⭐ Company approved: DataStream Analytics</li>
-      </ul>
-    </div>
+  <h3>Latest Activity</h3>
+  <ul class="activity">
+    <li th:if="${#lists.isEmpty(logs)}">⭐ No recent activity found.</li>
+
+    <li th:each="log : ${logs}">
+      ⭐
+      <span th:text="${log.action}">ACTION</span>
+      :
+      <span th:text="${log.targetName}">Target Name</span>
+      <span> (</span>
+      <span th:text="${log.targetType}">Target Type</span>
+      <span>)</span>
+    </li>
+  </ul>
+</div>
 
     <div class="panel">
       <h3>Quick Actions</h3>

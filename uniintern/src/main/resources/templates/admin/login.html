@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login - UniIntern</title>
+
+  <style>
+    :root{
+      --navy:#052659;
+      --orange:#F07A12;
+      --white:#FFFFFF;
+      --text:#111827;
+      --muted:#6B7280;
+      --danger:#DC2626;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(193,232,255,0.92), rgba(125,160,202,0.72) 35%, rgba(5,38,89,0.96) 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      color:var(--text);
+    }
+
+    .login-card{
+      background:rgba(255,255,255,0.96);
+      border:1px solid rgba(255,255,255,0.55);
+      border-radius:32px;
+      padding:34px;
+      box-shadow:0 24px 60px rgba(2,16,36,0.16);
+      backdrop-filter:blur(16px);
+
+      max-width:420px;
+      width:100%;
+    }
+
+    .kicker{
+      display:inline-block;
+      background:#EEF6FF;
+      color:var(--navy);
+      border:1px solid #D7EAFE;
+      border-radius:999px;
+      padding:8px 14px;
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:14px;
+    }
+
+    .login-card h2{
+      margin:0 0 10px;
+      font-size:32px;
+      color:var(--navy);
+    }
+
+    .subtitle{
+      margin:0 0 20px;
+      color:var(--muted);
+    }
+
+    .alert{
+      margin-bottom:18px;
+      background:#FEF2F2;
+      border:1px solid #FECACA;
+      color:#B91C1C;
+      border-radius:16px;
+      padding:14px 16px;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-bottom:18px;
+    }
+
+    .label{
+      font-size:14px;
+      font-weight:800;
+    }
+
+    .input{
+      border:1px solid #D1D5DB;
+      background:#F9FAFB;
+      border-radius:16px;
+      padding:14px;
+      font-size:15px;
+      outline:none;
+    }
+
+    .input:focus{
+      border-color:#5483B3;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(84,131,179,0.16);
+    }
+
+    .input.error{
+      border-color:var(--danger);
+      background:#FEF2F2;
+    }
+
+    .field-error{
+      font-size:13px;
+      color:var(--danger);
+      font-weight:700;
+    }
+
+    .help{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      margin-top:10px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:16px;
+      padding:14px 20px;
+      font-weight:800;
+      cursor:pointer;
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--navy), var(--orange));
+      color:#fff;
+      flex:1;
+    }
+
+    .btn-secondary{
+      background:#F3F4F6;
+      border:1px solid #E5E7EB;
+      color:#111827;
+    }
+
+    .demo-box{
+      margin-top:20px;
+      background:#EFF6FF;
+      border:1px solid #BFDBFE;
+      color:#1E3A8A;
+      border-radius:16px;
+      padding:14px;
+      font-size:14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-card">
+    <div class="kicker">Admin</div>
+    <h2>Sign in</h2>
+    <p class="subtitle">Enter your credentials to access admin dashboard</p>
+
+    <div th:if="${formError}" class="alert" th:text="${formError}"></div>
+
+    <form th:action="@{/admin/login}" method="post" novalidate>
+
+      <div class="field">
+        <label class="label">Email</label>
+        <input
+          class="input"
+          th:classappend="${emailError} ? ' error' : ''"
+          type="text"
+          name="email"
+          th:value="${email}"
+          placeholder="Enter email">
+        <div class="help">Must be valid email</div>
+        <div class="field-error" th:if="${emailError}" th:text="${emailError}"></div>
+      </div>
+
+      <div class="field">
+        <label class="label">Password</label>
+        <input
+          class="input"
+          th:classappend="${passwordError} ? ' error' : ''"
+          type="password"
+          name="password"
+          placeholder="Enter password">
+        <div class="help">Minimum 8 characters</div>
+        <div class="field-error" th:if="${passwordError}" th:text="${passwordError}"></div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Login</button>
+        <a href="/" class="btn btn-secondary">Home</a>
+      </div>
+
+    </form>
+
+    <div class="demo-box">
+      <strong>Demo</strong><br>
+      admin@uniintern.com<br>
+      Admin@123
+    </div>
+  </div>
+
+</body>
+</html>
