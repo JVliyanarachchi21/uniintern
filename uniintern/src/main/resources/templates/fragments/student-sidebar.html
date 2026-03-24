@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="studentSidebar(activePage)">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-dot"></div>
+      <div class="brand-text">UniIntern</div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item"
+         th:classappend="${activePage == 'dashboard'} ? ' active'"
+         th:href="@{/student/dashboard}">
+        Dashboard
+      </a>
+
+      <a class="nav-item"
+         th:classappend="${activePage == 'profile'} ? ' active'"
+         th:href="@{/student/profile}">
+        My Profile
+      </a>
+
+      <a class="nav-item"
+         th:classappend="${activePage == 'internships'} ? ' active'"
+         th:href="@{/student/internships}">
+        Browse Internships
+      </a>
+
+      <a class="nav-item"
+         th:classappend="${activePage == 'applications'} ? ' active'"
+         th:href="@{/student/applications}">
+        My Applications
+      </a>
+
+      <a class="nav-item"
+         th:classappend="${activePage == 'interviews'} ? ' active'"
+         th:href="@{/student/interviews}">
+        Interviews
+      </a>
+
+      <a class="nav-item"
+         th:classappend="${activePage == 'notifications'} ? ' active'"
+         th:href="@{/student/notifications}">
+        Notifications
+      </a>
+
+      <a class="nav-item" href="#">Settings</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a class="nav-item logout" href="#">Logout</a>
+    </div>
+  </aside>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Notifications | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('notifications')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar('Ashan Perera')"></div>
+
+  <section class="content">
+    <div class="page-title">
+      <h1>Notifications</h1>
+      <p>Stay updated with your application and interview activity.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">All Notifications</div>
+
+      <div class="notif-list">
+        <div class="notif" th:each="n : ${notifications}" th:classappend="${n.read} ? ' notif-read' : ''">
+          <div class="notif-type" th:text="${n.type}">Type</div>
+          <div class="notif-text" th:text="${n.text}">Text</div>
+          <div class="notif-date" th:text="${n.date}">Date</div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:12px;">
+        <button class="btn" type="button">Mark all as read (UI)</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

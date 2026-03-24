@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('dashboard')"></div>
+
+<main class="main">
+  <div th:replace="fragments/student-topbar :: studentTopbar(${studentName})"></div>
+
+  <section class="dashboard-page">
+    <div class="dashboard-hero">
+      <div class="dashboard-hero-left">
+        <div class="hero-badge">Student Portal</div>
+        <h1>Welcome back, <span th:text="${studentName}">Ashan</span></h1>
+        <p>Track your applications, discover opportunities, and stay ready for interviews.</p>
+      </div>
+
+      <div class="dashboard-hero-actions">
+        <a class="dashboard-btn dashboard-btn-primary" th:href="@{/student/internships}">Browse Internships</a>
+        <a class="dashboard-btn dashboard-btn-secondary" th:href="@{/student/profile}">Complete Profile</a>
+      </div>
+    </div>
+
+    <div class="dashboard-stats">
+      <div class="stat-box">
+        <div class="stat-title">Profile Completion</div>
+        <div class="stat-number"><span th:text="${profileCompletion}">85</span>%</div>
+        <div class="stat-progress">
+          <div class="stat-progress-fill" th:style="'width:' + ${profileCompletion} + '%'"></div>
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-title">Active Applications</div>
+        <div class="stat-number" th:text="${activeApplications}">8</div>
+        <div class="stat-text">Applications currently in progress</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-title">Interviews</div>
+        <div class="stat-number" th:text="${interviews}">2</div>
+        <div class="stat-text">Upcoming interview sessions</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-title">Notifications</div>
+        <div class="stat-number" th:text="${notificationCount}">3</div>
+        <div class="stat-text">Unread updates waiting</div>
+      </div>
+    </div>
+
+    <div class="interview-banner">
+      <div class="interview-banner-left">
+        <div class="interview-banner-label">Next Important Step</div>
+        <h2 th:text="${upcomingInterview.title}">Full Stack Developer Intern</h2>
+        <p>
+          <strong th:text="${upcomingInterview.company}">TechCorp Solutions</strong>
+          <span>•</span>
+          <span th:text="${upcomingInterview.date}">2026-02-25</span>
+          <span>•</span>
+          <span th:text="${upcomingInterview.time}">10:30 AM</span>
+        </p>
+        <p>
+          <span th:text="${upcomingInterview.mode}">Online</span>
+          <span>•</span>
+          <span th:text="${upcomingInterview.location}">Google Meet</span>
+        </p>
+      </div>
+
+      <div class="interview-banner-right">
+        <a class="dashboard-btn dashboard-btn-light" th:href="@{/student/interviews}">Open Interviews</a>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="dashboard-left">
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Recent Applications</h3>
+            <a th:href="@{/student/applications}">View All</a>
+          </div>
+
+          <div class="simple-table">
+            <div class="simple-table-head">
+              <div>Internship</div>
+              <div>Company</div>
+              <div>Date</div>
+              <div>Status</div>
+            </div>
+
+            <div class="simple-table-row" th:each="a : ${recentApplications}">
+              <div th:text="${a.title}">Frontend Developer Intern</div>
+              <div th:text="${a.company}">TechCorp Solutions</div>
+              <div th:text="${a.date}">2026-02-14</div>
+              <div>
+                <span class="status-pill"
+                      th:classappend="${a.status == 'Shortlisted'} ? ' status-green' :
+                                      (${a.status == 'Rejected'} ? ' status-red' : ' status-blue')"
+                      th:text="${a.status}">
+                  Shortlisted
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Recommended Internships</h3>
+            <a th:href="@{/student/internships}">Explore More</a>
+          </div>
+
+          <div class="recommended-list">
+            <div class="recommended-item" th:each="i : ${recentInternships}">
+              <div class="recommended-top">
+                <div>
+                  <div class="recommended-title" th:text="${i.title}">Frontend Developer Intern</div>
+                  <div class="recommended-subtitle">
+                    <span th:text="${i.company}">TechCorp Solutions</span>
+                    <span>•</span>
+                    <span th:text="${i.location}">Colombo</span>
+                  </div>
+                </div>
+
+                <div class="match-pill">
+                  <span th:text="${i.match}">82</span>% Match
+                </div>
+              </div>
+
+              <div class="recommended-bottom">
+                <div class="deadline-text">
+                  Deadline: <span th:text="${i.deadline}">2026-04-15</span>
+                </div>
+                <a class="dashboard-btn dashboard-btn-primary small-btn" th:href="@{/student/internships}">Explore</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-right">
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Latest Notifications</h3>
+          </div>
+
+          <div class="notification-list">
+            <div class="notification-item" th:each="n : ${latestNotifications}">
+              <div class="notification-dot"></div>
+              <div class="notification-content">
+                <div class="notification-text" th:text="${n.text}">Your application was shortlisted.</div>
+                <div class="notification-date" th:text="${n.date}">2026-02-14</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Activity Feed</h3>
+          </div>
+
+          <div class="activity-list">
+            <div class="activity-item" th:each="a : ${activityFeed}">
+              <div class="activity-dot"></div>
+              <div class="activity-content">
+                <div class="activity-text" th:text="${a.title}">Applied for internship</div>
+                <div class="activity-date" th:text="${a.date}">2026-02-12</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+</body>
+</html>

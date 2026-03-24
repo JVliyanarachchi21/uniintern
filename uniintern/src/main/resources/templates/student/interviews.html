@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interviews | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('interviews')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar('Ashan Perera')"></div>
+
+  <section class="content">
+    <div class="page-title">
+      <h1>Interviews</h1>
+      <p>View and confirm upcoming interview schedules.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Upcoming Interviews</div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Internship</th>
+              <th>Company</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Mode</th>
+              <th>Location / Link</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr th:each="i : ${interviews}">
+              <td th:text="${i.title}">Title</td>
+              <td th:text="${i.company}">Company</td>
+              <td th:text="${i.date}">Date</td>
+              <td th:text="${i.time}">Time</td>
+              <td th:text="${i.mode}">Mode</td>
+              <td th:text="${i.location}">Location</td>
+
+              <td>
+                <span class="badge"
+                      th:classappend="${i.status == 'CONFIRMED'} ? ' badge-green' : ' badge-blue'"
+                      th:text="${i.status}">
+                  PENDING
+                </span>
+              </td>
+
+              <td style="text-align:right;">
+                <button class="btn primary" type="button" th:if="${i.status != 'CONFIRMED'}">
+                  Confirm (UI)
+                </button>
+                <span class="muted" th:if="${i.status == 'CONFIRMED'}">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <small class="hint">UI phase: these records will be created by Admin + Scheduling module later.</small>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
