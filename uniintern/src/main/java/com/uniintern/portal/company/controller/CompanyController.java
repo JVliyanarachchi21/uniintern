@@ -40,6 +40,11 @@ public class CompanyController {
              public String companyRegister() {
     return "company/company-register";
     }
+    
+     @GetMapping("/verify")
+             public String verifyPageString() {
+    return "company/company-verify";
+    }
 
     @GetMapping({"/dashboard", "", "/"})
     public String dashboard(Model model) {

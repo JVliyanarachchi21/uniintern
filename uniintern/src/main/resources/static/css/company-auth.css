@@ -389,3 +389,8 @@ body {
   box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.08);
   background: #ffffff;
 }
+
+/* ===== Verify Page ===== */
+.verify-card {
+  max-width: 400px;
+}
