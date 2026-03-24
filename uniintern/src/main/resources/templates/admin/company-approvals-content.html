@@ -1,0 +1,39 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Company Approvals</h1>
+  <p class="subtitle">Approve or reject newly registered companies.</p>
+
+  <div class="panel">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Company Name</th>
+          <th>Email</th>
+          <th>Industry</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:if="${#lists.isEmpty(companies)}">
+          <td colspan="5" style="color:#6B7280;">No pending companies.</td>
+        </tr>
+
+        <tr th:each="c : ${companies}">
+          <td th:text="${c.companyName}">Company Name</td>
+          <td th:text="${c.email}">Email</td>
+          <td th:text="${c.industry}">Industry</td>
+          <td><span class="badge badge-pending" th:text="${c.status}">PENDING</span></td>
+
+          <td style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a th:href="@{|/admin/companies/${c.id}/approve|}" class="btn btn-approve">Approve</a>
+            <a th:href="@{|/admin/companies/${c.id}/reject|}" class="btn btn-reject">Reject</a>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+
+</div>

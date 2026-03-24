@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniIntern | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/home.css}" href="/css/home.css">
+</head>
+<body>
+<div class="page-shell">
+    <header class="site-header" id="siteHeader">
+        <div class="container nav-wrap">
+            <a class="brand" th:href="@{/}" href="/">
+                <span class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2 9l10-5 10 5-10 5-10-5z"></path>
+                        <path d="M6 10.6V15c0 1.1 2.7 3 6 3s6-1.9 6-3v-4.4"></path>
+                    </svg>
+                </span>
+                <span class="brand-text">
+                    <span class="brand-name">UniIntern</span>
+                    <span class="brand-tag">Launch Your Career</span>
+                </span>
+            </a>
+
+            <nav class="desktop-nav">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#who-its-for">Who It&apos;s For</a>
+                <a th:href="@{/dashboard}" href="/dashboard">Free Course</a>
+            </nav>
+
+            <div class="nav-actions desktop-actions">
+                <a class="btn btn-outline" th:href="@{/student/register}" href="/student/register">I&apos;m a Student</a>
+                <a class="btn btn-primary" th:href="@{/company/register}" href="/company/register">I&apos;m a Company</a>
+            </div>
+
+            <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#who-its-for">Who It&apos;s For</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Free Course</a>
+            <a class="btn btn-outline" th:href="@{/student/register}" href="/student/register">I&apos;m a Student</a>
+            <a class="btn btn-primary" th:href="@{/company/register}" href="/company/register">I&apos;m a Company</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-glow hero-glow-right"></div>
+            <div class="hero-glow hero-glow-left"></div>
+
+            <div class="container hero-grid">
+                <div class="hero-copy reveal">
+                    <div class="eyebrow-pill">
+                        <span class="pulse-dot"></span>
+                        <span>Smarter internships for students and recruiters</span>
+                    </div>
+
+                    <h1>
+                        Launch your future with
+                        <span>UniIntern</span>
+                    </h1>
+
+                    <p class="hero-text">
+                        Discover verified internship opportunities, connect with trusted recruiters, and manage your internship journey through one modern platform.
+                    </p>
+
+                    <div class="hero-cta">
+                        <a class="btn btn-primary btn-large" th:href="@{/student/register}" href="/student/register">Students: Apply
+                            <span aria-hidden="true">→</span>
+                        </a>
+                        <a class="btn btn-light btn-large" th:href="@{/company/register}" href="/company/register">Companies: Hire</a>
+                    </div>
+
+                    <div class="stats-row">
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="7" width="18" height="13" rx="2"></rect>
+                                        <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </span>
+                                <strong>200+</strong>
+                            </div>
+                            <p>Verified Companies</p>
+                        </article>
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 6V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"></path>
+                                        <path d="M18 6h-1V4a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2H2a2 2 0 0 0-2 2v10a4 4 0 0 0 4 4h12a4 4 0 0 0 4-4V8a2 2 0 0 0-2-2Z"></path>
+                                    </svg>
+                                </span>
+                                <strong>500+</strong>
+                            </div>
+                            <p>Internships</p>
+                        </article>
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <path d="M20 8v6"></path>
+                                        <path d="M23 11h-6"></path>
+                                    </svg>
+                                </span>
+                                <strong>1000+</strong>
+                            </div>
+                            <p>Students</p>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="hero-visual reveal delay-1">
+                    <div class="blob blob-one"></div>
+                    <div class="blob blob-two"></div>
+
+                    <div class="dashboard-card">
+                        <div class="dashboard-header">
+                            <div class="window-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <div class="header-pill"></div>
+                        </div>
+
+                        <div class="dashboard-body">
+                            <div class="profile-row">
+                                <div class="avatar-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <div class="profile-lines">
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+
+                            <div class="job-list">
+                                <article class="job-item">
+                                    <div class="job-left">
+                                        <span class="job-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 6V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"></path>
+                                                <rect x="2" y="6" width="20" height="14" rx="2"></rect>
+                                            </svg>
+                                        </span>
+                                        <div class="job-lines"><span></span><span></span></div>
+                                    </div>
+                                    <span class="job-badge"></span>
+                                </article>
+                                <article class="job-item">
+                                    <div class="job-left">
+                                        <span class="job-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 6V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"></path>
+                                                <rect x="2" y="6" width="20" height="14" rx="2"></rect>
+                                            </svg>
+                                        </span>
+                                        <div class="job-lines"><span></span><span></span></div>
+                                    </div>
+                                    <span class="job-badge"></span>
+                                </article>
+                                <article class="job-item">
+                                    <div class="job-left">
+                                        <span class="job-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 6V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"></path>
+                                                <rect x="2" y="6" width="20" height="14" rx="2"></rect>
+                                            </svg>
+                                        </span>
+                                        <div class="job-lines"><span></span><span></span></div>
+                                    </div>
+                                    <span class="job-badge"></span>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="floating-note note-right">
+                        <span class="note-icon success">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                        </span>
+                        <div>
+                            <strong>Interview Scheduled</strong>
+                            <p>Tomorrow, 10:00 AM</p>
+                        </div>
+                    </div>
+
+                    <div class="floating-note note-left">
+                        <span class="note-icon alert">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.72 3h16.92a2 2 0 0 0 1.72-3L13.7 3.86a2 2 0 0 0-3.4 0Z"></path>
+                                <path d="M12 9v4"></path>
+                                <path d="M12 17h.01"></path>
+                            </svg>
+                        </span>
+                        <div>
+                            <strong>New Match!</strong>
+                            <p>Software Engineering Intern</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section" id="features">
+            <div class="feature-glow"></div>
+            <div class="container section-shell">
+                <div class="section-head reveal">
+                    <h2>Why UniIntern?</h2>
+                    <p>Everything you need for a seamless internship experience</p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card reveal">
+                        <span class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"></path>
+                                <path d="M12 3h0"></path>
+                            </svg>
+                        </span>
+                        <h3>Verified Opportunities</h3>
+                        <p>Every internship is reviewed and approved. No spam, no scams — only legitimate opportunities from trusted companies.</p>
+                    </article>
+
+                    <article class="feature-card reveal delay-1">
+                        <span class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3l1.9 3.9L18 9l-3 2.9.7 4.1L12 14l-3.7 2 .7-4.1L6 9l4.1-2.1L12 3Z"></path>
+                            </svg>
+                        </span>
+                        <h3>Smart Matching</h3>
+                        <p>Our intelligent system matches you with internships based on your skills, GPA, and career goals.</p>
+                    </article>
+
+                    <article class="feature-card reveal delay-2">
+                        <span class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                                <path d="M16 2v4"></path>
+                                <path d="M8 2v4"></path>
+                                <path d="M3 10h18"></path>
+                                <path d="M8 14h.01"></path>
+                                <path d="M12 14h.01"></path>
+                                <path d="M16 14h.01"></path>
+                            </svg>
+                        </span>
+                        <h3>Interview Scheduling</h3>
+                        <p>Seamlessly schedule and manage interviews with an organized, stress-free process.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="steps-section" id="how-it-works">
+            <div class="container section-shell">
+                <div class="section-head reveal">
+                    <h2>How It Works</h2>
+                    <p>Get started in three simple steps</p>
+                </div>
+
+                <div class="step-line"></div>
+                <div class="steps-grid">
+                    <article class="step-card reveal">
+                        <span class="step-number">01</span>
+                        <span class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <h3>Create Your Profile</h3>
+                        <p>Sign up as a student or recruiter and complete your profile with your skills, experience, and preferences.</p>
+                    </article>
+
+                    <article class="step-card reveal delay-1">
+                        <span class="step-number">02</span>
+                        <span class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <path d="M14 2v6h6"></path>
+                            </svg>
+                        </span>
+                        <h3>Apply or Post</h3>
+                        <p>Students browse and apply to internships. Recruiters post opportunities and review applications.</p>
+                    </article>
+
+                    <article class="step-card reveal delay-2">
+                        <span class="step-number">03</span>
+                        <span class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4.5 16.5 9 12l3 3 7.5-7.5"></path>
+                                <path d="M14 7h5v5"></path>
+                            </svg>
+                        </span>
+                        <h3>Get Matched &amp; Start</h3>
+                        <p>Get approved, schedule interviews, and begin your internship journey with confidence.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="audience-section" id="who-its-for">
+            <div class="container audience-grid">
+                <article class="audience-card reveal">
+                    <span class="audience-label">For Students</span>
+                    <h2>Find internships that actually fit your skills.</h2>
+                    <p>Build your profile, upload your CV, apply faster, and track every stage of your internship journey in one place.</p>
+                </article>
+
+                <article class="audience-card reveal delay-1">
+                    <span class="audience-label">For Recruiters</span>
+                    <h2>Reach verified university talent without the mess.</h2>
+                    <p>Post openings, review applicants, schedule interviews, and manage your hiring flow through a cleaner recruiter dashboard.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="cta-pattern"></div>
+            <div class="container cta-shell reveal">
+                <h2>Ready to launch your career?</h2>
+                <p>Join thousands of students and recruiters already using UniIntern to build the future of work.</p>
+                <div class="cta-actions">
+                    <a class="btn btn-primary btn-large" th:href="@{/student/register}" href="/student/register">Join as Student</a>
+                    <a class="btn btn-ghost-light btn-large" th:href="@{/company/register}" href="/company/register">Join as Company</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" id="contact">
+        <div class="container footer-top">
+            <div class="footer-brand">
+                <div class="brand footer-brand-inner">
+                    <span class="brand-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2 9l10-5 10 5-10 5-10-5z"></path>
+                            <path d="M6 10.6V15c0 1.1 2.7 3 6 3s6-1.9 6-3v-4.4"></path>
+                        </svg>
+                    </span>
+                    <span class="brand-text">
+                        <span class="brand-name">UniIntern</span>
+                        <span class="brand-tag">Launch Your Career</span>
+                    </span>
+                </div>
+                <p>Smarter internships for students and recruiters. Building the future of early careers.</p>
+            </div>
+
+            <nav class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#contact">Contact Us</a>
+    <a href="/admin/login">Admin Portal</a>
+</nav>
+
+            <div class="social-links">
+                <a href="#" aria-label="Twitter">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c.1.8.1 1.6.1 2.4 0 7.3-5.6 15.7-15.7 15.7A15.6 15.6 0 0 1 2 20.4a11 11 0 0 0 8-2.2 5.5 5.5 0 0 1-5.1-3.8 5.7 5.7 0 0 0 2.5-.1A5.5 5.5 0 0 1 3 9v-.1a5.5 5.5 0 0 0 2.5.7A5.5 5.5 0 0 1 3.8 2.8a15.6 15.6 0 0 0 11.3 5.7 5.5 5.5 0 0 1 9.3-5A11 11 0 0 0 22 4Z"></path></svg>
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6Z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="#" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-7A5.4 5.4 0 0 0 20 4.8 5 5 0 0 0 19.9 1S18.7.7 16 2.5a13.4 13.4 0 0 0-7 0C6.3.7 5.1 1 5.1 1A5 5 0 0 0 5 4.8 5.4 5.4 0 0 0 3.8 8.5c0 5.5 3.1 6.7 6.1 7a3.4 3.4 0 0 0-.9 2.6V22"></path></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p>© 2026 UniIntern. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script th:src="@{/js/home.js}" src="/js/home.js"></script>
+</body>
+</html>
