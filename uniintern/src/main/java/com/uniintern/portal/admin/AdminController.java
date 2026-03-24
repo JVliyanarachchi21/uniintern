@@ -29,7 +29,30 @@ public class AdminController {
     }
 
     @GetMapping({ "/dashboard", "" })
-    public String dashboard() {
+    public String dashboard(Model model) {
+
+        long pendingCompanies = companyRepository
+                .findByStatus(CompanyStatus.PENDING_VERIFICATION)
+                .size();
+
+        long pendingInternships = internshipRepository
+                .findByStatus(InternshipStatus.PENDING_ADMIN_APPROVAL)
+                .size();
+
+        long interviewsToday = interviewRepository.findAll().stream()
+                .filter(i -> i.getInterviewDateTime() != null)
+                .filter(i -> i.getInterviewDateTime().toLocalDate()
+                        .equals(java.time.LocalDate.now()))
+                .count();
+
+        model.addAttribute("pendingCompanies", pendingCompanies);
+        model.addAttribute("pendingInternships", pendingInternships);
+        model.addAttribute("interviewsToday", interviewsToday);
+
+        model.addAttribute("logs",
+                auditLogRepository.findAllByOrderByPerformedAtDesc()
+                        .stream().limit(5).toList());
+
         return "admin/dashboard";
     }
 
