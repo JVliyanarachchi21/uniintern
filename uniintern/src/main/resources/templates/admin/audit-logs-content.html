@@ -4,72 +4,31 @@
   <p class="subtitle">Track important actions performed in the system.</p>
 
   <div class="panel">
-
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-      <h3 style="margin:0;">Recent System Activities</h3>
-
-      <div style="display:flex;gap:10px;">
-        <select class="input">
-          <option>All Users</option>
-          <option>Admin</option>
-          <option>Company</option>
-          <option>Student</option>
-        </select>
-
-        <select class="input">
-          <option>All Actions</option>
-          <option>Approve</option>
-          <option>Reject</option>
-          <option>Schedule</option>
-        </select>
-      </div>
-    </div>
-
-    <table class="table" style="margin-top:14px;">
+    <table class="table">
       <thead>
         <tr>
           <th>Date & Time</th>
-          <th>User</th>
-          <th>Role</th>
           <th>Action</th>
-          <th>Details</th>
+          <th>Target Type</th>
+          <th>Target Name</th>
+          <th>Performed By</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr>
-          <td>2026-02-15 10:24</td>
-          <td>Admin</td>
-          <td>ADMIN</td>
-          <td>Approved Company</td>
-          <td>TechVentures Inc.</td>
+        <tr th:if="${#lists.isEmpty(logs)}">
+          <td colspan="5" style="color:#6B7280;">No audit logs found.</td>
         </tr>
 
-        <tr>
-          <td>2026-02-15 11:05</td>
-          <td>Admin</td>
-          <td>ADMIN</td>
-          <td>Approved Internship</td>
-          <td>Frontend Developer Intern</td>
-        </tr>
-
-        <tr>
-          <td>2026-02-16 09:10</td>
-          <td>Admin</td>
-          <td>ADMIN</td>
-          <td>Scheduled Interview</td>
-          <td>Janithi Perera - 02 Mar 2026</td>
-        </tr>
-
-        <tr>
-          <td>2026-02-16 11:42</td>
-          <td>Filtering Engine</td>
-          <td>SYSTEM</td>
-          <td>Generated Shortlist</td>
-          <td>Data Analyst Intern</td>
+        <tr th:each="log : ${logs}">
+          <td th:text="${log.performedAt}">2026-01-01T10:00</td>
+          <td th:text="${log.action}">APPROVED</td>
+          <td th:text="${log.targetType}">COMPANY</td>
+          <td th:text="${log.targetName}">TechVentures Inc.</td>
+          <td th:text="${log.performedBy}">ADMIN</td>
         </tr>
       </tbody>
     </table>
-
   </div>
 
 </div>
