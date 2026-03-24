@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Uni Intern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            background-color: #f8fafc;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-4 px-8 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2 text-brand-700">
+                <span class="text-xl font-bold tracking-tight">Uni Intern</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="text-sm text-slate-600 hidden sm:block">
+                    Welcome back, <span class="font-semibold text-slate-900" th:text="${userName} ?: 'Student'">Student</span>
+                </div>
+                <a th:href="@{/logout}" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Sign Out</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-8 py-12">
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Available Courses</h1>
+            <p class="text-slate-600">Select a course to begin learning. You must complete the video to unlock the certification quiz.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- SQL Course -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all hover:border-brand-300 group flex flex-col h-full">
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="h-12 w-12 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="database" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">SQL for Beginners</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Learn Database Management and SQL queries from scratch.</p>
+                    <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 bg-slate-50 w-fit px-3 py-1.5 rounded-md">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        4 Hours
+                    </div>
+                    <a th:href="@{/course/sql}" class="w-full bg-slate-900 hover:bg-brand-600 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-center">
+                        Start Course
+                        <i data-lucide="play-circle" class="w-4.5 h-4.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Python Course -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all hover:border-brand-300 group flex flex-col h-full">
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="h-12 w-12 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="terminal" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Python Full Course</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Master Python programming, from basic syntax to advanced concepts.</p>
+                    <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 bg-slate-50 w-fit px-3 py-1.5 rounded-md">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        6 Hours
+                    </div>
+                    <a th:href="@{/course/python}" class="w-full bg-slate-900 hover:bg-brand-600 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-center">
+                        Start Course
+                        <i data-lucide="play-circle" class="w-4.5 h-4.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- HTML CSS Course -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all hover:border-brand-300 group flex flex-col h-full">
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="h-12 w-12 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="layout" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">HTML + CSS Full Course</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Build responsive websites using modern HTML5 and CSS3.</p>
+                    <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 bg-slate-50 w-fit px-3 py-1.5 rounded-md">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        5 Hours
+                    </div>
+                    <a th:href="@{/course/htmlcss}" class="w-full bg-slate-900 hover:bg-brand-600 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-center">
+                        Start Course
+                        <i data-lucide="play-circle" class="w-4.5 h-4.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Java Course -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all hover:border-brand-300 group flex flex-col h-full">
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="h-12 w-12 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="coffee" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Java Full Course</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Comprehensive Java tutorial covering OOP, data structures, and more.</p>
+                    <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 bg-slate-50 w-fit px-3 py-1.5 rounded-md">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        8 Hours
+                    </div>
+                    <a th:href="@{/course/java}" class="w-full bg-slate-900 hover:bg-brand-600 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-center">
+                        Start Course
+                        <i data-lucide="play-circle" class="w-4.5 h-4.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- C++ Course -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all hover:border-brand-300 group flex flex-col h-full">
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="h-12 w-12 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="code" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">C++ Full Course</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Deep dive into C++ programming, memory management, and STL.</p>
+                    <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 bg-slate-50 w-fit px-3 py-1.5 rounded-md">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        7 Hours
+                    </div>
+                    <a th:href="@{/course/cpp}" class="w-full bg-slate-900 hover:bg-brand-600 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-center">
+                        Start Course
+                        <i data-lucide="play-circle" class="w-4.5 h-4.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cyber Security Course -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all hover:border-brand-300 group flex flex-col h-full">
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="h-12 w-12 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="shield" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Cyber Security Full Course</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Learn ethical hacking, network security, and cryptography.</p>
+                    <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 bg-slate-50 w-fit px-3 py-1.5 rounded-md">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        10 Hours
+                    </div>
+                    <a th:href="@{/course/cyber}" class="w-full bg-slate-900 hover:bg-brand-600 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-center">
+                        Start Course
+                        <i data-lucide="play-circle" class="w-4.5 h-4.5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
