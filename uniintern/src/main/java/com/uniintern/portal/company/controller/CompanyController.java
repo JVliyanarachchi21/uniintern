@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -186,4 +187,78 @@ public class CompanyController {
         model.addAttribute("page", "settings");
         return "company/settings";
     }
+
+    @GetMapping("/internships/edit/{id}")
+public String editInternship(@PathVariable Long id, Model model) {
+
+    Internship internship = internshipService.getById(id);
+
+    model.addAttribute("internship", internship);
+    model.addAttribute("page", "internships");
+
+    return "company/edit-internships";
 }
+  
+@PostMapping("/internships/update")
+public String updateInternship(
+        @RequestParam Long id,
+        @RequestParam String title,
+        @RequestParam String description,
+        @RequestParam String location,
+        @RequestParam String duration,
+        @RequestParam(required = false) String minGpa,
+        @RequestParam String deadline,
+        @RequestParam(required = false) String requiredSkills
+) {
+    Internship internship = internshipService.getById(id);
+
+    internship.setTitle(title);
+    internship.setDescription(description);
+    internship.setLocation(location);
+    internship.setDuration(duration);
+    internship.setRequiredSkills(requiredSkills);
+    internship.setDeadline(java.time.LocalDate.parse(deadline));
+
+    if (minGpa != null && !minGpa.isBlank()) {
+        internship.setMinGpa(Double.parseDouble(minGpa));
+    } else {
+        internship.setMinGpa(null);
+    }
+
+    internshipService.save(internship);
+
+    return "redirect:/company/internships/view/" + internship.getId();
+}
+
+
+@GetMapping("/internships/delete/{id}")
+public String deleteInternship(@PathVariable Long id) {
+    internshipService.delete(id);
+    return "redirect:/company/internships";
+}
+
+@GetMapping("/internships/view/{id}")
+public String viewInternship(@PathVariable Long id,
+                             @RequestParam(defaultValue = "overview") String tab,
+                             Model model) {
+
+    Internship internship = internshipService.getById(id);
+
+    model.addAttribute("internship", internship);
+    model.addAttribute("page", "internships");
+    model.addAttribute("activeTab", tab);
+
+    List<Map<String, Object>> applicants = List.of(
+            Map.of("name", "Ashan Fernando", "university", "University of Colombo", "gpa", 3.75, "score", 54, "status", "Shortlisted"),
+            Map.of("name", "Dilini Wickramasinghe", "university", "University of Moratuwa", "gpa", 3.48, "score", 40, "status", "Shortlisted"),
+            Map.of("name", "Nuwan Bandara", "university", "University of Peradeniya", "gpa", 3.33, "score", 96, "status", "Shortlisted"),
+            Map.of("name", "Sachini Rathnayake", "university", "SLIIT", "gpa", 2.90, "score", 88, "status", "Scored")
+    );
+
+    model.addAttribute("applicants", applicants);
+
+    return "company/view-internship";
+}
+
+}
+

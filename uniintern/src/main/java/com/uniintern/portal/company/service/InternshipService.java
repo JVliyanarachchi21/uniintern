@@ -27,4 +27,14 @@ public class InternshipService {
     public List<Internship> getAll() {
         return internshipRepository.findAll();
     }
+
+    //GET by id
+    public Internship getById(Long id) {
+    return internshipRepository.findById(id).orElse(null);
+}
+
+    // Delete internship
+    public void delete(Long id) {
+        internshipRepository.deleteById(id);
+    }
 }

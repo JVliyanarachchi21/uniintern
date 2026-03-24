@@ -5,9 +5,9 @@
       content=~{::body/content()})">
 
 <body>
-<section class="page-shell">
+<section class="page-shell internships-page-shell">
 
-    <div class="internships-header">
+    <div class="internships-header modern-header">
         <div>
             <h1 class="page-title">My Internships</h1>
             <p class="page-sub">Manage your internship postings</p>
@@ -16,8 +16,8 @@
         <a th:href="@{/company/internships/new}" class="btn primary">+ New Internship</a>
     </div>
 
-    <div class="table-card internships-table-card">
-        <table class="table internships-table">
+    <div class="table-card internships-table-card modern-table-wrap">
+        <table class="table internships-table modern-internships-table">
             <thead>
             <tr>
                 <th>Title</th>
@@ -29,38 +29,57 @@
             </tr>
             </thead>
 
- <tbody>
-<tr th:each="internship : ${internships}">
-    <td th:text="${internship.title}">Software Engineering Intern</td>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(internships)}">
+                <td colspan="6" class="empty-cell">
+                    No internships found.
+                </td>
+            </tr>
 
-    <td>
-        <span class="badge-status"
-              th:classappend="${internship.status == 'APPROVED'} ? ' st-approved' :
-                              (${internship.status == 'PENDING_ADMIN_APPROVAL'} ? ' st-pending' :
-                              (${internship.status == 'REJECTED'} ? ' st-rejected' :
-                              ' st-draft'))"
-              th:text="${internship.status}">
-            PENDING_ADMIN_APPROVAL
-        </span>
-    </td>
+            <tr th:each="internship : ${internships}">
+                <td class="internship-title-cell">
+                    <div class="internship-title-main" th:text="${internship.title}">Software Engineering Intern</div>
+                </td>
 
-    <td th:text="${internship.deadline}">2026-04-30</td>
-    <td>0</td>
+                <td>
+                    <span class="badge-status"
+                          th:classappend="${internship.status == 'APPROVED'} ? ' st-approved' :
+                                          (${internship.status == 'PENDING_ADMIN_APPROVAL'} ? ' st-pending' :
+                                          (${internship.status == 'REJECTED'} ? ' st-rejected' : ' st-draft'))"
+                          th:text="${internship.status}">
+                        PENDING_ADMIN_APPROVAL
+                    </span>
+                </td>
 
-    <td>
-        <span class="featured-pill featured-no">No</span>
-    </td>
+                <td th:text="${internship.deadline}">2026-03-05</td>
 
-    <td>
-        <div class="icon-actions">
-            <button type="button" class="icon-btn" title="View" onclick="viewInternship()">👁</button>
-            <button type="button" class="icon-btn" title="Edit" onclick="editInternship()">✎</button>
-            <button type="button" class="icon-btn" title="Copy" onclick="copyInternship()">⧉</button>
-            <button type="button" class="icon-btn" title="Feature" onclick="featureInternship()">☆</button>
-        </div>
-    </td>
-</tr>
-</tbody>
+                <td>
+                    <span class="count-pill">0</span>
+                </td>
+
+                <td>
+                    <span class="featured-pill featured-no">No</span>
+                </td>
+
+                <td class="actions-col">
+                    <div class="icon-actions modern-icon-actions">
+                        <a th:href="@{'/company/internships/view/' + ${internship.id}}"
+                           class="icon-btn" title="View">👁</a>
+
+                        <a th:href="@{'/company/internships/edit/' + ${internship.id}}"
+                           class="icon-btn" title="Edit">✎</a>
+
+                        <a th:href="@{'/company/internships/delete/' + ${internship.id}}"
+                           class="icon-btn"
+                           title="Delete"
+                           onclick="return confirm('Are you sure you want to delete this internship?');">🗑</a>
+
+                        <a th:href="@{/company/promotions}"
+                           class="icon-btn" title="Feature">☆</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
         </table>
     </div>
 
