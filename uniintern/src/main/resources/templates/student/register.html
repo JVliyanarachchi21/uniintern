@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body class="auth-body">
+
+<div class="auth-shell">
+    <div class="auth-left">
+        <div class="brand-row">
+            <div class="brand-logo">U</div>
+            <div class="brand-text">UniIntern</div>
+        </div>
+
+        <div class="auth-copy">
+            <h1>Create your student account</h1>
+            <p>Register with your university details to access internships, applications, interviews, and notifications.</p>
+        </div>
+
+        <div class="auth-features">
+            <div class="feature-card">
+                <h3>Track applications</h3>
+                <p>Monitor your internship status from application to interview.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Secure verification</h3>
+                <p>Use your university email and OTP verification to confirm student identity.</p>
+            </div>
+            <div class="feature-card">
+                <h3>One student portal</h3>
+                <p>Manage profile, skills, applications, and interviews in one place.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <h2>Student Registration</h2>
+                <p>Fill in your details to continue</p>
+            </div>
+
+            <form method="post" th:action="@{/register/student}" class="auth-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input id="name" type="text" name="name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">University Email</label>
+                    <input id="email" type="email" name="email" placeholder="e.g. itxxxxxx@my.sliit.lk" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regNo">Registration Number</label>
+                    <input id="regNo" type="text" name="regNo" placeholder="Enter your registration number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="university">University</label>
+                    <input id="university" type="text" name="university" placeholder="Enter your university name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" placeholder="Create a password" required>
+                </div>
+
+                <button type="submit" class="auth-btn">Continue to OTP Verification</button>
+            </form>
+
+            <div class="auth-footer">
+                <span>Already registered?</span>
+                <a href="#">Sign in</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

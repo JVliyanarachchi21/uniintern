@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Browse Internships | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('internships')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar('Ashan Perera')"></div>
+
+  <section class="content">
+    <div class="page-title">
+      <h1>Browse Internships</h1>
+      <p>Find opportunities that match your skills and interests.</p>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px;">
+      <div class="panel-title">Filters</div>
+
+      <div class="filters">
+        <div class="filter">
+          <label>Location</label>
+          <select>
+            <option>All</option>
+            <option>Colombo</option>
+            <option>Kandy</option>
+            <option>Galle</option>
+            <option>Remote</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label>Type</label>
+          <select>
+            <option>All</option>
+            <option>Internship</option>
+            <option>Trainee</option>
+            <option>Part-time</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label>Min Skill Match (%)</label>
+          <input type="range" min="0" max="100" th:value="${matchMin}">
+        </div>
+
+        <div class="filter">
+          <button class="btn primary" type="button">Apply Filters (UI)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="intern-cards">
+      <div class="intern-card" th:each="i : ${internships}">
+        <div class="intern-card-head">
+          <div>
+            <div class="intern-card-title" th:text="${i.title}">Title</div>
+            <div class="intern-card-sub">
+              <span th:text="${i.company}">Company</span> •
+              <span th:text="${i.location}">Location</span> •
+              <span th:text="${i.duration}">Duration</span>
+            </div>
+          </div>
+
+          <div class="match">
+            <div class="match-label">Match</div>
+            <div class="match-value"><span th:text="${i.match}">82</span>%</div>
+          </div>
+        </div>
+
+        <div class="skill-row">
+          <span class="chip" th:each="s : ${i.skills}" th:text="${s}">Skill</span>
+        </div>
+
+        <div class="intern-card-foot">
+          <div class="muted">Deadline: <span th:text="${i.deadline}">2026-04-15</span></div>
+
+          <a class="btn primary" th:href="@{'/student/apply/' + ${i.id}}">
+            Apply
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

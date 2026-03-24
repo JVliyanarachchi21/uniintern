@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="studentTopbar(studentName)">
+  <header class="topbar">
+    <div></div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="Notifications">🔔</button>
+      <div class="user">
+        <div class="avatar">A</div>
+        <div class="user-name" th:text="${studentName}">Student</div>
+        <div class="chev">▾</div>
+      </div>
+    </div>
+  </header>
+</div>
+</body>
+</html>
