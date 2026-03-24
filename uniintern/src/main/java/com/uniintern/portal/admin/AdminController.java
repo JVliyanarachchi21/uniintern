@@ -16,13 +16,16 @@ public class AdminController {
     private final CompanyRepository companyRepository;
     private final InternshipRepository internshipRepository;
     private final InterviewRepository interviewRepository;
+    private final AuditLogRepository auditLogRepository;
 
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
-            InterviewRepository interviewRepository) {
+            InterviewRepository interviewRepository,
+            AuditLogRepository auditLogRepository) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     @GetMapping({ "/dashboard", "" })
@@ -202,7 +205,8 @@ public class AdminController {
     }
 
     @GetMapping("/audit")
-    public String auditLogs() {
+    public String auditLogs(Model model) {
+        model.addAttribute("logs", auditLogRepository.findAllByOrderByPerformedAtDesc());
         return "admin/audit-logs";
     }
 
