@@ -9,8 +9,8 @@
 
     <div class="internships-header modern-header">
         <div>
-            <h1 class="page-title">My Internships</h1>
-            <p class="page-sub">Manage your internship postings</p>
+            <h1 class="page-title internships-title">My Internships</h1>
+            <p class="page-sub internships-sub">Manage your internship postings</p>
         </div>
 
         <a th:href="@{/company/internships/new}" class="btn primary">+ New Internship</a>
@@ -64,18 +64,18 @@
                 <td class="actions-col">
                     <div class="icon-actions modern-icon-actions">
                         <a th:href="@{'/company/internships/view/' + ${internship.id}}"
-                           class="icon-btn" title="View">👁</a>
+                           class="icon-btn icon-view" title="View">👁</a>
 
                         <a th:href="@{'/company/internships/edit/' + ${internship.id}}"
-                           class="icon-btn" title="Edit">✎</a>
+                           class="icon-btn icon-edit" title="Edit">✎</a>
 
                         <a th:href="@{'/company/internships/delete/' + ${internship.id}}"
-                           class="icon-btn"
+                           class="icon-btn icon-delete"
                            title="Delete"
                            onclick="return confirm('Are you sure you want to delete this internship?');">🗑</a>
 
                         <a th:href="@{/company/promotions}"
-                           class="icon-btn" title="Feature">☆</a>
+                           class="icon-btn icon-feature" title="Feature">☆</a>
                     </div>
                 </td>
             </tr>

@@ -31,6 +31,16 @@ public class CompanyController {
         model.addAttribute("companyName", "TechCorp Lanka");
     }
 
+    @GetMapping("/login")
+             public String companyLogin() {
+    return "company/company-login";
+    }
+
+    @GetMapping("/register")
+             public String companyRegister() {
+    return "company/company-register";
+    }
+
     @GetMapping({"/dashboard", "", "/"})
     public String dashboard(Model model) {
         model.addAttribute("page", "dashboard");
@@ -61,7 +71,7 @@ public class CompanyController {
 
         return "company/dashboard";
     }
-
+ 
     @GetMapping("/profile")
     public String profile(Model model) {
         model.addAttribute("page", "profile");
