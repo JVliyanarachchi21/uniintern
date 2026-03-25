@@ -43,7 +43,7 @@
             </ul>
         </div>
 
-        <div class="promo-card active" onclick="selectPromoCard(this, 'Homepage Banner — 7 Days', 15000)">
+        <div class="promo-card" onclick="selectPromoCard(this, 'Homepage Banner — 7 Days', 15000)">
             <div class="promo-icon-circle"><span>♕</span></div>
             <h3>Homepage Banner — 7 Days</h3>
             <div class="promo-price">LKR 15,000</div>
@@ -59,16 +59,16 @@
 
     </div>
 
-    <div class="promo-select-box">
+    <div class="promo-select-box" id="promoSelectSection" style="display: none; animation: fadeIn 0.4s ease-out;">
         <label for="promoInternship">Select Internship to Promote</label>
-        <select id="promoInternship">
+        <select id="promoInternship" onchange="checkInternshipSelection()">
             <option value="">Choose an approved internship</option>
             <option>Software Engineering Intern</option>
             <option>Data Science Trainee</option>
         </select>
 
         <div class="promo-bottom-actions">
-            <button type="button" class="btn primary promo-pay-btn" onclick="window.location.href='/company/payments/checkout'">
+            <button type="button" id="proceedBtn" class="btn primary promo-pay-btn" style="opacity: 0.5; pointer-events: none; transition: 0.3s;" onclick="window.location.href='/company/payments/checkout'">
                  Proceed to Payment
             </button>
         </div>

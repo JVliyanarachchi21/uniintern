@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="company/layout/layout :: layout(
         pageTitle='Post Internship',
-        content=~{::section})">
+        content=~{::body/content()})">
 
 <body>
 <section class="page-shell">
@@ -29,19 +29,50 @@
 
         <div class="field">
           <label for="title">Internship Title <span class="required">*</span></label>
-          <input id="title" type="text" name="title" placeholder="Software Engineering Intern" required>
+          <select id="title" name="title" required>
+            <option value="" disabled selected>Select an Internship Title</option>
+            <option value="Software Engineering Intern">Software Engineering Intern</option>
+            <option value="Data Science Intern">Data Science Intern</option>
+            <option value="Quality Assurance (QA) Intern">Quality Assurance (QA) Intern</option>
+            <option value="UI/UX Design Intern">UI/UX Design Intern</option>
+            <option value="Product Management Intern">Product Management Intern</option>
+            <option value="Business Analyst Intern">Business Analyst Intern</option>
+            <option value="Marketing & General Intern">Marketing & General Intern</option>
+          </select>
         </div>
 
         <div class="field">
           <label for="description">Description <span class="required">*</span></label>
-          <textarea id="description" name="description" placeholder="Write internship responsibilities, requirements, benefits, and learning opportunities..." required></textarea>
-          <div class="hint">Include responsibilities, qualifications, and what students will gain from this role.</div>
+          <textarea id="description" name="description" placeholder="Write internship responsibilities, requirements, benefits, and learning opportunities..." required minlength="100"></textarea>
+          <div class="hint" style="display: flex; justify-content: space-between;">
+              <span>Include responsibilities, qualifications, and what students will gain from this role.</span>
+              <span><span id="char-count" style="color: #ef4444; font-weight: 600;">0</span> / 100 min chars</span>
+          </div>
         </div>
 
         <div class="grid-3 compact-grid">
           <div class="field">
             <label for="location">Location <span class="required">*</span></label>
-            <input id="location" type="text" name="location" placeholder="Colombo / Remote" required>
+            <select id="location" name="location" required>
+              <option value="" disabled selected>Select a Location</option>
+              <option value="Colombo 01 (Fort)">Colombo 01 (Fort)</option>
+              <option value="Colombo 02 (Slave Island)">Colombo 02 (Slave Island)</option>
+              <option value="Colombo 03 (Kollupitiya)">Colombo 03 (Kollupitiya)</option>
+              <option value="Colombo 04 (Bambalapitiya)">Colombo 04 (Bambalapitiya)</option>
+              <option value="Colombo 05 (Havelock Town)">Colombo 05 (Havelock Town)</option>
+              <option value="Colombo 07 (Cinnamon Gardens)">Colombo 07 (Cinnamon Gardens)</option>
+              <option value="Nawala">Nawala</option>
+              <option value="Rajagiriya">Rajagiriya</option>
+              <option value="Battaramulla">Battaramulla</option>
+              <option value="Dehiwala">Dehiwala</option>
+              <option value="Mount Lavinia">Mount Lavinia</option>
+              <option value="Moratuwa">Moratuwa</option>
+              <option value="Malabe">Malabe</option>
+              <option value="Nugegoda">Nugegoda</option>
+              <option value="Kelaniya">Kelaniya</option>
+              <option value="Wattala">Wattala</option>
+              <option value="Remote">Remote</option>
+            </select>
           </div>
 
           <div class="field">

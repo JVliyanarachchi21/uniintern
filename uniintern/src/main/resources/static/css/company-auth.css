@@ -394,3 +394,30 @@ body {
 .verify-card {
   max-width: 400px;
 }
+
+/* ========================================= */
+/* VALIDATION ERRORS                         */
+/* ========================================= */
+
+.error-msg {
+  display: none;
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.error-msg.visible {
+  display: block;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}

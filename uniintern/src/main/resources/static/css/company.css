@@ -316,13 +316,19 @@ a {
 /* ===== Common Typography ===== */
 .page-shell {
   width: 100%;
+  padding: 32px 48px;
 }
 
 .page-title {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   font-size: 42px;
   font-weight: 800;
-  color: var(--color-darkest);
+  background: linear-gradient(135deg, var(--color-darkest) 0%, var(--color-primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline-block;
 }
 
 .page-sub {
@@ -351,9 +357,15 @@ a {
 }
 
 .btn.primary {
-  background: #1f4ed8;
-  color: white;
-  border-color: #1f4ed8;
+  background: var(--color-dark);
+  color: #ffffff;
+  border-color: var(--color-dark);
+  transition: background 0.3s ease;
+}
+
+.btn.primary:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* ===== Dashboard cards ===== */
@@ -367,21 +379,72 @@ a {
 .card {
   background: #ffffff;
   border: 1px solid var(--border-soft);
+  border-top: 4px solid var(--color-primary);
   border-radius: 12px;
   padding: 18px 18px 16px;
   box-shadow: var(--shadow-soft);
   min-height: 120px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(5, 38, 89, 0.08);
 }
 
 .card .value {
   font-size: 24px;
   font-weight: 800;
   margin-bottom: 4px;
-  color: var(--color-darkest);
+  color: var(--color-dark);
 }
 
 .card .label {
   font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ===== Dashboard Stat Cards ===== */
+.stat-card {
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 24px 20px;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.stat-icon.blue { background: #eff6ff; color: var(--color-primary); }
+.stat-icon.orange { background: #fff7ed; color: #f97316; }
+.stat-icon.purple { background: #f5f3ff; color: #8b5cf6; }
+.stat-icon.green { background: #f0fdf4; color: #22c55e; }
+.stat-icon.pink { background: #fdf2f8; color: #ec4899; }
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card .value {
+  margin-bottom: 2px !important;
+  font-size: 26px !important;
+}
+
+.stat-card .label {
+  font-size: 11px !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   color: var(--text-muted);
 }
 
@@ -399,13 +462,21 @@ a {
   padding: 20px 24px;
   box-shadow: var(--shadow-soft);
   min-height: 440px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(5, 38, 89, 0.08);
 }
 
 .panel-title {
   font-size: 16px;
   font-weight: 800;
   margin-bottom: 18px;
-  color: var(--text-dark);
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-light);
+  padding-bottom: 8px;
 }
 
 /* ===== Applicants list ===== */
@@ -563,8 +634,6 @@ a {
 
 /* ===== My Internships ===== */
 .internships-page-shell {
-  max-width: 1360px;
-  margin: 0 auto;
   padding-right: 18px;
 }
 
@@ -632,8 +701,8 @@ a {
 }
 
 .internship-title-main {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
   color: #111827;
 }
 
@@ -673,16 +742,15 @@ a {
 }
 
 .actions-col {
-  text-align: right;
+  text-align: left;
   white-space: nowrap;
 }
 
 .modern-icon-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   gap: 10px;
-  min-width: 190px;
 }
 
 .modern-icon-actions .icon-btn {
@@ -700,42 +768,50 @@ a {
 }
 
 .icon-view {
-  color: #2563eb;
-}
-.icon-view:hover {
   background: #eff6ff;
   border-color: #bfdbfe;
-  color: #2563eb;
+  color: #1d4ed8;
+}
+.icon-view:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
   transform: translateY(-1px);
 }
 
 .icon-edit {
-  color: #d97706;
-}
-.icon-edit:hover {
   background: #fff7ed;
   border-color: #fed7aa;
-  color: #d97706;
+  color: #b45309;
+}
+.icon-edit:hover {
+  background: #ffedd5;
+  border-color: #fdba74;
+  color: #9a3412;
   transform: translateY(-1px);
 }
 
 .icon-delete {
-  color: #dc2626;
-}
-.icon-delete:hover {
   background: #fef2f2;
   border-color: #fecaca;
-  color: #dc2626;
+  color: #b91c1c;
+}
+.icon-delete:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
   transform: translateY(-1px);
 }
 
 .icon-feature {
-  color: #7c3aed;
-}
-.icon-feature:hover {
   background: #f5f3ff;
   border-color: #ddd6fe;
-  color: #7c3aed;
+  color: #6d28d9;
+}
+.icon-feature:hover {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #5b21b6;
   transform: translateY(-1px);
 }
 
@@ -2400,29 +2476,29 @@ select:focus {
 /* ========================================= */
 
 :root {
-  --pub-primary: #4f46e5;
-  --pub-primary-dark: #4338ca;
-  --pub-primary-light: #e0e7ff;
-  --pub-accent: #0ea5e9;
-  --pub-accent-light: #e0f2fe;
+  --pub-primary: var(--color-primary);
+  --pub-primary-dark: var(--color-dark);
+  --pub-primary-light: rgba(84, 131, 179, 0.1);
+  --pub-accent: var(--color-secondary);
+  --pub-accent-light: rgba(125, 160, 202, 0.1);
   
-  --pub-bg-dark: #0f172a;
-  --pub-bg-darker: #020617;
+  --pub-bg-dark: var(--bg-main); /* Light blue-ish standard background */
+  --pub-bg-darker: #e2eaf5;      /* Slightly darker light blue */
   
-  --pub-surface-1: rgba(255, 255, 255, 0.03);
-  --pub-surface-2: rgba(255, 255, 255, 0.05);
-  --pub-surface-3: rgba(255, 255, 255, 0.08);
+  --pub-surface-1: rgba(2, 16, 36, 0.02);
+  --pub-surface-2: rgba(2, 16, 36, 0.04);
+  --pub-surface-3: rgba(2, 16, 36, 0.06);
   
-  --pub-border-subtle: rgba(255, 255, 255, 0.1);
-  --pub-border-light: rgba(255, 255, 255, 0.2);
+  --pub-border-subtle: rgba(2, 16, 36, 0.08);
+  --pub-border-light: rgba(2, 16, 36, 0.12);
   
-  --pub-text-main: #f8fafc;
-  --pub-text-muted: #94a3b8;
-  --pub-text-faint: #64748b;
+  --pub-text-main: var(--color-darkest);
+  --pub-text-muted: #475467;
+  --pub-text-faint: #667085;
   
-  --pub-glass-bg: rgba(15, 23, 42, 0.7);
-  --pub-glass-border: rgba(255, 255, 255, 0.1);
-  --pub-shadow-glow: 0 0 20px rgba(79, 70, 229, 0.3);
+  --pub-glass-bg: rgba(255, 255, 255, 0.75);
+  --pub-glass-border: rgba(2, 16, 36, 0.08);
+  --pub-shadow-glow: 0 4px 20px rgba(84, 131, 179, 0.15);
 }
 
 body.public-listing-body {
@@ -2631,7 +2707,7 @@ body.public-listing-body {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-  color: white;
+  color: var(--pub-text-main);
 }
 
 .hero-section p {
@@ -2665,7 +2741,7 @@ body.public-listing-body {
   background: transparent;
   border: none;
   padding: 12px 24px;
-  color: white;
+  color: var(--pub-text-main);
   font-size: 16px;
   outline: none;
 }
@@ -2706,7 +2782,7 @@ body.public-listing-body {
 .section-header h3 {
   font-size: 24px;
   margin: 0;
-  color: white;
+  color: var(--pub-text-main);
 }
 
 .section-header p {
@@ -2719,6 +2795,7 @@ body.public-listing-body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 24px;
+  justify-content: center;
 }
 
 /* Internship Cards */
@@ -2800,7 +2877,7 @@ body.public-listing-body {
 .job-info h4 {
   font-size: 18px;
   margin: 0 0 4px;
-  color: #ffffff;
+  color: var(--pub-text-main);
 }
 
 .job-info .company-name {
@@ -3167,4 +3244,55 @@ textarea.pub-form-control {
   height: 1px;
   background: var(--pub-border-subtle);
   margin: 40px 0;
+}
+
+/* ===== Creative Data Tables & Layouts ===== */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  background: transparent;
+}
+
+.table thead th {
+  background: var(--bg-main);
+  color: var(--color-dark);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px;
+  padding: 16px 24px;
+  border-bottom: 2px solid var(--color-light);
+}
+
+.table thead th:first-child { border-top-left-radius: 12px; }
+.table thead th:last-child { border-top-right-radius: 12px; }
+
+.table tbody td {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: middle;
+  background: #ffffff;
+  transition: background 0.2s ease;
+  font-size: 14px;
+}
+
+.table tbody tr:hover td {
+  background: #f8fafc;
+}
+
+.table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-soft);
+}
+
+.modern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
 }

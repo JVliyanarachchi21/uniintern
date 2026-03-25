@@ -74,6 +74,7 @@
                         <span class="input-icon">🏢</span>
                         <input type="text" id="companyName" name="companyName" placeholder="TechCorp Lanka" required>
                     </div>
+                    <span class="error-msg" id="companyNameError"></span>
                 </div>
 
                 <div class="field">
@@ -82,19 +83,32 @@
                         <span class="input-icon">✉</span>
                         <input type="email" id="email" name="email" placeholder="hr@company.com" required>
                     </div>
+                    <span class="error-msg" id="emailError"></span>
                 </div>
 
                 <div class="field">
                     <label for="industry">Industry</label>
                     <div class="input-wrap">
                         <span class="input-icon">🏭</span>
-                        <input type="text" id="industry" name="industry" placeholder="Software / IT" required>
+                        <select id="industry" name="industry" required style="width: 100%; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-dark); cursor: pointer; padding-right: 14px;">
+                            <option value="" disabled selected>Select an industry</option>
+                            <option value="Software / IT">Software / IT</option>
+                            <option value="Finance / Banking">Finance / Banking</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Education">Education</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Construction">Construction</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
+                    <span class="error-msg" id="industryError"></span>
                 </div>
 
                 <div class="field">
                     <label for="description">Company Description</label>
                     <textarea id="description" name="description" placeholder="Briefly describe your company" class="auth-textarea" required></textarea>
+                    <span class="error-msg" id="descriptionError"></span>
                 </div>
 
                 <div class="field">
@@ -103,6 +117,7 @@
                         <span class="input-icon">🔒</span>
                         <input type="password" id="password" name="password" placeholder="Create a password" required>
                     </div>
+                    <span class="error-msg" id="passwordError"></span>
                 </div>
 
                 <div class="field">
@@ -111,6 +126,7 @@
                         <span class="input-icon">🔐</span>
                         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
                     </div>
+                    <span class="error-msg" id="confirmPasswordError"></span>
                 </div>
 
                 <button type="submit" class="auth-btn">Create Account</button>
@@ -127,5 +143,6 @@
 
 </div>
 
+<script src="/js/company-auth.js"></script>
 </body>
 </html>
