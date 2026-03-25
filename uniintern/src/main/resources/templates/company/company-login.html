@@ -67,7 +67,11 @@
             <h2>Welcome back</h2>
             <p class="auth-sub">Sign in to your recruiter portal</p>
 
-            <form th:action="@{/company/login}" method="post">
+            <form th:action="@{/company/dashboard}" method="get">
+                <div th:if="${error}" style="background: #fee2e2; color: #ef4444; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
+                    <span th:text="${error}"></span>
+                </div>
+                
                 <div class="field">
                     <label for="email">Email</label>
                     <div class="input-wrap">

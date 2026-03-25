@@ -32,8 +32,18 @@ public class CompanyController {
     }
 
     @GetMapping("/login")
-             public String companyLogin() {
-    return "company/company-login";
+    public String companyLogin() {
+        return "company/company-login";
+    }
+
+    @PostMapping("/login")
+    public String handleLogin(@RequestParam("email") String email, @RequestParam("password") String password, Model model) {
+        if ("hr@techcorp.lk".equals(email) && "password123".equals(password)) {
+            return "redirect:/company/dashboard";
+        } else {
+            model.addAttribute("error", "Invalid email or password");
+            return "company/company-login";
+        }
     }
 
     @GetMapping("/register")
@@ -45,6 +55,23 @@ public class CompanyController {
              public String verifyPageString() {
     return "company/company-verify";
     }
+
+    @GetMapping("/internships/preview")
+public String internshipPreview(Model model) {
+    model.addAttribute("page", "internships");
+    return "company/internship-preview";
+}
+
+@GetMapping("/internships/application-template")
+public String applicationTemplate(Model model) {
+    model.addAttribute("page", "internships");
+    return "company/application-template";
+}
+
+@GetMapping("/internships/listing")
+public String internshipsListing() {
+    return "company/internships-listing";
+}
 
     @GetMapping({"/dashboard", "", "/"})
     public String dashboard(Model model) {
@@ -102,14 +129,14 @@ public class CompanyController {
 
     @PostMapping("/internships/new")
     public String submitNewInternship(
-            @RequestParam String title,
-            @RequestParam String description,
-            @RequestParam String location,
-            @RequestParam String duration,
-            @RequestParam String deadline,
-            @RequestParam(required = false) String minGpa,
-            @RequestParam(required = false) String skills,
-            @RequestParam(required = false) String status
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("location") String location,
+            @RequestParam("duration") String duration,
+            @RequestParam("deadline") String deadline,
+            @RequestParam(value = "minGpa", required = false) String minGpa,
+            @RequestParam(value = "skills", required = false) String skills,
+            @RequestParam(value = "status", required = false) String status
     ) {
         Internship internship = new Internship();
 
@@ -204,7 +231,7 @@ public class CompanyController {
     }
 
     @GetMapping("/internships/edit/{id}")
-public String editInternship(@PathVariable Long id, Model model) {
+public String editInternship(@PathVariable("id") Long id, Model model) {
 
     Internship internship = internshipService.getById(id);
 
@@ -216,14 +243,14 @@ public String editInternship(@PathVariable Long id, Model model) {
   
 @PostMapping("/internships/update")
 public String updateInternship(
-        @RequestParam Long id,
-        @RequestParam String title,
-        @RequestParam String description,
-        @RequestParam String location,
-        @RequestParam String duration,
-        @RequestParam(required = false) String minGpa,
-        @RequestParam String deadline,
-        @RequestParam(required = false) String requiredSkills
+        @RequestParam("id") Long id,
+        @RequestParam("title") String title,
+        @RequestParam("description") String description,
+        @RequestParam("location") String location,
+        @RequestParam("duration") String duration,
+        @RequestParam(value = "minGpa", required = false) String minGpa,
+        @RequestParam("deadline") String deadline,
+        @RequestParam(value = "requiredSkills", required = false) String requiredSkills
 ) {
     Internship internship = internshipService.getById(id);
 
@@ -247,14 +274,14 @@ public String updateInternship(
 
 
 @GetMapping("/internships/delete/{id}")
-public String deleteInternship(@PathVariable Long id) {
+public String deleteInternship(@PathVariable("id") Long id) {
     internshipService.delete(id);
     return "redirect:/company/internships";
 }
 
 @GetMapping("/internships/view/{id}")
-public String viewInternship(@PathVariable Long id,
-                             @RequestParam(defaultValue = "overview") String tab,
+public String viewInternship(@PathVariable("id") Long id,
+                             @RequestParam(name = "tab", defaultValue = "overview") String tab,
                              Model model) {
 
     Internship internship = internshipService.getById(id);

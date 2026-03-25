@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Details | UniIntern</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/company.css}">
+</head>
+<body class="public-listing-body">
+
+    <!-- Background Decoration -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Glass Header -->
+    <header class="glass-header">
+        <div class="pub-container header-inner">
+            <div class="brand-wrapper">
+                <div class="brand-icon">UI</div>
+                <div class="brand-text">
+                    <h1>UniIntern</h1>
+                    <p>Elevate your career</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="/company/internships-listing" class="pub-btn pub-btn-glass">← Back to Listings</a>
+                <a href="/" class="pub-btn pub-btn-glass">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pub-container preview-showcase">
+        <div class="preview-content">
+            <div class="preview-top">
+                <div class="preview-top-left">
+                    <div class="preview-logo">T</div>
+                    <div>
+                        <h2 class="preview-title">Software Engineering Intern</h2>
+                        <div class="preview-company-name">TechCorp Lanka</div>
+                    </div>
+                </div>
+                <div class="preview-badges">
+                    <span class="preview-badge-status">Open for Applications</span>
+                </div>
+            </div>
+
+            <div class="preview-details-grid">
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Location</span>
+                        <strong>Colombo / Hybrid</strong>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Duration</span>
+                        <strong>6 Months</strong>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Deadline</span>
+                        <strong>2026-05-30</strong>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Minimum GPA</span>
+                        <strong>3.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-body">
+                <h3>About this Internship</h3>
+                <p>We are looking for a motivated Software Engineering Intern to join our team. The selected candidate will work on real-world projects, support development tasks, and collaborate with experienced software engineers in an agile environment to build modern scalable web applications serving millions of users daily.</p>
+                
+                <h3>Responsibilities</h3>
+                <ul>
+                    <li>Develop and maintain web application features</li>
+                    <li>Fix bugs and improve system performance</li>
+                    <li>Collaborate with developers and participate in code reviews</li>
+                    <li>Support testing and documentation activities</li>
+                </ul>
+
+                <h3>Required Skills</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">Spring Boot</span>
+                    <span class="skill-tag">PostgreSQL</span>
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">HTML</span>
+                    <span class="skill-tag">CSS</span>
+                </div>
+            </div>
+
+            <div class="preview-action">
+                <a th:href="@{/company/internships/application-template}" class="pub-btn pub-btn-primary pub-btn-apply">Apply Now</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

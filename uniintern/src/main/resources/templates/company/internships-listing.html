@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stunning Internships | UniIntern</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/company.css}">
+</head>
+<body class="public-listing-body">
+
+    <!-- Background Decoration -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Glass Header -->
+    <header class="glass-header">
+        <div class="container header-inner">
+            <div class="brand-wrapper">
+                <div class="brand-icon">UI</div>
+                <div class="brand-text">
+                    <h1>UniIntern</h1>
+                    <p>Elevate your career</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-glass">Home</a>
+                <a href="/company/login" class="btn btn-primary">Recruit Students</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-glow"></div>
+            <div class="hero-badge">🎓 Fall 2026 Opportunities Available</div>
+            <h2>Discover your next <br><span class="text-gradient">Dream Internship</span></h2>
+            <p>We connect ambitious students with world-class companies, startups, and agencies. Start your journey with opportunities that truly matter.</p>
+            
+            <div class="search-bar-wrapper">
+                <input type="text" class="search-input" placeholder="Search internships, companies, or keywords...">
+                <button class="search-btn">Find Internships</button>
+            </div>
+        </section>
+
+        <!-- Featured Section -->
+        <section class="listings-container">
+            <div class="section-header">
+                <div>
+                    <h3>Featured Placements</h3>
+                    <p>Premium opportunities with high learning curves</p>
+                </div>
+            </div>
+
+            <div class="grid">
+                <!-- Card 1 -->
+                <div class="internship-card">
+                    <div class="card-badge">🔥 Hot</div>
+                    <div class="card-header">
+                        <div class="company-logo alt-1">T</div>
+                        <div class="job-info">
+                            <h4>Software Engineering Intern</h4>
+                            <div class="company-name">TechCorp Lanka</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Hybrid
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            6 Months
+                        </div>
+                    </div>
+                    <p class="card-desc">Join our engineering team to work on real-world projects and modern scalable web applications serving millions of users daily.</p>
+                    <div class="card-footer">
+                        <span class="posted-time">Posted 2 days ago</span>
+                        <a href="/company/internships/preview" class="btn-card">Apply Now</a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="internship-card">
+                    <div class="card-badge">Featured</div>
+                    <div class="card-header">
+                        <div class="company-logo alt-2">I</div>
+                        <div class="job-info">
+                            <h4>Data Science Intern</h4>
+                            <div class="company-name">InsightX Analytics</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Remote
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            3 Months
+                        </div>
+                    </div>
+                    <p class="card-desc">Work with petabyte-scale data pipelines, cutting-edge machine learning models, and complex analytics dashboards.</p>
+                    <div class="card-footer">
+                        <span class="posted-time">Posted 1 week ago</span>
+                        <a href="/company/internships/preview" class="btn-card">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Listings -->
+        <section class="listings-container" style="padding-top: 0;">
+            <div class="section-header">
+                <div>
+                    <h3>Explore All Opportunities</h3>
+                    <p>New roles added weekly from verified employers</p>
+                </div>
+            </div>
+
+            <div class="grid">
+                <!-- Card 3 -->
+                <div class="internship-card">
+                    <div class="card-header">
+                        <div class="company-logo alt-3">Q</div>
+                        <div class="job-info">
+                            <h4>QA Engineering Intern</h4>
+                            <div class="company-name">QualityFirst Pvt Ltd</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Colombo
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            4 Months
+                        </div>
+                    </div>
+                    <p class="card-desc">Learn automated testing in Cypress and Selenium. Own the bug tracking processes for our enterprise SaaS products.</p>
+                    <div class="card-footer">
+                        <span class="posted-time">Posted 3 days ago</span>
+                        <a href="/company/internships/preview" class="btn-card">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="internship-card">
+                    <div class="card-header">
+                        <div class="company-logo alt-4">C</div>
+                        <div class="job-info">
+                            <h4>UI/UX Design Intern</h4>
+                            <div class="company-name">Creative Studio Hub</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Hybrid
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            6 Months
+                        </div>
+                    </div>
+                    <p class="card-desc">Collaborate on modern web design, mobile wireframing, and interactive prototyping on Figma for exciting client projects.</p>
+                    <div class="card-footer">
+                        <span class="posted-time">Posted 5 days ago</span>
+                        <a href="/company/internships/preview" class="btn-card">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="internship-card">
+                    <div class="card-header">
+                        <div class="company-logo alt-1">N</div>
+                        <div class="job-info">
+                            <h4>Network Support Intern</h4>
+                            <div class="company-name">NetCore Systems</div>
+                        </div>
+                    </div>
+                    <div class="card-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Kandy
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            3 Months
+                        </div>
+                    </div>
+                    <p class="card-desc">Train on infrastructure support, network monitoring tools, and Tier-1 troubleshooting operations in a fast-paced NOC.</p>
+                    <div class="card-footer">
+                        <span class="posted-time">Posted 1 week ago</span>
+                        <a href="/company/internships/preview" class="btn-card">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
