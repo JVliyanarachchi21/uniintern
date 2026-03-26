@@ -21,9 +21,11 @@ import java.util.Map;
 public class CompanyController {
 
     private final InternshipService internshipService;
+    private final com.uniintern.portal.company.service.CompanyService companyService;
 
-    public CompanyController(InternshipService internshipService) {
+    public CompanyController(InternshipService internshipService, com.uniintern.portal.company.service.CompanyService companyService) {
         this.internshipService = internshipService;
+        this.companyService = companyService;
     }
 
     @ModelAttribute
@@ -32,7 +34,14 @@ public class CompanyController {
     }
 
     @GetMapping("/login")
-    public String companyLogin() {
+    public String companyLogin(@RequestParam(value = "verified", required = false) String verified,
+                               @RequestParam(value = "success", required = false) String success,
+                               Model model) {
+        if ("true".equals(verified)) {
+            model.addAttribute("message", "Email verified successfully! You can now log in.");
+        } else if (success != null) {
+            model.addAttribute("message", "Registration successful! Please verify your email or log in.");
+        }
         return "company/company-login";
     }
 
@@ -47,13 +56,39 @@ public class CompanyController {
     }
 
     @GetMapping("/register")
-             public String companyRegister() {
-    return "company/company-register";
+    public String companyRegister() {
+        return "company/company-register";
+    }
+
+    @PostMapping("/register")
+    public String registerCompany(@ModelAttribute com.uniintern.portal.company.dto.CompanyRegistrationDto dto, Model model) {
+        try {
+            companyService.registerCompany(dto);
+            return "redirect:/company/verify?email=" + dto.getEmail();
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "company/company-register";
+        }
     }
     
-     @GetMapping("/verify")
-             public String verifyPageString() {
-    return "company/company-verify";
+    @GetMapping("/verify")
+    public String verifyPageString(@RequestParam(value = "email", required = false) String email, Model model) {
+        if (email != null) {
+            model.addAttribute("email", email);
+        }
+        return "company/company-verify";
+    }
+
+    @PostMapping("/verify")
+    public String handleVerifyOtp(@RequestParam("email") String email, @RequestParam("otp") String otp, Model model) {
+        try {
+            companyService.verifyOtp(email, otp);
+            return "redirect:/company/login?verified=true";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("email", email);
+            return "company/company-verify";
+        }
     }
 
     @GetMapping("/internships/preview")
