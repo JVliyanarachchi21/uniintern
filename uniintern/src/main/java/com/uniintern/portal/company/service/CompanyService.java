@@ -19,6 +19,43 @@ public class CompanyService {
         this.emailService = emailService;
     }
 
+    public Company findById(Long id) {
+        return companyRepository.findById(id).orElse(null);
+    }
+
+    public Company getOrCreateMockCompany() {
+        return companyRepository.findAll().stream().findFirst().orElseGet(() -> {
+            Company dummy = new Company();
+            dummy.setCompanyName("TechCorp Lanka");
+            dummy.setEmail("hr@techcorp.lk");
+            dummy.setIndustry("Information Technology");
+            dummy.setPhone("+94 77 123 4567");
+            dummy.setWebsite("www.techcorp.lk");
+            dummy.setAddress("Colombo, Sri Lanka");
+            dummy.setDescription("TechCorp Lanka is a growing technology company focused on software engineering, innovation, and digital transformation. We provide internship opportunities for students to gain practical industry experience.");
+            dummy.setLogoPath(null);
+            dummy.setStatus("ACTIVE");
+            return companyRepository.save(dummy);
+        });
+    }
+
+    public void updateProfile(Long id, String companyName, String industry, String email, String phone, String website, String address, String description, String logoPath) {
+        Company company = getOrCreateMockCompany(); // Always use our mock company
+        company.setCompanyName(companyName);
+        company.setIndustry(industry);
+        company.setEmail(email);
+        company.setPhone(phone);
+        company.setWebsite(website);
+        company.setAddress(address);
+        company.setDescription(description);
+        
+        if (logoPath != null) {
+            company.setLogoPath(logoPath);
+        }
+        
+        companyRepository.save(company);
+    }
+
     public void registerCompany(CompanyRegistrationDto dto) {
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new IllegalArgumentException("Passwords do not match");

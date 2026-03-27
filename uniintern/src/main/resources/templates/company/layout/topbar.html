@@ -8,7 +8,9 @@
 
         <div class="profile-dropdown">
             <button type="button" class="profile-trigger" onclick="toggleProfileMenu()">
-                <span class="profile-avatar">T</span>
+                <img th:if="${companyLogo != null && companyLogo != ''}" th:src="${companyLogo}" class="profile-avatar profile-avatar-img" alt="Logo">
+                <span th:unless="${companyLogo != null && companyLogo != ''}" class="profile-avatar" th:text="${#strings.substring(companyName, 0, 1)}">T</span>
+                
                 <span class="profile-name" th:text="${companyName}">TechCorp Lanka</span>
                 <i class="bi bi-chevron-down profile-arrow"></i>
             </button>

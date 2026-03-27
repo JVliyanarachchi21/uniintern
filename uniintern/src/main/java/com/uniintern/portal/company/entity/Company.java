@@ -22,6 +22,13 @@ public class Company {
     private String description;
     
     private String password;
+    
+    private String phone;
+    private String website;
+    private String address;
+    
+    private String logoPath;
+
     private String status;
     private LocalDateTime createdAt;
     
@@ -47,6 +54,18 @@ public class Company {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getWebsite() { return website; }
+    public void setWebsite(String website) { this.website = website; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getLogoPath() { return logoPath; }
+    public void setLogoPath(String logoPath) { this.logoPath = logoPath; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }

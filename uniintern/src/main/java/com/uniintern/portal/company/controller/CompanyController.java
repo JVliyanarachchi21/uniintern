@@ -30,7 +30,14 @@ public class CompanyController {
 
     @ModelAttribute
     public void addCommonAttributes(Model model) {
-        model.addAttribute("companyName", "TechCorp Lanka");
+        try {
+            com.uniintern.portal.company.entity.Company company = companyService.getOrCreateMockCompany();
+            model.addAttribute("companyName", company.getCompanyName());
+            model.addAttribute("companyLogo", company.getLogoPath() != null ? company.getLogoPath() : "");
+        } catch (Exception e) {
+            model.addAttribute("companyName", "TechCorp Lanka");
+            model.addAttribute("companyLogo", "");
+        }
     }
 
     @GetMapping("/login")
@@ -142,7 +149,55 @@ public String internshipsListing() {
     @GetMapping("/profile")
     public String profile(Model model) {
         model.addAttribute("page", "profile");
+        try {
+            com.uniintern.portal.company.entity.Company company = companyService.getOrCreateMockCompany();
+            model.addAttribute("company", company);
+        } catch (Exception e) {
+            // Provide a dummy company if completely fails
+            // ...
+        }
         return "company/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(
+            @RequestParam("companyName") String companyName,
+            @RequestParam("industry") String industry,
+            @RequestParam("email") String email,
+            @RequestParam("phone") String phone,
+            @RequestParam("website") String website,
+            @RequestParam("address") String address,
+            @RequestParam("description") String description,
+            @RequestParam(value = "logoFile", required = false) org.springframework.web.multipart.MultipartFile logoFile,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes
+    ) {
+        Long mockCompanyId = 1L;
+        String logoPath = null;
+
+        if (logoFile != null && !logoFile.isEmpty()) {
+            try {
+                String uploadDir = "uploads/logos/";
+                java.io.File uploadDirFile = new java.io.File(uploadDir);
+                if (!uploadDirFile.exists()) {
+                    uploadDirFile.mkdirs();
+                }
+                String fileName = java.util.UUID.randomUUID().toString() + "_" + logoFile.getOriginalFilename();
+                java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDir, fileName);
+                java.nio.file.Files.copy(logoFile.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                logoPath = "/uploads/logos/" + fileName;
+            } catch (java.io.IOException e) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload logo: " + e.getMessage());
+                return "redirect:/company/profile";
+            }
+        }
+
+        try {
+            companyService.updateProfile(mockCompanyId, companyName, industry, email, phone, website, address, description, logoPath);
+            redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating profile: " + e.getMessage());
+        }
+        return "redirect:/company/profile";
     }
 
     @GetMapping("/internships/new")
