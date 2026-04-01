@@ -4,37 +4,235 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Notifications | UniIntern</title>
-  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <style>
+    .notif-page-bg {
+      background: var(--bg-main);
+      min-height: calc(100vh - 64px);
+    }
+    
+    .notif-header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 32px;
+    }
+    
+    .notif-header-text h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+    }
+    
+    .notif-header-text p {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    
+    .mark-read-btn {
+      background: var(--bg-white);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 10px 18px;
+      color: var(--text-dark);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 2px rgba(2, 16, 36, 0.02);
+      transition: all 0.2s;
+    }
+    
+    .mark-read-btn:hover {
+      background: var(--bg-main);
+      border-color: #cbd5e1;
+    }
+    
+    .notif-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 800px;
+    }
+    
+    .premium-notif-card {
+      background: var(--bg-white);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      gap: 20px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .premium-notif-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+      border-color: #cbd5e1;
+    }
+    
+    /* Elegant unread state indicator */
+    .premium-notif-unread {
+      background: var(--bg-white);
+    }
+    
+    .premium-notif-unread::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      border-radius: 4px 0 0 4px;
+    }
+    
+    .notif-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px inset rgba(255,255,255,0.5);
+    }
+    
+    .avatar-Application { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: var(--color-dark); }
+    .avatar-Interview { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #b45309; }
+    .avatar-Internship { background: linear-gradient(135deg, var(--success-bg) 0%, #a7f3d0 100%); color: var(--success-text); }
+    
+    .notif-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .notif-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    
+    .notif-category {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .cat-Application { color: var(--color-dark); }
+    .cat-Interview { color: #d97706; }
+    .cat-Internship { color: var(--success-text); }
+    
+    .notif-time {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .notif-message {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--text-dark);
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    .notif-unread .notif-message {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    
+    /* New badge indicator inside the top row */
+    .new-badge {
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-left: 10px;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+  </style>
+
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
 </head>
 
 <body class="app">
 
 <div th:replace="fragments/student-sidebar :: studentSidebar('notifications')"></div>
 
-<main class="main">
+<main class="main" style="background: var(--bg-main);">
 
-  <div th:replace="fragments/student-topbar :: studentTopbar('Ashan Perera')"></div>
+  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
 
-  <section class="content">
-    <div class="page-title">
-      <h1>Notifications</h1>
-      <p>Stay updated with your application and interview activity.</p>
+  <section class="content notif-page-bg" style="padding: 40px;">
+    
+    <!-- Premium Header -->
+    <div class="notif-header-section">
+      <div class="notif-header-text">
+        <h1>Notifications</h1>
+        <p>Stay updated with your applications and internship alerts.</p>
+      </div>
+      <button class="mark-read-btn" type="button">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Mark all as read
+      </button>
     </div>
 
-    <div class="panel">
-      <div class="panel-title">All Notifications</div>
-
-      <div class="notif-list">
-        <div class="notif" th:each="n : ${notifications}" th:classappend="${n.read} ? ' notif-read' : ''">
-          <div class="notif-type" th:text="${n.type}">Type</div>
-          <div class="notif-text" th:text="${n.text}">Text</div>
-          <div class="notif-date" th:text="${n.date}">Date</div>
+    <!-- Floating Cards Feed -->
+    <div class="notif-feed">
+      
+      <!-- Iterate over notifications -->
+      <div th:each="n : ${notifications}" class="premium-notif-card" th:classappend="${!n.read} ? 'premium-notif-unread' : ''">
+        
+        <!-- Premium Animated Avatar -->
+        <div class="notif-avatar" th:classappend="'avatar-' + ${n.type}">
+          <!-- Dynamic SVG Icons -->
+          <svg th:if="${n.type == 'Application'}" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <svg th:if="${n.type == 'Interview'}" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><circle cx="12" cy="15" r="2"></circle></svg>
+          <svg th:if="${n.type != 'Application' and n.type != 'Interview'}" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
         </div>
-      </div>
 
-      <div class="actions" style="margin-top:12px;">
-        <button class="btn" type="button">Mark all as read (UI)</button>
+        <!-- Content Body -->
+        <div class="notif-body">
+          <div class="notif-top-row">
+            <div style="display: flex; align-items: center;">
+              <span class="notif-category" th:classappend="'cat-' + ${n.type}" th:text="${n.type}">Category</span>
+              <span class="new-badge" th:if="${!n.read}">New</span>
+            </div>
+            <div class="notif-time">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span th:text="${n.date}">Feb 18, 2026</span>
+            </div>
+          </div>
+          <p class="notif-message" th:text="${n.text}">This is the notification text here.</p>
+        </div>
+
       </div>
+      
     </div>
   </section>
 </main>

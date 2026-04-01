@@ -24,6 +24,12 @@ public class Student {
     private String university;
 
     @Column(nullable = false)
+    private String registrationNumber;
+
+    @Column(nullable = false)
+    private String nicNumber;
+
+    @Column(nullable = false)
     private String degreeProgram;
 
     @Column(nullable = false)
@@ -95,6 +101,22 @@ public class Student {
 
     public void setUniversity(String university) {
         this.university = university;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    public String getNicNumber() {
+        return nicNumber;
+    }
+
+    public void setNicNumber(String nicNumber) {
+        this.nicNumber = nicNumber;
     }
 
     public String getDegreeProgram() {

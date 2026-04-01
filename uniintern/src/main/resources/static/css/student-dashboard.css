@@ -1,52 +1,64 @@
-/* Student Dashboard CSS - Redesign */
+/* 
+  Advanced Student Dashboard CSS 
+  - Fully mapped to global app.css variables
+  - Implements smooth transitions, soft shadows, and modern card styling
+*/
 
 .dashboard-page-container {
-    padding: 24px 32px;
-    font-family: 'Inter', sans-serif;
-    color: #1e293b;
-    background-color: #f8fafc;
+    padding: 32px 40px;
+    font-family: 'Inter', Roboto, sans-serif;
+    color: var(--text-dark);
 }
 
 .dashboard-main-content {
-    background-color: #f8fafc;
+    background-color: var(--bg-main);
     min-height: 100vh;
 }
 
 /* Greeting Section */
 .dashboard-greeting {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 }
 
 .dashboard-greeting h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 6px 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
 }
 
 .dashboard-greeting p {
-    font-size: 14px;
-    color: #64748b;
+    font-size: 15px;
+    color: var(--text-muted);
     margin: 0;
+    font-weight: 500;
 }
 
 /* Stats Row */
 .dashboard-stats-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 20px;
+    margin-bottom: 28px;
 }
 
 .stat-card {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 20px 24px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft);
 }
 
 .stat-content {
@@ -56,24 +68,25 @@
 }
 
 .stat-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: #6b7280;
-    margin-bottom: 4px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
     line-height: 1.3;
 }
 
 .stat-value {
-    font-size: 28px;
-    font-weight: 700;
-    color: #111827;
-    line-height: 1.2;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.1;
+    letter-spacing: -1px;
 }
 
 .stat-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -82,68 +95,71 @@
 }
 
 .stat-icon svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
 }
 
-/* Specific Stat Icon Colors */
+/* Specific Stat Icon Colors matching Legacy Values */
 .icon-profile {
-    background: #eff6ff;
-    color: #2563eb;
+    background: var(--color-light); /* C1E8FF */
+    color: var(--color-dark);       /* 052659 */
 }
 
 .icon-apps {
-    background: #ecfdf5;
-    color: #059669;
+    background: var(--success-bg);
+    color: var(--success-text);
 }
 
 .icon-interviews {
-    background: #fef3c7;
+    background: #fef3c7; /* Keeping yellow for interviews */
     color: #d97706;
 }
 
 .icon-notifications {
-    background: #fef2f2;
-    color: #dc2626;
+    background: #fee2e2;
+    color: #ef4444;
 }
 
 /* Progress bar for profile */
 .stat-progress {
-    margin-top: 10px;
+    margin-top: 14px;
     width: 100%;
 }
 
 .stat-progress-bar {
     width: 100%;
-    height: 5px;
-    background: #e5e7eb;
+    height: 6px;
+    background: var(--border-soft);
     border-radius: 99px;
     overflow: hidden;
 }
 
 .stat-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #1e3a8a 0%, #10b981 100%);
+    /* Gradient from secondary to primary */
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--success-text) 100%);
     border-radius: 99px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Action Buttons Row */
 .action-buttons-row {
     display: flex;
-    gap: 12px;
-    margin-bottom: 28px;
+    gap: 14px;
+    margin-bottom: 32px;
 }
 
 .btn-dashboard {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 9px 16px;
-    border-radius: 6px;
-    font-size: 13.5px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-dashboard svg {
@@ -152,46 +168,58 @@
 }
 
 .btn-outline {
-    background: #ffffff;
-    border: 1px solid #d1d5db;
-    color: #374151;
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    color: var(--text-dark);
 }
 
 .btn-outline:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
+    background: var(--border-soft);
+    color: var(--color-dark);
+    transform: translateY(-1px);
 }
 
 .btn-primary {
-    background: #1e3a8a;
-    border: 1px solid #1e3a8a;
+    background: var(--color-dark);
+    border: 1px solid var(--color-dark);
     color: #ffffff;
+    box-shadow: 0 4px 12px rgba(5, 38, 89, 0.2);
 }
 
 .btn-primary:hover {
-    background: #1e40af;
+    background: var(--color-darkest);
+    border-color: var(--color-darkest);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 38, 89, 0.3);
 }
 
 /* Content Grid */
 .content-grid-row {
     display: grid;
     grid-template-columns: 1.1fr 1fr;
-    gap: 20px;
+    gap: 24px;
 }
 
+/* Advanced Panels */
 .panel-card {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 22px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02);
+    /* Subtle hover on entire card frame */
+    transition: box-shadow 0.3s ease;
+}
+
+.panel-card:hover {
+    box-shadow: var(--shadow-soft);
 }
 
 .panel-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
 .panel-icon {
@@ -200,18 +228,19 @@
 }
 
 .panel-header h2 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-dark);
     margin: 0;
+    letter-spacing: -0.3px;
 }
 
 .icon-bell {
-    color: #1e3a8a;
+    color: var(--color-primary);
 }
 
 .icon-trend {
-    color: #10b981;
+    color: var(--success-text);
 }
 
 /* Notification List */
@@ -224,98 +253,118 @@
 .notification-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 14px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .notif-dot {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     margin-top: 7px;
     flex-shrink: 0;
 }
 
 .dot-green {
-    background: #10b981;
+    background: var(--success-text);
 }
 
 .dot-blue {
-    background: #2563eb;
+    background: var(--color-primary);
 }
 
 .notif-content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .notif-text {
-    font-size: 13.5px;
-    color: #111827;
+    font-size: 14.5px;
+    color: var(--text-dark);
     line-height: 1.5;
     font-weight: 500;
 }
 
 .notif-date {
-    font-size: 12px;
-    color: #6b7280;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
 /* Internships List */
 .internships-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .internship-item {
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 14px 16px;
+    background: var(--bg-main);
+    border-radius: 10px;
+    padding: 18px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid #f3f4f6;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.internship-item:hover {
+    background: var(--bg-white);
+    border-color: var(--border-soft);
+    box-shadow: 0 4px 12px rgba(2, 16, 36, 0.04);
+    transform: translateY(-2px);
 }
 
 .internship-info h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #111827;
-    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 6px 0;
 }
 
 .internship-info p {
-    font-size: 12.5px;
-    color: #6b7280;
+    font-size: 13.5px;
+    color: var(--text-muted);
     margin: 0;
+    font-weight: 500;
 }
 
 .internship-date {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 12.5px;
-    color: #6b7280;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
     white-space: nowrap;
+    font-weight: 500;
 }
 
 .internship-date svg {
-    width: 14px;
-    height: 14px;
-    color: #9ca3af;
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    opacity: 0.8;
 }
 
 /* Media Queries for Responsiveness */
-@media (max-width: 1200px) {
-    .dashboard-stats-row {
-        grid-template-columns: repeat(2, 1fr);
+@media (max-width: 1400px) {
+    .content-grid-row {
+        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 992px) {
-    .content-grid-row {
-        grid-template-columns: 1fr;
+@media (max-width: 1200px) {
+    .dashboard-stats-row {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -327,6 +376,6 @@
         flex-direction: column;
     }
     .dashboard-page-container {
-        padding: 16px;
+        padding: 24px 20px;
     }
-}
+}

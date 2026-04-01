@@ -10,6 +10,11 @@
   --danger:#EF4444;
 }
 
+.white-logo-fix {
+  mix-blend-mode: screen;
+  filter: grayscale(1) invert(1) brightness(10);
+}
+
 *{
   box-sizing:border-box;
   font-family:Inter, system-ui, Arial, sans-serif;

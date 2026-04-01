@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard | UniIntern</title>
-  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
   <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -14,12 +14,12 @@
 <div th:replace="fragments/student-sidebar :: studentSidebar('dashboard')"></div>
 
 <main class="main dashboard-main-content">
-  <div th:replace="fragments/student-topbar :: studentTopbar(${studentName})"></div>
+  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
 
   <section class="dashboard-page-container">
     
     <div class="dashboard-greeting">
-      <h1>Welcome back, <span th:text="${studentName}">Ashan</span>!</h1>
+      <h1>Welcome back, <span th:text="${fullName}">Student</span>!</h1>
       <p>Here's your internship overview.</p>
     </div>
 
