@@ -12,8 +12,7 @@ public class StudentDashboardController {
 
     @GetMapping("/student/dashboard")
     public String dashboard(Model model) {
-
-        model.addAttribute("studentName", "Ashan");
+        // studentName will be provided by loggedInStudent via StudentGlobalAdvice
         model.addAttribute("profileCompletion", 85);
         model.addAttribute("activeApplications", 8);
         model.addAttribute("interviews", 2);
@@ -54,5 +53,10 @@ public class StudentDashboardController {
         ));
 
         return "student/dashboard";
+    }
+
+    @GetMapping("/student/settings")
+    public String settings(Model model) {
+        return "student/settings";
     }
 }

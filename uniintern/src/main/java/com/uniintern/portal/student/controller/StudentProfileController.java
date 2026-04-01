@@ -12,14 +12,7 @@ public class StudentProfileController {
     @GetMapping("/student/profile")
     public String profile(Model model) {
 
-        // Mock student info
-        model.addAttribute("fullName", "Ashan Perera");
-        model.addAttribute("email", "ashan@uni.edu");
-        model.addAttribute("university", "SLIIT");
-        model.addAttribute("degree", "BSc (Hons) IT");
-        model.addAttribute("regNo", "IT20231234");
-        model.addAttribute("nic", "200112345678");
-        model.addAttribute("gpa", "3.25");
+        // Basic student info is now provided globally via loggedInStudent
 
         // Mock skill tags (UI phase)
         model.addAttribute("skills", List.of("Java", "Spring Boot", "PostgreSQL", "Git"));
