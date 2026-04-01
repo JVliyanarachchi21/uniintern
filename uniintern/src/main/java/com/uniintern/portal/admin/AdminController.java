@@ -1,10 +1,14 @@
 package com.uniintern.portal.admin;
 
 import com.uniintern.portal.company.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -144,76 +148,74 @@ public class AdminController {
 
     @GetMapping("/schedule")
     public String scheduleForm(Model model) {
+        List<Internship> approvedInternships = internshipRepository.findByStatus(InternshipStatus.APPROVED);
+        model.addAttribute("approvedInternships", approvedInternships);
         model.addAttribute("candidateName", "");
-        model.addAttribute("internshipTitle", "");
+        model.addAttribute("internshipId", "");
         model.addAttribute("datetime", "");
+        model.addAttribute("showPopup", false);
         return "admin/schedule-form";
     }
 
     @PostMapping("/schedule")
     public String createInterview(@RequestParam(required = false) String candidateName,
-            @RequestParam(required = false) String internshipTitle,
+            @RequestParam(required = false) Long internshipId,
             @RequestParam(required = false) String datetime,
             Model model) {
 
+        List<Internship> approvedInternships = internshipRepository.findByStatus(InternshipStatus.APPROVED);
+        model.addAttribute("approvedInternships", approvedInternships);
+
         String cleanCandidateName = candidateName == null ? "" : candidateName.trim();
-        String cleanInternshipTitle = internshipTitle == null ? "" : internshipTitle.trim();
         String cleanDatetime = datetime == null ? "" : datetime.trim();
 
         boolean hasError = false;
 
         model.addAttribute("candidateName", cleanCandidateName);
-        model.addAttribute("internshipTitle", cleanInternshipTitle);
+        model.addAttribute("internshipId", internshipId);
         model.addAttribute("datetime", cleanDatetime);
 
         if (cleanCandidateName.isBlank()) {
-            model.addAttribute("candidateNameError", "Candidate name is required.");
             hasError = true;
         } else if (cleanCandidateName.length() < 3 || cleanCandidateName.length() > 80) {
-            model.addAttribute("candidateNameError", "Candidate name must be between 3 and 80 characters.");
             hasError = true;
         } else if (!cleanCandidateName.matches("^[A-Za-z ]+$")) {
-            model.addAttribute("candidateNameError", "Candidate name can contain only letters and spaces.");
             hasError = true;
         }
 
-        if (cleanInternshipTitle.isBlank()) {
-            model.addAttribute("internshipTitleError", "Internship title is required.");
+        Internship selectedInternship = null;
+        if (internshipId == null) {
             hasError = true;
-        } else if (cleanInternshipTitle.length() < 3 || cleanInternshipTitle.length() > 120) {
-            model.addAttribute("internshipTitleError", "Internship title must be between 3 and 120 characters.");
-            hasError = true;
-        } else if (!cleanInternshipTitle.matches("^[A-Za-z0-9 .,&()/-]+$")) {
-            model.addAttribute("internshipTitleError", "Internship title contains invalid characters.");
-            hasError = true;
+        } else {
+            selectedInternship = internshipRepository.findById(internshipId).orElse(null);
+            if (selectedInternship == null || selectedInternship.getStatus() != InternshipStatus.APPROVED) {
+                hasError = true;
+            }
         }
 
         LocalDateTime interviewDateTime = null;
-
         if (cleanDatetime.isBlank()) {
-            model.addAttribute("datetimeError", "Interview date and time are required.");
             hasError = true;
         } else {
             try {
                 interviewDateTime = LocalDateTime.parse(cleanDatetime);
                 if (interviewDateTime.isBefore(LocalDateTime.now().plusMinutes(5))) {
-                    model.addAttribute("datetimeError", "Interview time must be at least 5 minutes in the future.");
                     hasError = true;
                 }
             } catch (DateTimeParseException e) {
-                model.addAttribute("datetimeError", "Enter a valid interview date and time.");
                 hasError = true;
             }
         }
 
         if (hasError) {
-            model.addAttribute("formError", "Please fix the highlighted errors before scheduling the interview.");
+            model.addAttribute("showPopup", true);
+            model.addAttribute("formError", "Invalid input detected. Please correct the fields and try again.");
             return "admin/schedule-form";
         }
 
         Interview interview = new Interview();
         interview.setCandidateName(cleanCandidateName);
-        interview.setInternshipTitle(cleanInternshipTitle);
+        interview.setInternshipTitle(selectedInternship.getTitle());
         interview.setInterviewDateTime(interviewDateTime);
         interview.setStatus(InterviewStatus.SCHEDULED);
 
@@ -223,8 +225,120 @@ public class AdminController {
     }
 
     @GetMapping("/reports")
-    public String reports() {
+    public String reports(Model model) {
+
+        long totalCompanies = companyRepository.count();
+        long pendingCompanies = companyRepository.findByStatus(CompanyStatus.PENDING_VERIFICATION).size();
+        long verifiedCompanies = companyRepository.findByStatus(CompanyStatus.VERIFIED).size();
+        long rejectedCompanies = companyRepository.findByStatus(CompanyStatus.REJECTED).size();
+
+        long pendingInternships = internshipRepository.findByStatus(InternshipStatus.PENDING_ADMIN_APPROVAL).size();
+        long approvedInternships = internshipRepository.findByStatus(InternshipStatus.APPROVED).size();
+        long rejectedInternships = internshipRepository.findByStatus(InternshipStatus.REJECTED).size();
+
+        List<Interview> interviews = interviewRepository.findAll();
+
+        long scheduledInterviews = interviews.stream()
+                .filter(i -> i.getStatus() == InterviewStatus.SCHEDULED)
+                .count();
+
+        long completedInterviews = interviews.stream()
+                .filter(i -> i.getStatus() == InterviewStatus.COMPLETED)
+                .count();
+
+        long cancelledInterviews = interviews.stream()
+                .filter(i -> i.getStatus() == InterviewStatus.CANCELLED)
+                .count();
+
+        model.addAttribute("portalName", "UniIntern Portal");
+        model.addAttribute("generatedOn", LocalDateTime.now());
+
+        model.addAttribute("totalCompanies", totalCompanies);
+        model.addAttribute("pendingCompanies", pendingCompanies);
+        model.addAttribute("verifiedCompanies", verifiedCompanies);
+        model.addAttribute("rejectedCompanies", rejectedCompanies);
+
+        model.addAttribute("pendingInternships", pendingInternships);
+        model.addAttribute("approvedInternships", approvedInternships);
+        model.addAttribute("rejectedInternships", rejectedInternships);
+
+        model.addAttribute("scheduledInterviews", scheduledInterviews);
+        model.addAttribute("completedInterviews", completedInterviews);
+        model.addAttribute("cancelledInterviews", cancelledInterviews);
+
         return "admin/reports";
+    }
+
+    @GetMapping("/reports/companies/download")
+    public ResponseEntity<byte[]> downloadCompanyReport() {
+        StringBuilder csv = new StringBuilder();
+
+        csv.append("UniIntern Portal - Company Verification Report\n");
+        csv.append("Generated On,").append(LocalDateTime.now()).append("\n\n");
+        csv.append("Company Name,Email,Industry,Status,Created At\n");
+
+        for (Company company : companyRepository.findAll()) {
+            csv.append(csvEscape(company.getCompanyName())).append(",");
+            csv.append(csvEscape(company.getEmail())).append(",");
+            csv.append(csvEscape(company.getIndustry())).append(",");
+            csv.append(company.getStatus() != null ? company.getStatus() : "").append(",");
+            csv.append(company.getCreatedAt() != null ? company.getCreatedAt() : "").append("\n");
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=company-report.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(csv.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    @GetMapping("/reports/internships/download")
+    public ResponseEntity<byte[]> downloadInternshipReport() {
+        StringBuilder csv = new StringBuilder();
+
+        csv.append("UniIntern Portal - Internship Approval Report\n");
+        csv.append("Generated On,").append(LocalDateTime.now()).append("\n\n");
+        csv.append("Title,Location,Min GPA,Deadline,Status\n");
+
+        for (Internship internship : internshipRepository.findAll()) {
+            csv.append(csvEscape(internship.getTitle())).append(",");
+            csv.append(csvEscape(internship.getLocation())).append(",");
+            csv.append(internship.getMinGpa()).append(",");
+            csv.append(internship.getDeadline() != null ? internship.getDeadline() : "").append(",");
+            csv.append(internship.getStatus() != null ? internship.getStatus() : "").append("\n");
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=internship-report.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(csv.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    @GetMapping("/reports/interviews/download")
+    public ResponseEntity<byte[]> downloadInterviewReport() {
+        StringBuilder csv = new StringBuilder();
+
+        csv.append("UniIntern Portal - Interview Scheduling Report\n");
+        csv.append("Generated On,").append(LocalDateTime.now()).append("\n\n");
+        csv.append("Candidate Name,Internship Title,Interview Date Time,Status\n");
+
+        for (Interview interview : interviewRepository.findAll()) {
+            csv.append(csvEscape(interview.getCandidateName())).append(",");
+            csv.append(csvEscape(interview.getInternshipTitle())).append(",");
+            csv.append(interview.getInterviewDateTime() != null ? interview.getInterviewDateTime() : "").append(",");
+            csv.append(interview.getStatus() != null ? interview.getStatus() : "").append("\n");
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=interview-report.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(csv.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String csvEscape(String value) {
+        if (value == null) {
+            return "";
+        }
+        return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 
     @GetMapping("/audit")
