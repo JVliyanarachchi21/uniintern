@@ -67,13 +67,7 @@
     }
 
     .schedule-alert{
-      margin-bottom:18px;
-      background:#FEF2F2;
-      border:1px solid #FECACA;
-      color:#B91C1C;
-      border-radius:16px;
-      padding:14px;
-      font-weight:700;
+      display:none;
     }
 
     .schedule-grid{
@@ -104,17 +98,19 @@
       padding:15px;
       font-size:15px;
       outline:none;
+      transition:0.2s ease;
+    }
+
+    .schedule-input:focus{
+      border-color:#5483B3;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(84,131,179,0.12);
     }
 
     .schedule-input.error{
       border-color:#DC2626;
       background:#FEF2F2;
-    }
-
-    .schedule-error{
-      font-size:13px;
-      color:#DC2626;
-      font-weight:700;
+      box-shadow:0 0 0 4px rgba(220,38,38,0.10);
     }
 
     .schedule-actions{
@@ -129,6 +125,11 @@
       padding:14px 22px;
       font-weight:800;
       cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:15px;
     }
 
     .schedule-btn-primary{
@@ -139,6 +140,81 @@
     .schedule-btn-secondary{
       background:#F3F4F6;
       border:1px solid #E5E7EB;
+      color:#111827;
+    }
+
+    .popup-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(17,24,39,0.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      padding:20px;
+    }
+
+    .popup-overlay.show{
+      display:flex;
+    }
+
+    .popup-box{
+      width:100%;
+      max-width:380px;
+      background:#fff;
+      border-radius:22px;
+      padding:24px;
+      box-shadow:0 25px 60px rgba(2,16,36,0.28);
+      text-align:center;
+    }
+
+    .popup-icon{
+      width:56px;
+      height:56px;
+      margin:0 auto 14px;
+      border-radius:50%;
+      background:#FEF2F2;
+      color:#DC2626;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      font-weight:900;
+    }
+
+    .popup-title{
+      margin:0 0 8px;
+      font-size:22px;
+      font-weight:900;
+      color:#111827;
+    }
+
+    .popup-message{
+      margin:0 0 18px;
+      color:#4B5563;
+      line-height:1.6;
+      font-size:15px;
+    }
+
+    .popup-btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 20px;
+      background:linear-gradient(135deg, #052659, #5483B3);
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+      min-width:110px;
+    }
+
+    @media (max-width: 760px){
+      .schedule-grid{
+        grid-template-columns:1fr;
+      }
+
+      .schedule-hero h1{
+        font-size:36px;
+      }
     }
   </style>
 </head>
@@ -152,7 +228,7 @@
   <div class="schedule-hero">
     <div class="schedule-kicker">Interview Management</div>
     <h1>Schedule Interview</h1>
-    <p>Real validation + restricted inputs + future-only time.</p>
+    <p>Schedule interviews only for approved internships.</p>
   </div>
 
   <div class="schedule-card">
@@ -166,27 +242,26 @@
         <div class="schedule-field">
           <label class="schedule-label">Candidate Name</label>
           <input
+            id="candidateName"
             class="schedule-input"
-            th:classappend="${candidateNameError} ? ' error' : ''"
             type="text"
             name="candidateName"
             th:value="${candidateName}"
             maxlength="80"
-            oninput="this.value = this.value.replace(/[^A-Za-z ]/g,'').replace(/\s{2,}/g,' ')">
-          <div class="schedule-error" th:if="${candidateNameError}" th:text="${candidateNameError}"></div>
+            autocomplete="off"
+            placeholder="Enter candidate name">
         </div>
 
         <div class="schedule-field">
-          <label class="schedule-label">Internship Title</label>
-          <input
-            class="schedule-input"
-            th:classappend="${internshipTitleError} ? ' error' : ''"
-            type="text"
-            name="internshipTitle"
-            th:value="${internshipTitle}"
-            maxlength="120"
-            oninput="this.value = this.value.replace(/[^A-Za-z0-9 .,&()/-]/g,'')">
-          <div class="schedule-error" th:if="${internshipTitleError}" th:text="${internshipTitleError}"></div>
+          <label class="schedule-label">Approved Internship</label>
+          <select id="internshipId" class="schedule-input" name="internshipId">
+            <option value="">Select approved internship</option>
+            <option th:each="internship : ${approvedInternships}"
+                    th:value="${internship.id}"
+                    th:text="${internship.title}"
+                    th:selected="${internship.id == internshipId}">
+            </option>
+          </select>
         </div>
 
         <div class="schedule-field schedule-field-full">
@@ -194,11 +269,9 @@
           <input
             id="datetimeInput"
             class="schedule-input"
-            th:classappend="${datetimeError} ? ' error' : ''"
             type="datetime-local"
             name="datetime"
             th:value="${datetime}">
-          <div class="schedule-error" th:if="${datetimeError}" th:text="${datetimeError}"></div>
         </div>
 
       </div>
@@ -214,10 +287,18 @@
 
 </div>
 
+<div id="validationPopup" class="popup-overlay">
+  <div class="popup-box">
+    <div class="popup-icon">!</div>
+    <h3 class="popup-title">Invalid Input</h3>
+    <p id="popupMessage" class="popup-message">Please enter valid data.</p>
+    <button type="button" class="popup-btn" onclick="closePopup()">OK</button>
+  </div>
+</div>
+
 <script>
   function setMinDateTime() {
     const input = document.getElementById("datetimeInput");
-
     const now = new Date();
     now.setMinutes(now.getMinutes() + 5);
 
@@ -230,7 +311,52 @@
     input.min = `${y}-${m}-${d}T${h}:${min}`;
   }
 
+  const popup = document.getElementById("validationPopup");
+  const popupMessage = document.getElementById("popupMessage");
+
+  function showPopup(message) {
+    popupMessage.textContent = message;
+    popup.classList.add("show");
+  }
+
+  function closePopup() {
+    popup.classList.remove("show");
+  }
+
+  popup.addEventListener("click", function(e) {
+    if (e.target === popup) {
+      closePopup();
+    }
+  });
+
+  const candidateInput = document.getElementById("candidateName");
+
+  let candidatePopupShown = false;
+
+  candidateInput.addEventListener("input", function () {
+    const original = this.value;
+    const cleaned = original.replace(/[^A-Za-z ]/g, "").replace(/\s{2,}/g, " ");
+
+    if (original !== cleaned) {
+      this.value = cleaned;
+      this.classList.add("error");
+
+      if (!candidatePopupShown) {
+        showPopup("Candidate name can contain letters and spaces only. Numbers and special characters are not allowed.");
+        candidatePopupShown = true;
+      }
+    } else {
+      this.classList.remove("error");
+      candidatePopupShown = false;
+    }
+  });
+
   setMinDateTime();
+
+  const backendPopupFlag = /*[[${showPopup}]]*/ false;
+  if (backendPopupFlag === true) {
+    showPopup("Invalid input detected. Please correct the fields and try again.");
+  }
 </script>
 
 </body>
