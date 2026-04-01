@@ -8,6 +8,9 @@
     --text: #111827;
     --muted: #6B7280;
     --border: #E5E7EB;
+    --danger: #DC2626;
+    --warning: #B45309;
+    --success: #059669;
     --shadow: 0 18px 45px rgba(17, 24, 39, 0.08);
     --radius: 20px;
 }
@@ -169,6 +172,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 7px;
+    position: relative;
 }
 
 .form-group label {
@@ -225,6 +229,54 @@ body {
     font-weight: 700;
     text-decoration: none;
     margin-left: 6px;
+}
+
+.field-error {
+    margin: 2px 0 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--danger);
+}
+
+.live-hint {
+    margin: 4px 0 0;
+    min-height: 16px;
+    font-size: 12px;
+    color: transparent;
+    transition: 0.2s ease;
+}
+
+.show-hint {
+    color: var(--warning);
+    font-weight: 600;
+}
+
+.password-rules-box {
+    display: none;
+    margin-top: 6px;
+    padding: 10px 12px;
+    background: #F9FAFB;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.show-rules {
+    display: block;
+}
+
+.rule-item {
+    margin: 4px 0;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.rule-valid {
+    color: var(--success);
+}
+
+.rule-invalid {
+    color: var(--danger);
 }
 
 .otp-shell {

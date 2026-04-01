@@ -2,13 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Registration | UniIntern</title>
     <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
 <body class="auth-body">
 
 <div class="auth-shell">
+
     <div class="auth-left">
         <div class="brand-row">
             <div class="brand-logo">U</div>
@@ -25,10 +25,12 @@
                 <h3>Track applications</h3>
                 <p>Monitor your internship status from application to interview.</p>
             </div>
+
             <div class="feature-card">
                 <h3>Secure verification</h3>
                 <p>Use your university email and OTP verification to confirm student identity.</p>
             </div>
+
             <div class="feature-card">
                 <h3>One student portal</h3>
                 <p>Manage profile, skills, applications, and interviews in one place.</p>
@@ -43,33 +45,82 @@
                 <p>Fill in your details to continue</p>
             </div>
 
-            <form method="post" th:action="@{/register/student}" class="auth-form">
+            <form method="post" th:action="@{/student/register}" class="auth-form" novalidate>
+
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input id="name" type="text" name="name" placeholder="Enter your full name" required>
+                    <input id="name"
+                           type="text"
+                           name="name"
+                           placeholder="Enter your full name"
+                           th:value="${name}"
+                           maxlength="100"
+                           autocomplete="off"
+                           required>
+                    <p class="field-error" th:if="${errorName}" th:text="${errorName}"></p>
+                    <p class="live-hint" id="nameHint"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="email">University Email</label>
-                    <input id="email" type="email" name="email" placeholder="e.g. itxxxxxx@my.sliit.lk" required>
+                    <input id="email"
+                           type="text"
+                           name="email"
+                           placeholder="Enter your university email"
+                           th:value="${email}"
+                           maxlength="120"
+                           autocomplete="off"
+                           required>
+                    <p class="field-error" th:if="${errorEmail}" th:text="${errorEmail}"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="regNo">Registration Number</label>
-                    <input id="regNo" type="text" name="regNo" placeholder="Enter your registration number" required>
+                    <input id="regNo"
+                           type="text"
+                           name="regNo"
+                           placeholder="Enter your registration number"
+                           th:value="${regNo}"
+                           maxlength="30"
+                           autocomplete="off"
+                           required>
+                    <p class="field-error" th:if="${errorRegNo}" th:text="${errorRegNo}"></p>
+                    <p class="live-hint" id="regNoHint"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="university">University</label>
-                    <input id="university" type="text" name="university" placeholder="Enter your university name" required>
+                    <input id="university"
+                           type="text"
+                           name="university"
+                           placeholder="Enter your university"
+                           th:value="${university}"
+                           maxlength="100"
+                           autocomplete="off"
+                           required>
+                    <p class="field-error" th:if="${errorUniversity}" th:text="${errorUniversity}"></p>
+                    <p class="live-hint" id="universityHint"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input id="password" type="password" name="password" placeholder="Create a password" required>
+                    <input id="password"
+                           type="password"
+                           name="password"
+                           placeholder="Create password"
+                           maxlength="100"
+                           required>
+                    <p class="field-error" th:if="${errorPassword}" th:text="${errorPassword}"></p>
+
+                    <div class="password-rules-box" id="passwordRulesBox">
+                        <p id="ruleLength" class="rule-item">At least 8 characters</p>
+                        <p id="ruleUpper" class="rule-item">At least 1 uppercase letter</p>
+                        <p id="ruleLower" class="rule-item">At least 1 lowercase letter</p>
+                        <p id="ruleNumber" class="rule-item">At least 1 number</p>
+                    </div>
                 </div>
 
-                <button type="submit" class="auth-btn">Continue to OTP Verification</button>
+                <button type="submit" class="auth-btn">Continue</button>
             </form>
 
             <div class="auth-footer">
@@ -78,7 +129,97 @@
             </div>
         </div>
     </div>
+
 </div>
+
+<script>
+    function setupRestrictedInput(inputId, regex, hintId, message) {
+        const input = document.getElementById(inputId);
+        const hint = document.getElementById(hintId);
+
+        input.addEventListener("input", function () {
+            const original = this.value;
+            const cleaned = original.split("").filter(ch => regex.test(ch)).join("");
+
+            if (original !== cleaned) {
+                hint.textContent = message;
+                hint.classList.add("show-hint");
+            } else {
+                hint.textContent = "";
+                hint.classList.remove("show-hint");
+            }
+
+            this.value = cleaned;
+        });
+
+        input.addEventListener("paste", function (e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData("text");
+            const cleaned = pasted.split("").filter(ch => regex.test(ch)).join("");
+
+            if (pasted !== cleaned) {
+                hint.textContent = message;
+                hint.classList.add("show-hint");
+            } else {
+                hint.textContent = "";
+                hint.classList.remove("show-hint");
+            }
+
+            document.execCommand("insertText", false, cleaned);
+        });
+
+        input.addEventListener("blur", function () {
+            setTimeout(() => {
+                hint.textContent = "";
+                hint.classList.remove("show-hint");
+            }, 800);
+        });
+    }
+
+    setupRestrictedInput("name", /^[A-Za-z ]$/, "nameHint", "Only letters and spaces allowed.");
+    setupRestrictedInput("regNo", /^[A-Za-z0-9]$/, "regNoHint", "Only letters and numbers allowed.");
+    setupRestrictedInput("university", /^[A-Za-z .,&()-]$/, "universityHint", "Only letters and basic punctuation allowed.");
+
+    const passwordInput = document.getElementById("password");
+    const passwordRulesBox = document.getElementById("passwordRulesBox");
+    const ruleLength = document.getElementById("ruleLength");
+    const ruleUpper = document.getElementById("ruleUpper");
+    const ruleLower = document.getElementById("ruleLower");
+    const ruleNumber = document.getElementById("ruleNumber");
+
+    function toggleRule(element, valid) {
+        element.classList.remove("rule-valid", "rule-invalid");
+        element.classList.add(valid ? "rule-valid" : "rule-invalid");
+    }
+
+    passwordInput.addEventListener("focus", function () {
+        passwordRulesBox.classList.add("show-rules");
+    });
+
+    passwordInput.addEventListener("input", function () {
+        const value = this.value;
+
+        passwordRulesBox.classList.add("show-rules");
+
+        toggleRule(ruleLength, value.length >= 8);
+        toggleRule(ruleUpper, /[A-Z]/.test(value));
+        toggleRule(ruleLower, /[a-z]/.test(value));
+        toggleRule(ruleNumber, /\d/.test(value));
+    });
+
+    passwordInput.addEventListener("blur", function () {
+        const value = this.value;
+        const allValid =
+            value.length >= 8 &&
+            /[A-Z]/.test(value) &&
+            /[a-z]/.test(value) &&
+            /\d/.test(value);
+
+        if (allValid || value.length === 0) {
+            passwordRulesBox.classList.remove("show-rules");
+        }
+    });
+</script>
 
 </body>
 </html>
