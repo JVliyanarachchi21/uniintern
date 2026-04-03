@@ -46,4 +46,8 @@ public class PromotionService {
                 .map(Promotion::getInternshipId)
                 .collect(Collectors.toList());
     }
+
+    public List<Promotion> getAllPromotionsForCompany(Long companyId) {
+        return promotionRepository.findByCompanyId(companyId);
+    }
 }

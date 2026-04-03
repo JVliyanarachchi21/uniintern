@@ -36,9 +36,9 @@
 
                 <td>
                     <span class="badge-status"
-                          th:classappend="${p.status == 'Active'} ? ' st-approved' : ' st-expired'"
+                          th:classappend="${#strings.equalsIgnoreCase(p.status, 'ACTIVE')} ? ' st-approved' : ' st-expired'"
                           th:text="${p.status}">
-                        Active
+                        ACTIVE
                     </span>
                 </td>
 

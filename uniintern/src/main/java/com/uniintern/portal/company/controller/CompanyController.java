@@ -7,8 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
@@ -362,10 +362,26 @@ public String internshipsListing(Model model) {
     public String paymentHistory(Model model) {
         model.addAttribute("page", "payments");
 
-        List<Map<String, Object>> payments = List.of(
-                Map.of("id", "PAY-001", "date", "2026-01-20", "plan", "Featured Internship — 7 Days", "amount", "LKR 5,000", "status", "Active"),
-                Map.of("id", "PAY-002", "date", "2025-12-01", "plan", "Featured Internship — 14 Days", "amount", "LKR 8,500", "status", "Expired")
-        );
+        Long mockCompanyId = 1L;
+        List<com.uniintern.portal.company.entity.Promotion> promos = promotionService.getAllPromotionsForCompany(mockCompanyId);
+        
+        List<Map<String, Object>> payments = promos.stream().map(p -> {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", "PAY-" + String.format("%03d", p.getId()));
+            map.put("date", p.getStartDate().toLocalDate().toString());
+            
+            // Fetch internship title
+            String internTitle = "Unknown Internship";
+            try {
+                com.uniintern.portal.company.entity.Internship i = internshipService.getById(p.getInternshipId());
+                if(i != null) internTitle = i.getTitle();
+            } catch(Exception e) {}
+            
+            map.put("plan", p.getType() + " (" + internTitle + ")");
+            map.put("amount", "LKR " + String.format("%,.0f", p.getPrice()));
+            map.put("status", p.getStatus()); // Will be "ACTIVE"
+            return map;
+        }).collect(java.util.stream.Collectors.toList());
 
         model.addAttribute("payments", payments);
         return "company/payment-history";
