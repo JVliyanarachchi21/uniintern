@@ -8,13 +8,13 @@
        th:classappend="${selectedStatus == null} ? ' btn-active' : ''">All</a>
 
     <a class="btn" th:href="@{/admin/companies/all(status='PENDING_VERIFICATION')}"
-       th:classappend="${selectedStatus?.name() == 'PENDING_VERIFICATION'} ? ' btn-active' : ''">Pending</a>
+       th:classappend="${selectedStatus == 'PENDING_VERIFICATION'} ? ' btn-active' : ''">Pending</a>
 
     <a class="btn" th:href="@{/admin/companies/all(status='VERIFIED')}"
-       th:classappend="${selectedStatus?.name() == 'VERIFIED'} ? ' btn-active' : ''">Verified</a>
+       th:classappend="${selectedStatus == 'VERIFIED'} ? ' btn-active' : ''">Verified</a>
 
     <a class="btn" th:href="@{/admin/companies/all(status='REJECTED')}"
-       th:classappend="${selectedStatus?.name() == 'REJECTED'} ? ' btn-active' : ''">Rejected</a>
+       th:classappend="${selectedStatus == 'REJECTED'} ? ' btn-active' : ''">Rejected</a>
 
     <div style="margin-left:auto;color:#6B7280;">
       Total: <b th:text="${#lists.size(companies)}">0</b>
@@ -42,9 +42,9 @@
           <td th:text="${c.email}">Email</td>
           <td th:text="${c.industry}">Industry</td>
           <td>
-            <span th:if="${c.status.name() == 'PENDING_VERIFICATION'}" class="badge badge-pending">Pending</span>
-            <span th:if="${c.status.name() == 'VERIFIED'}" class="badge badge-approved">Verified</span>
-            <span th:if="${c.status.name() == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
+            <span th:if="${c.status == 'PENDING_VERIFICATION'}" class="badge badge-pending">Pending</span>
+            <span th:if="${c.status == 'VERIFIED'}" class="badge badge-approved">Verified</span>
+            <span th:if="${c.status == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
           </td>
         </tr>
       </tbody>

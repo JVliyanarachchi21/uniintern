@@ -33,9 +33,9 @@
           <td th:text="${i.minGpa}">Min GPA</td>
           <td th:text="${i.deadline}">Deadline</td>
           <td>
-            <span th:if="${i.status.name() == 'PENDING_ADMIN_APPROVAL'}" class="badge badge-pending">Pending</span>
-            <span th:if="${i.status.name() == 'APPROVED'}" class="badge badge-approved">Approved</span>
-            <span th:if="${i.status.name() == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
+            <span th:if="${i.status == 'PENDING_ADMIN_APPROVAL'}" class="badge badge-pending">Pending</span>
+            <span th:if="${i.status == 'APPROVED'}" class="badge badge-approved">Approved</span>
+            <span th:if="${i.status == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
           </td>
         </tr>
       </tbody>
