@@ -22,10 +22,12 @@ public class CompanyController {
 
     private final InternshipService internshipService;
     private final com.uniintern.portal.company.service.CompanyService companyService;
+    private final com.uniintern.portal.company.service.PromotionService promotionService;
 
-    public CompanyController(InternshipService internshipService, com.uniintern.portal.company.service.CompanyService companyService) {
+    public CompanyController(InternshipService internshipService, com.uniintern.portal.company.service.CompanyService companyService, com.uniintern.portal.company.service.PromotionService promotionService) {
         this.internshipService = internshipService;
         this.companyService = companyService;
+        this.promotionService = promotionService;
     }
 
     @ModelAttribute
@@ -281,12 +283,78 @@ public String internshipsListing(Model model) {
     @GetMapping("/promotions")
     public String promotions(Model model) {
         model.addAttribute("page", "promotions");
+        
+        // Fetch real approved internships for the dropdown
+        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings();
+        model.addAttribute("internships", internships);
+        
         return "company/promotions";
     }
 
+    @PostMapping("/promotions/process")
+    public String processPromotion(
+            @RequestParam(value = "internshipId", required = false) Long internshipId,
+            @RequestParam(value = "promoType", required = false) String promoType,
+            @RequestParam(value = "price", required = false) Double price,
+            @RequestParam(value = "days", required = false) Integer days,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        
+        System.out.println("Processing promotion for Internship: " + internshipId + ", Plan: " + promoType);
+        
+        // Redirect to checkout page with parameters
+        redirectAttributes.addAttribute("internshipId", internshipId != null ? internshipId : 0L);
+        redirectAttributes.addAttribute("type", promoType != null ? promoType : "Featured");
+        redirectAttributes.addAttribute("price", price != null ? price : 5000.0);
+        redirectAttributes.addAttribute("days", days != null ? days : 7);
+        
+        System.out.println("Redirecting to /company/payments/checkout");
+        return "redirect:/company/payments/checkout";
+    }
+
+    @PostMapping("/payments/complete")
+    public String completePayment(
+            @RequestParam("internshipId") Long internshipId,
+            @RequestParam("type") String type,
+            @RequestParam("price") Double price,
+            @RequestParam("days") Integer days,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        
+        // Finalize transaction and activate promotion
+        Long mockCompanyId = 1L;
+        promotionService.createPromotion(internshipId, mockCompanyId, type, price, days);
+        
+        redirectAttributes.addAttribute("internshipId", internshipId);
+        redirectAttributes.addAttribute("type", type);
+        
+        return "redirect:/company/payments/success";
+    }
+
+    @GetMapping("/payments/success")
+    public String paymentSuccess(
+            @RequestParam("internshipId") Long internshipId,
+            @RequestParam("type") String type,
+            Model model) {
+        
+        model.addAttribute("page", "promotions");
+        model.addAttribute("internship", internshipService.getById(internshipId));
+        model.addAttribute("promoType", type);
+        
+        return "company/payment-success";
+    }
+
     @GetMapping("/payments/checkout")
-    public String checkout(Model model) {
-        model.addAttribute("page", "payments");
+    public String checkout(
+            @RequestParam("internshipId") Long internshipId,
+            @RequestParam("type") String type,
+            @RequestParam("price") Double price,
+            @RequestParam("days") Integer days,
+            Model model) {
+        model.addAttribute("page", "promotions");
+        model.addAttribute("internship", internshipService.getById(internshipId));
+        model.addAttribute("promoType", type);
+        model.addAttribute("price", price);
+        model.addAttribute("days", days);
+        model.addAttribute("internshipId", internshipId);
         return "company/payments-checkout";
     }
 

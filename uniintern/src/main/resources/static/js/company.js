@@ -199,6 +199,21 @@ function selectPromoCard(card, planName, amount) {
   selectedPromotionPlan = planName;
   selectedPromotionAmount = amount;
 
+  // Sync to hidden form fields
+  const typeField = document.getElementById("formPromoType");
+  const priceField = document.getElementById("formPrice");
+  const daysField = document.getElementById("formDays");
+
+  if (typeField) typeField.value = planName;
+  if (priceField) priceField.value = amount;
+  
+  // Determine days from plan name
+  let days = 7;
+  if (planName.includes("14 Days")) days = 14;
+  if (daysField) daysField.value = days;
+
+  console.log("Promotion selected:", planName, amount, days);
+
   const section = document.getElementById("promoSelectSection");
   if (section) section.style.display = "block";
 }
