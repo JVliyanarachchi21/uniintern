@@ -1,9 +1,10 @@
-package com.uniintern.portal.company;
+package com.uniintern.portal.company.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "interviews")
 public class Interview {
 
     @Id
@@ -12,11 +13,9 @@ public class Interview {
 
     private String candidateName;
     private String internshipTitle;
-
     private LocalDateTime interviewDateTime;
-
-    @Enumerated(EnumType.STRING)
-    private InterviewStatus status;
+    
+    private String status;
 
     public Interview() {
     }
@@ -49,11 +48,11 @@ public class Interview {
         this.interviewDateTime = interviewDateTime;
     }
 
-    public InterviewStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(InterviewStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }

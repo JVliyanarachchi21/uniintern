@@ -22,7 +22,7 @@ public class StudentAuthController {
     @Autowired
     private StudentRepository studentRepository;
 
-    @Autowired
+    @org.springframework.beans.factory.annotation.Qualifier("studentEmailService")
     private EmailService emailService;
 
     // A simple in-memory cache for OTPs mapped by email (for prototyping purposes)

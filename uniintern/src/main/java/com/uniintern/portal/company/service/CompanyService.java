@@ -14,7 +14,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final EmailService emailService;
 
-    public CompanyService(CompanyRepository companyRepository, EmailService emailService) {
+    public CompanyService(CompanyRepository companyRepository, @org.springframework.beans.factory.annotation.Qualifier("companyEmailService") EmailService emailService) {
         this.companyRepository = companyRepository;
         this.emailService = emailService;
     }
