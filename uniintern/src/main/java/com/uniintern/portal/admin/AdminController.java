@@ -1,6 +1,11 @@
 package com.uniintern.portal.admin;
 
-import com.uniintern.portal.company.*;
+import com.uniintern.portal.company.entity.Company;
+import com.uniintern.portal.company.repository.CompanyRepository;
+import com.uniintern.portal.company.entity.Internship;
+import com.uniintern.portal.company.repository.InternshipRepository;
+import com.uniintern.portal.company.entity.Interview;
+import com.uniintern.portal.company.repository.InterviewRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,11 +41,11 @@ public class AdminController {
     public String dashboard(Model model) {
 
         long pendingCompanies = companyRepository
-                .findByStatus(CompanyStatus.PENDING_VERIFICATION)
+                .findByStatus("PENDING_VERIFICATION")
                 .size();
 
         long pendingInternships = internshipRepository
-                .findByStatus(InternshipStatus.PENDING_ADMIN_APPROVAL)
+                .findByStatus("PENDING_ADMIN_APPROVAL")
                 .size();
 
         long interviewsToday = interviewRepository.findAll().stream()
@@ -62,13 +67,13 @@ public class AdminController {
 
     @GetMapping("/companies")
     public String companyApprovals(Model model) {
-        List<Company> pending = companyRepository.findByStatus(CompanyStatus.PENDING_VERIFICATION);
+        List<Company> pending = companyRepository.findByStatus("PENDING_VERIFICATION");
         model.addAttribute("companies", pending);
         return "admin/company-approvals";
     }
 
     @GetMapping("/companies/all")
-    public String allCompanies(@RequestParam(required = false) CompanyStatus status, Model model) {
+    public String allCompanies(@RequestParam(required = false) String status, Model model) {
         List<Company> list = (status == null)
                 ? companyRepository.findAll()
                 : companyRepository.findByStatus(status);
@@ -81,7 +86,7 @@ public class AdminController {
     @GetMapping("/companies/{id}/approve")
     public String approveCompany(@PathVariable Long id) {
         Company c = companyRepository.findById(id).orElseThrow();
-        c.setStatus(CompanyStatus.VERIFIED);
+        c.setStatus("VERIFIED");
         companyRepository.save(c);
         return "redirect:/admin/companies";
     }
@@ -89,20 +94,20 @@ public class AdminController {
     @GetMapping("/companies/{id}/reject")
     public String rejectCompany(@PathVariable Long id) {
         Company c = companyRepository.findById(id).orElseThrow();
-        c.setStatus(CompanyStatus.REJECTED);
+        c.setStatus("REJECTED");
         companyRepository.save(c);
         return "redirect:/admin/companies";
     }
 
     @GetMapping("/internships")
     public String internshipApprovals(Model model) {
-        List<Internship> pending = internshipRepository.findByStatus(InternshipStatus.PENDING_ADMIN_APPROVAL);
+        List<Internship> pending = internshipRepository.findByStatus("PENDING_ADMIN_APPROVAL");
         model.addAttribute("internships", pending);
         return "admin/internship-approvals";
     }
 
     @GetMapping("/internships/all")
-    public String allInternships(@RequestParam(required = false) InternshipStatus status, Model model) {
+    public String allInternships(@RequestParam(required = false) String status, Model model) {
         List<Internship> list = (status == null)
                 ? internshipRepository.findAll()
                 : internshipRepository.findByStatus(status);
@@ -115,7 +120,7 @@ public class AdminController {
     @GetMapping("/internships/{id}/approve")
     public String approveInternship(@PathVariable Long id) {
         Internship i = internshipRepository.findById(id).orElseThrow();
-        i.setStatus(InternshipStatus.APPROVED);
+        i.setStatus("APPROVED");
         internshipRepository.save(i);
         return "redirect:/admin/internships";
     }
@@ -123,7 +128,7 @@ public class AdminController {
     @GetMapping("/internships/{id}/reject")
     public String rejectInternship(@PathVariable Long id) {
         Internship i = internshipRepository.findById(id).orElseThrow();
-        i.setStatus(InternshipStatus.REJECTED);
+        i.setStatus("REJECTED");
         internshipRepository.save(i);
         return "redirect:/admin/internships";
     }
@@ -138,17 +143,17 @@ public class AdminController {
         List<Interview> interviews = interviewRepository.findAll();
         model.addAttribute("interviews", interviews);
         model.addAttribute("scheduledCount",
-                interviews.stream().filter(i -> i.getStatus() == InterviewStatus.SCHEDULED).count());
+                interviews.stream().filter(i -> "SCHEDULED".equals(i.getStatus())).count());
         model.addAttribute("completedCount",
-                interviews.stream().filter(i -> i.getStatus() == InterviewStatus.COMPLETED).count());
+                interviews.stream().filter(i -> "COMPLETED".equals(i.getStatus())).count());
         model.addAttribute("cancelledCount",
-                interviews.stream().filter(i -> i.getStatus() == InterviewStatus.CANCELLED).count());
+                interviews.stream().filter(i -> "CANCELLED".equals(i.getStatus())).count());
         return "admin/interview-scheduling";
     }
 
     @GetMapping("/schedule")
     public String scheduleForm(Model model) {
-        List<Internship> approvedInternships = internshipRepository.findByStatus(InternshipStatus.APPROVED);
+        List<Internship> approvedInternships = internshipRepository.findByStatus("APPROVED");
         model.addAttribute("approvedInternships", approvedInternships);
         model.addAttribute("candidateName", "");
         model.addAttribute("internshipId", "");
@@ -163,7 +168,7 @@ public class AdminController {
             @RequestParam(required = false) String datetime,
             Model model) {
 
-        List<Internship> approvedInternships = internshipRepository.findByStatus(InternshipStatus.APPROVED);
+        List<Internship> approvedInternships = internshipRepository.findByStatus("APPROVED");
         model.addAttribute("approvedInternships", approvedInternships);
 
         String cleanCandidateName = candidateName == null ? "" : candidateName.trim();
@@ -188,7 +193,7 @@ public class AdminController {
             hasError = true;
         } else {
             selectedInternship = internshipRepository.findById(internshipId).orElse(null);
-            if (selectedInternship == null || selectedInternship.getStatus() != InternshipStatus.APPROVED) {
+            if (selectedInternship == null || selectedInternship.getStatus() != "APPROVED") {
                 hasError = true;
             }
         }
@@ -217,7 +222,7 @@ public class AdminController {
         interview.setCandidateName(cleanCandidateName);
         interview.setInternshipTitle(selectedInternship.getTitle());
         interview.setInterviewDateTime(interviewDateTime);
-        interview.setStatus(InterviewStatus.SCHEDULED);
+        interview.setStatus("SCHEDULED");
 
         interviewRepository.save(interview);
 
@@ -228,26 +233,26 @@ public class AdminController {
     public String reports(Model model) {
 
         long totalCompanies = companyRepository.count();
-        long pendingCompanies = companyRepository.findByStatus(CompanyStatus.PENDING_VERIFICATION).size();
-        long verifiedCompanies = companyRepository.findByStatus(CompanyStatus.VERIFIED).size();
-        long rejectedCompanies = companyRepository.findByStatus(CompanyStatus.REJECTED).size();
+        long pendingCompanies = companyRepository.findByStatus("PENDING_VERIFICATION").size();
+        long verifiedCompanies = companyRepository.findByStatus("VERIFIED").size();
+        long rejectedCompanies = companyRepository.findByStatus("REJECTED").size();
 
-        long pendingInternships = internshipRepository.findByStatus(InternshipStatus.PENDING_ADMIN_APPROVAL).size();
-        long approvedInternships = internshipRepository.findByStatus(InternshipStatus.APPROVED).size();
-        long rejectedInternships = internshipRepository.findByStatus(InternshipStatus.REJECTED).size();
+        long pendingInternships = internshipRepository.findByStatus("PENDING_ADMIN_APPROVAL").size();
+        long approvedInternships = internshipRepository.findByStatus("APPROVED").size();
+        long rejectedInternships = internshipRepository.findByStatus("REJECTED").size();
 
         List<Interview> interviews = interviewRepository.findAll();
 
         long scheduledInterviews = interviews.stream()
-                .filter(i -> i.getStatus() == InterviewStatus.SCHEDULED)
+                .filter(i -> "SCHEDULED".equals(i.getStatus()))
                 .count();
 
         long completedInterviews = interviews.stream()
-                .filter(i -> i.getStatus() == InterviewStatus.COMPLETED)
+                .filter(i -> "COMPLETED".equals(i.getStatus()))
                 .count();
 
         long cancelledInterviews = interviews.stream()
-                .filter(i -> i.getStatus() == InterviewStatus.CANCELLED)
+                .filter(i -> "CANCELLED".equals(i.getStatus()))
                 .count();
 
         model.addAttribute("portalName", "UniIntern Portal");

@@ -1,6 +1,9 @@
 package com.uniintern.portal.admin;
 
-import com.uniintern.portal.company.*;
+import com.uniintern.portal.company.entity.Company;
+import com.uniintern.portal.company.repository.CompanyRepository;
+import com.uniintern.portal.company.entity.Internship;
+import com.uniintern.portal.company.repository.InternshipRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -29,14 +32,14 @@ public class AdminSeedData implements CommandLineRunner {
                 c1.setCompanyName("TechVentures Inc.");
                 c1.setEmail("hr@techventures.com");
                 c1.setIndustry("Software");
-                c1.setStatus(CompanyStatus.PENDING_VERIFICATION);
+                c1.setStatus("PENDING_VERIFICATION");
                 companyRepository.save(c1);
 
                 Company c2 = new Company();
                 c2.setCompanyName("DataStream Analytics");
                 c2.setEmail("contact@datastream.com");
                 c2.setIndustry("Data Science");
-                c2.setStatus(CompanyStatus.PENDING_VERIFICATION);
+                c2.setStatus("PENDING_VERIFICATION");
                 companyRepository.save(c2);
             }
 
@@ -50,7 +53,7 @@ public class AdminSeedData implements CommandLineRunner {
                 i1.setLocation("Colombo");
                 i1.setDuration("6 months");
                 i1.setDeadline(LocalDate.now().plusDays(20));
-                i1.setStatus(InternshipStatus.PENDING_ADMIN_APPROVAL);
+                i1.setStatus("PENDING_ADMIN_APPROVAL");
 
                 Internship i2 = new Internship();
                 i2.setCompanyId(2L);
@@ -61,7 +64,7 @@ public class AdminSeedData implements CommandLineRunner {
                 i2.setLocation("Remote");
                 i2.setDuration("3 months");
                 i2.setDeadline(LocalDate.now().plusDays(15));
-                i2.setStatus(InternshipStatus.PENDING_ADMIN_APPROVAL);
+                i2.setStatus("PENDING_ADMIN_APPROVAL");
 
                 internshipRepository.save(i1);
                 internshipRepository.save(i2);
