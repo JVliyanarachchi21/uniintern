@@ -22,6 +22,7 @@ public class Internship {
     private String requiredSkills;
 
     private Double minGpa;
+    private Double maxGpa;
 
     private String location;
 
@@ -82,6 +83,14 @@ public class Internship {
 
     public void setMinGpa(Double minGpa) {
         this.minGpa = minGpa;
+    }
+
+    public Double getMaxGpa() {
+        return maxGpa;
+    }
+
+    public void setMaxGpa(Double maxGpa) {
+        this.maxGpa = maxGpa;
     }
 
     public String getLocation() {

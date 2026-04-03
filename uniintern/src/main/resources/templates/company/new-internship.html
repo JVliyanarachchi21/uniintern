@@ -93,10 +93,12 @@
 
         <div class="grid-3 compact-grid">
           <div class="field">
-            <label for="minGpa">Minimum GPA</label>
-            <input id="minGpa" type="number" name="minGpa" step="0.01" min="0" max="4" placeholder="e.g. 3.00">
-          </div>
-
+            <label>GPA Requirement <span class="required">*</span></label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <input id="minGpa" type="number" name="minGpa" step="0.01" min="0" max="4" placeholder="Min (e.g. 2.50)" required>
+                <input id="maxGpa" type="number" name="maxGpa" step="0.01" min="0" max="4" placeholder="Max (e.g. 4.00)" required>
+            </div>
+        </div>
           <div class="field">
             <label for="vacancies">Number of Vacancies <span class="required">*</span></label>
             <input id="vacancies" type="number" name="vacancies" min="1" placeholder="e.g. 2" required>

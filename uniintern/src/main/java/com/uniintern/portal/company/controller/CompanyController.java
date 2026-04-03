@@ -225,6 +225,7 @@ public String internshipsListing() {
             @RequestParam("duration") String duration,
             @RequestParam("deadline") String deadline,
             @RequestParam(value = "minGpa", required = false) String minGpa,
+            @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam(value = "skills", required = false) String skills,
             @RequestParam(value = "status", required = false) String status
     ) {
@@ -240,6 +241,10 @@ public String internshipsListing() {
 
         if (minGpa != null && !minGpa.isBlank()) {
             internship.setMinGpa(Double.parseDouble(minGpa));
+        }
+        
+        if (maxGpa != null && !maxGpa.isBlank()) {
+            internship.setMaxGpa(Double.parseDouble(maxGpa));
         }
 
         if ("DRAFT".equalsIgnoreCase(status)) {
@@ -339,6 +344,7 @@ public String updateInternship(
         @RequestParam("location") String location,
         @RequestParam("duration") String duration,
         @RequestParam(value = "minGpa", required = false) String minGpa,
+        @RequestParam(value = "maxGpa", required = false) String maxGpa,
         @RequestParam("deadline") String deadline,
         @RequestParam(value = "requiredSkills", required = false) String requiredSkills
 ) {
@@ -355,6 +361,12 @@ public String updateInternship(
         internship.setMinGpa(Double.parseDouble(minGpa));
     } else {
         internship.setMinGpa(null);
+    }
+    
+    if (maxGpa != null && !maxGpa.isBlank()) {
+        internship.setMaxGpa(Double.parseDouble(maxGpa));
+    } else {
+        internship.setMaxGpa(null);
     }
 
     internshipService.save(internship);

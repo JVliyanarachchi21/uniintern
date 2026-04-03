@@ -36,27 +36,57 @@ function validateInternshipForm() {
     }
   }
 
+  const maxGpaValue = document.querySelector('input[name="maxGpa"]')?.value || "";
+  
+  if (minGpaValue === "" || maxGpaValue === "") {
+    alert("Both Minimum and Maximum GPA are required.");
+    const focusTarget = document.querySelector('input[name="' + (minGpaValue === "" ? 'minGpa' : 'maxGpa') + '"]');
+    if (focusTarget) focusTarget.focus();
+    return false;
+  }
+
+  let gpaError = false;
+  let minGpa = null;
+  let maxGpa = null;
+
   if (minGpaValue !== "") {
-    const minGpa = parseFloat(minGpaValue);
+    minGpa = parseFloat(minGpaValue);
+    if (minGpa < 0 || minGpa > 4 || isNaN(minGpa)) gpaError = true;
+  }
+  
+  if (maxGpaValue !== "") {
+    maxGpa = parseFloat(maxGpaValue);
+    if (maxGpa < 0 || maxGpa > 4 || isNaN(maxGpa)) gpaError = true;
+  }
+
+  if (minGpa !== null && maxGpa !== null && minGpa > maxGpa) {
+    gpaError = true;
+  }
+
+  if (gpaError) {
     const gpaInput = document.querySelector('input[name="minGpa"]');
-    if (minGpa < 0 || minGpa > 4 || isNaN(minGpa)) {
-      if(gpaInput) {
-        gpaInput.style.borderColor = "red";
-        gpaInput.style.color = "red";
-        let errorMsg = gpaInput.nextElementSibling;
-        if (!errorMsg || !errorMsg.classList.contains('gpa-error')) {
-            errorMsg = document.createElement('div');
-            errorMsg.classList.add('gpa-error');
-            errorMsg.style.color = 'red';
-            errorMsg.style.fontSize = '13px';
-            errorMsg.style.marginTop = '4px';
-            gpaInput.parentNode.appendChild(errorMsg);
-        }
-        errorMsg.textContent = "Valid GPA between 0.00 and 4.00 is required.";
-        gpaInput.focus();
+    if(gpaInput) {
+      gpaInput.style.borderColor = "red";
+      let errorMsg = gpaInput.parentNode.querySelector('.gpa-error');
+      if (!errorMsg) {
+          errorMsg = document.createElement('div');
+          errorMsg.classList.add('gpa-error');
+          errorMsg.style.color = 'red';
+          errorMsg.style.fontSize = '13px';
+          errorMsg.style.marginTop = '4px';
+          gpaInput.parentNode.appendChild(errorMsg);
       }
-      return false;
+      errorMsg.textContent = "Valid GPA between 0.00 and 4.00 is required, and Min must not exceed Max.";
+      gpaInput.focus();
     }
+    return false;
+  } else {
+      const gpaInput = document.querySelector('input[name="minGpa"]');
+      if (gpaInput) {
+          gpaInput.style.borderColor = "";
+          const errorMsg = gpaInput.parentNode.querySelector('.gpa-error');
+          if (errorMsg) errorMsg.remove();
+      }
   }
 
   const total = wSkills + wGpa + wExp + wCert;
@@ -513,37 +543,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // GPA Constraint
-    const gpaInput = document.querySelector('input[name="minGpa"]');
-    if (gpaInput) {
-        // Prevent typing 'e', '-', '+' 
-        gpaInput.addEventListener('keydown', function(e) {
-            if (['e', 'E', '-', '+'].includes(e.key)) {
-                e.preventDefault();
-            }
-        });
+    const minGpaInput = document.querySelector('input[name="minGpa"]');
+    const maxGpaInput = document.querySelector('input[name="maxGpa"]');
+    
+    function validateGpaLive() {
+        if (!minGpaInput && !maxGpaInput) return;
+        
+        let container = (minGpaInput || maxGpaInput).parentNode;
+        let errorMsg = container.querySelector('.gpa-error');
+        
+        let minVal = minGpaInput && minGpaInput.value !== "" ? parseFloat(minGpaInput.value) : null;
+        let maxVal = maxGpaInput && maxGpaInput.value !== "" ? parseFloat(maxGpaInput.value) : null;
+        
+        let isError = false;
+        let msg = "";
 
-        // Live validation for red text
-        gpaInput.addEventListener('input', function() {
-            let errorMsg = this.nextElementSibling;
-            if (!errorMsg || !errorMsg.classList.contains('gpa-error')) {
+        if (minVal !== null && (isNaN(minVal) || minVal < 0 || minVal > 4)) {
+            isError = true;
+            msg = "Min GPA must be between 0.00 and 4.00";
+        } else if (maxVal !== null && (isNaN(maxVal) || maxVal < 0 || maxVal > 4)) {
+            isError = true;
+            msg = "Max GPA must be between 0.00 and 4.00";
+        } else if (minVal !== null && maxVal !== null && minVal > maxVal) {
+            isError = true;
+            msg = "Minimum GPA cannot exceed Maximum GPA";
+        }
+
+        if (isError) {
+            if (!errorMsg) {
                 errorMsg = document.createElement('div');
                 errorMsg.classList.add('gpa-error');
-                errorMsg.style.color = 'red';
-                errorMsg.style.fontSize = '13px';
+                errorMsg.style.color = '#ef4444';
+                errorMsg.style.fontSize = '12px';
                 errorMsg.style.marginTop = '4px';
-                this.parentNode.appendChild(errorMsg);
+                errorMsg.style.gridColumn = '1 / -1';
+                container.appendChild(errorMsg);
             }
+            errorMsg.textContent = msg;
+            if (minGpaInput) { minGpaInput.style.borderColor = "#ef4444"; minGpaInput.style.color = "#ef4444"; }
+            if (maxGpaInput) { maxGpaInput.style.borderColor = "#ef4444"; maxGpaInput.style.color = "#ef4444"; }
+        } else {
+            if (errorMsg) errorMsg.remove();
+            if (minGpaInput) { minGpaInput.style.borderColor = ""; minGpaInput.style.color = ""; }
+            if (maxGpaInput) { maxGpaInput.style.borderColor = ""; maxGpaInput.style.color = ""; }
+        }
+    }
 
-            const val = parseFloat(this.value);
-            if (this.value !== "" && (isNaN(val) || val < 0 || val > 4)) {
-                errorMsg.textContent = "GPA must be between 0.00 and 4.00";
-                this.style.borderColor = "red";
-                this.style.color = "red";
-            } else {
-                errorMsg.textContent = "";
-                this.style.borderColor = "";
-                this.style.color = "";
-            }
-        });
+    if (minGpaInput) {
+        minGpaInput.addEventListener('keydown', function(e) { if (['e', 'E', '-', '+'].includes(e.key)) e.preventDefault();});
+        minGpaInput.addEventListener('input', validateGpaLive);
+    }
+    
+    if (maxGpaInput) {
+        maxGpaInput.addEventListener('keydown', function(e) { if (['e', 'E', '-', '+'].includes(e.key)) e.preventDefault();});
+        maxGpaInput.addEventListener('input', validateGpaLive);
     }
 });
