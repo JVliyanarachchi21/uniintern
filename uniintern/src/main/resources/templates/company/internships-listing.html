@@ -84,151 +84,40 @@
                 </div>
 
                 <div class="internships-grid-v2">
-                    <!-- Card 1 -->
-                    <div class="job-card-v2">
+                    <!-- Dynamic Cards -->
+                    <div class="job-card-v2" th:each="job : ${internships}">
                         <div class="card-top-row">
                             <div class="c-logo-box">
-                                <img src="https://ui-avatars.com/api/?name=TechCorp+Lanka&background=0D8ABC&color=fff&size=128" alt="TechCorp Lanka Logo">
+                                <img th:if="${job.logoPath == null or job.logoPath.isEmpty()}" th:src="'https://ui-avatars.com/api/?name=' + ${job.companyName} + '&background=0D8ABC&color=fff&size=128'" th:alt="${job.companyName} + ' Logo'">
+                                <img th:unless="${job.logoPath == null or job.logoPath.isEmpty()}" th:src="${job.logoPath}" th:alt="${job.companyName} + ' Logo'">
                             </div>
-                            <span class="card-top-badge hot">🔥 Hot</span>
                         </div>
-                        <h4 class="job-title">Software Engineering Intern</h4>
-                        <div class="job-company">TechCorp Lanka</div>
+                        <h4 class="job-title" th:text="${job.title}">Internship Title</h4>
+                        <div class="job-company" th:text="${job.companyName}">Company Name</div>
                         
                         <div class="job-tags">
                             <span class="j-tag">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                Hybrid
+                                <span th:text="${job.location}">Location</span>
                             </span>
                             <span class="j-tag">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                6 Months
+                                <span th:text="${job.duration}">Duration</span>
                             </span>
                         </div>
 
-                        <p class="job-description">Join our engineering team to work on real-world projects and modern scalable web applications serving millions of users daily.</p>
+                        <p class="job-description" th:text="${job.descriptionSnippet}">Description here...</p>
                         
                         <div class="job-footer">
-                            <span class="job-posted">Posted 2 days ago</span>
-                            <a href="/company/internships/preview" class="btn-card-apply">Apply Now</a>
-                        </div>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div class="job-card-v2">
-                        <div class="card-top-row">
-                            <div class="c-logo-box">
-                                <img src="https://ui-avatars.com/api/?name=InsightX&background=F59E0B&color=fff&size=128" alt="InsightX Analytics Logo">
-                            </div>
-                            <span class="card-top-badge">Featured</span>
-                        </div>
-                        <h4 class="job-title">Data Science Intern</h4>
-                        <div class="job-company">InsightX Analytics</div>
-                        
-                        <div class="job-tags">
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                Remote
-                            </span>
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                3 Months
-                            </span>
-                        </div>
-
-                        <p class="job-description">Work with petabyte-scale data pipelines, cutting-edge machine learning models, and complex analytics dashboards.</p>
-                        
-                        <div class="job-footer">
-                            <span class="job-posted">Posted 1 week ago</span>
-                            <a href="/company/internships/preview" class="btn-card-apply">Apply Now</a>
+                            <span class="job-posted" th:text="${job.postedAgo}">Posted X days ago</span>
+                            <a th:href="@{/company/internships/preview(id=${job.id})}" class="btn-card-apply">Apply Now</a>
                         </div>
                     </div>
                     
-                    <!-- Card 3 -->
-                    <div class="job-card-v2">
-                        <div class="card-top-row">
-                            <div class="c-logo-box">
-                                <img src="https://ui-avatars.com/api/?name=QualityFirst&background=10B981&color=fff&size=128" alt="QualityFirst Logo">
-                            </div>
-                        </div>
-                        <h4 class="job-title">QA Engineering Intern</h4>
-                        <div class="job-company">QualityFirst Pvt Ltd</div>
-                        
-                        <div class="job-tags">
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                Colombo
-                            </span>
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                4 Months
-                            </span>
-                        </div>
-
-                        <p class="job-description">Learn automated testing in Cypress and Selenium. Own the bug tracking processes for our enterprise SaaS products.</p>
-                        
-                        <div class="job-footer">
-                            <span class="job-posted">Posted 3 days ago</span>
-                            <a href="/company/internships/preview" class="btn-card-view">View Details</a>
-                        </div>
-                    </div>
-
-                    <!-- Card 4 -->
-                    <div class="job-card-v2">
-                        <div class="card-top-row">
-                            <div class="c-logo-box">
-                                <img src="https://ui-avatars.com/api/?name=Creative+Studio&background=8B5CF6&color=fff&size=128" alt="Creative Studio Logo">
-                            </div>
-                        </div>
-                        <h4 class="job-title">UI/UX Design Intern</h4>
-                        <div class="job-company">Creative Studio Hub</div>
-                        
-                        <div class="job-tags">
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                Hybrid
-                            </span>
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                6 Months
-                            </span>
-                        </div>
-
-                        <p class="job-description">Collaborate on modern web design, mobile wireframing, and interactive prototyping on Figma for exciting client projects.</p>
-                        
-                        <div class="job-footer">
-                            <span class="job-posted">Posted 5 days ago</span>
-                            <a href="/company/internships/preview" class="btn-card-view">View Details</a>
-                        </div>
-                    </div>
-
-                    <!-- Card 5 -->
-                    <div class="job-card-v2">
-                        <div class="card-top-row">
-                            <div class="c-logo-box">
-                                <img src="https://ui-avatars.com/api/?name=NetCore&background=EF4444&color=fff&size=128" alt="NetCore Systems Logo">
-                            </div>
-                        </div>
-                        <h4 class="job-title">Network Support Intern</h4>
-                        <div class="job-company">NetCore Systems</div>
-                        
-                        <div class="job-tags">
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                Kandy
-                            </span>
-                            <span class="j-tag">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                3 Months
-                            </span>
-                        </div>
-
-                        <p class="job-description">Train on infrastructure support, network monitoring tools, and Tier-1 troubleshooting operations in a fast-paced NOC.</p>
-                        
-                        <div class="job-footer">
-                            <span class="job-posted">Posted 1 week ago</span>
-                            <a href="/company/internships/preview" class="btn-card-view">View Details</a>
-                        </div>
+                    <!-- Empty State -->
+                    <div th:if="${internships == null or internships.isEmpty()}" style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;">
+                        <h3 style="color: var(--color-dark); margin-bottom: 0.5rem;">No Opportunities Found</h3>
+                        <p style="color: rgba(5,38,89,0.7);">There are currently no approved internships available. Please check back later.</p>
                     </div>
                 </div>
             </div>

@@ -111,7 +111,9 @@ public String applicationTemplate(Model model) {
 }
 
 @GetMapping("/internships/listing")
-public String internshipsListing() {
+public String internshipsListing(Model model) {
+    java.util.List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings();
+    model.addAttribute("internships", internships);
     return "company/internships-listing";
 }
 
