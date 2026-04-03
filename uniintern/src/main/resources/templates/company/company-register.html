@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Register | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/company-auth.css}">
+</head>
+<body>
+
+<div class="auth-page">
+
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+        <div class="auth-left-content-wrapper">
+
+            <div class="brand-wrap">
+                <img th:src="@{/images/logo.png}" src="/images/logo.png" class="brand-logo" alt="UniIntern Logo">
+
+                <div class="brand-text-wrap">
+                    <h1 class="brand-name">UniIntern</h1>
+                    <p class="brand-tag">LAUNCH YOUR CAREER</p>
+                </div>
+            </div>
+
+            <div class="hero-badge">
+                Build your recruiter presence
+            </div>
+
+            <div class="auth-left-content">
+                <h2>Create your company account</h2>
+
+                <p>
+                    Join UniIntern to post internships, discover talented students,
+                    and manage recruitment through one simple platform.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Create and manage internship postings</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Review verified student applications</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Get started with secure email verification</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
+        <div class="auth-card register-card">
+
+            <div class="mini-logo-wrap">
+                <img th:src="@{/images/logo.png}" src="/images/logo.png" class="mini-logo-img" alt="UniIntern Logo">
+            </div>
+
+            <h2>Create Account</h2>
+            <p class="auth-sub">Register your company to get started</p>
+            
+            <div th:if="${error}" style="color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 10px; margin-bottom: 20px; font-size: 14px; text-align: center;" th:text="${error}"></div>
+
+            <form th:action="@{/company/register}" method="post">
+                <div class="field">
+                    <label for="companyName">Company Name</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🏢</span>
+                        <input type="text" id="companyName" name="companyName" placeholder="TechCorp Lanka" required>
+                    </div>
+                    <span class="error-msg" id="companyNameError"></span>
+                </div>
+
+                <div class="field">
+                    <label for="email">Company Email</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">✉</span>
+                        <input type="email" id="email" name="email" placeholder="hr@company.com" required>
+                    </div>
+                    <span class="error-msg" id="emailError"></span>
+                </div>
+
+                <div class="field">
+                    <label for="industry">Industry</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🏭</span>
+                        <select id="industry" name="industry" required style="width: 100%; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-dark); cursor: pointer; padding-right: 14px;">
+                            <option value="" disabled selected>Select an industry</option>
+                            <option value="Software / IT">Software / IT</option>
+                            <option value="Finance / Banking">Finance / Banking</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Education">Education</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Construction">Construction</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <span class="error-msg" id="industryError"></span>
+                </div>
+
+                <div class="field">
+                    <label for="description">Company Description</label>
+                    <textarea id="description" name="description" placeholder="Briefly describe your company" class="auth-textarea" required></textarea>
+                    <span class="error-msg" id="descriptionError"></span>
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    </div>
+                    <span class="error-msg" id="passwordError"></span>
+                </div>
+
+                <div class="field">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🔐</span>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <span class="error-msg" id="confirmPasswordError"></span>
+                </div>
+
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+
+            <div class="auth-links">
+                <p>Already have an account? <a th:href="@{/company/login}">Sign in</a></p>
+                <p>Need to verify your email? <a th:href="@{/company/verify}">Verify here</a></p>
+                <p><a th:href="@{/}">← Back to Home</a></p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="/js/company-auth.js"></script>
+</body>
+</html>

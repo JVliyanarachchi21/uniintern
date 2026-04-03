@@ -14,8 +14,8 @@
     <header class="site-header" id="siteHeader">
         <div class="container nav-wrap">
             <a class="brand" th:href="@{/}" href="/">
-                <span class="brand-icon">
-                    <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 46px; height: auto; border-radius: 4px;">
+                <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                    <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
                 </span>
                 <span class="brand-text">
                     <span class="brand-name">UniIntern</span>
@@ -27,11 +27,13 @@
                 <a href="#features">Features</a>
                 <a href="#how-it-works">How It Works</a>
                 <a href="#who-its-for">Who It&apos;s For</a>
+                <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
                 <a th:href="@{/dashboard}" href="/dashboard">Free Course</a>
             </nav>
 
             <div class="nav-actions desktop-actions">
                 <a class="btn btn-outline" th:href="@{/student/register}" href="/student/register">I&apos;m a Student</a>
+                <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
                 <a class="btn btn-primary" th:href="@{/company/register}" href="/company/register">I&apos;m a Company</a>
             </div>
 
@@ -46,6 +48,10 @@
             <a href="#features">Features</a>
             <a href="#how-it-works">How It Works</a>
             <a href="#who-its-for">Who It&apos;s For</a>
+            <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Free Course</a>
+            <a class="btn btn-outline" th:href="@{/student/register}" href="/student/register">I&apos;m a Student</a>
+            <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
             <a th:href="@{/dashboard}" href="/dashboard">Free Course</a>
             <a class="btn btn-outline" th:href="@{/student/register}" href="/student/register">I&apos;m a Student</a>
             <a class="btn btn-primary" th:href="@{/company/register}" href="/company/register">I&apos;m a Company</a>
@@ -77,6 +83,7 @@
                         <a class="btn btn-primary btn-large" th:href="@{/student/register}" href="/student/register">Students: Apply
                             <span aria-hidden="true">→</span>
                         </a>
+                        <a class="btn btn-light btn-large" th:href="@{/company/login}" href="/company/login">Companies: Hire</a>
                         <a class="btn btn-light btn-large" th:href="@{/company/register}" href="/company/register">Companies: Hire</a>
                     </div>
 
@@ -338,6 +345,7 @@
                 <p>Join thousands of students and recruiters already using UniIntern to build the future of work.</p>
                 <div class="cta-actions">
                     <a class="btn btn-primary btn-large" th:href="@{/student/register}" href="/student/register">Join as Student</a>
+                    <a class="btn btn-ghost-light btn-large" th:href="@{/company/login}" href="/company/login">Join as Company</a>
                     <a class="btn btn-ghost-light btn-large" th:href="@{/company/register}" href="/company/register">Join as Company</a>
                 </div>
             </div>
@@ -348,6 +356,8 @@
         <div class="container footer-top">
             <div class="footer-brand">
                 <div class="brand footer-brand-inner">
+                    <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                        <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
                     <span class="brand-icon">
                         <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 46px; height: auto; border-radius: 4px;">
                     </span>
@@ -387,4 +397,5 @@
 
 <script th:src="@{/js/home.js}" src="/js/home.js"></script>
 </body>
+</html>
 </html>

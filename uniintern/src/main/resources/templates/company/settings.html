@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Settings',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+    <div class="settings-header">
+        <div>
+            <h1 class="page-title">Security Settings</h1>
+            <p class="page-sub">Manage your password, account protection, and login preferences.</p>
+        </div>
+    </div>
+
+    <div class="settings-grid">
+
+        <!-- Change Password -->
+        <div class="settings-card">
+            <div class="section-title">Change Password</div>
+
+            <div class="field">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password">
+            </div>
+
+            <div class="field">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password">
+            </div>
+
+            <div class="field">
+                <label for="confirmPassword">Confirm New Password</label>
+                <input type="password" id="confirmPassword" placeholder="Re-enter new password">
+            </div>
+
+            <div class="form-actions no-border-actions">
+                <button type="button" class="btn primary" onclick="updatePassword()">Update Password</button>
+            </div>
+        </div>
+
+        <!-- Security Preferences -->
+        <div class="settings-card">
+            <div class="section-title">Security Preferences</div>
+
+            <div class="security-option">
+                <div>
+                    <div class="security-title">Two-Factor Authentication</div>
+                    <div class="security-desc">Add an extra verification step when signing in.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="twoFactorToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="security-option">
+                <div>
+                    <div class="security-title">Login Alerts</div>
+                    <div class="security-desc">Receive email alerts for new login attempts.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="loginAlertToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="security-option">
+                <div>
+                    <div class="security-title">Remember Trusted Device</div>
+                    <div class="security-desc">Reduce verification prompts on trusted devices.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="trustedDeviceToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="form-actions no-border-actions">
+                <button type="button" class="btn" onclick="saveSecurityPreferences()">Save Preferences</button>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="settings-card full-width-card">
+            <div class="section-title">Recent Security Activity</div>
+
+            <div class="security-log">
+                <div class="security-log-item">
+                    <div>
+                        <div class="security-title">Password changed</div>
+                        <div class="security-desc">Your password was updated successfully.</div>
+                    </div>
+                    <div class="security-time">2026-03-21 10:30 AM</div>
+                </div>
+
+                <div class="security-log-item">
+                    <div>
+                        <div class="security-title">New login detected</div>
+                        <div class="security-desc">Login from Colombo, Sri Lanka.</div>
+                    </div>
+                    <div class="security-time">2026-03-20 08:15 PM</div>
+                </div>
+
+                <div class="security-log-item">
+                    <div>
+                        <div class="security-title">Security preferences updated</div>
+                        <div class="security-desc">Login alerts were enabled.</div>
+                    </div>
+                    <div class="security-time">2026-03-18 02:00 PM</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<script src="/js/company.js"></script>
+</body>
+</html>

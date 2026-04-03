@@ -1,0 +1,39 @@
+<div th:fragment="topbar" class="topbar">
+    <div class="topbar-right">
+
+        <a th:href="@{/company/notifications}" class="notification-link">
+            <i class="bi bi-bell"></i>
+            <span class="badge">2</span>
+        </a>
+
+        <div class="profile-dropdown">
+            <button type="button" class="profile-trigger" onclick="toggleProfileMenu()">
+                <img th:if="${companyLogo != null && companyLogo != ''}" th:src="${companyLogo}" class="profile-avatar profile-avatar-img" alt="Logo">
+                <span th:unless="${companyLogo != null && companyLogo != ''}" class="profile-avatar" th:text="${#strings.substring(companyName, 0, 1)}">T</span>
+                
+                <span class="profile-name" th:text="${companyName}">TechCorp Lanka</span>
+                <i class="bi bi-chevron-down profile-arrow"></i>
+            </button>
+
+            <div id="profileMenu" class="profile-menu">
+                <a th:href="@{/company/profile}">
+                    <i class="bi bi-building"></i>
+                    <span>Company Profile</span>
+                </a>
+
+                <a th:href="@{/company/settings}">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </a>
+
+                <div class="profile-menu-divider"></div>
+
+                <a th:href="@{/company/login}" class="logout-link">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

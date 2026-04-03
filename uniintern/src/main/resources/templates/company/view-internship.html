@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+      pageTitle='Internship Details',
+      content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+    <div class="view-page-wrap">
+
+        <a th:href="@{/company/internships}" class="back-link">← Back to Internships</a>
+
+        <div class="view-header">
+            <div>
+                <h1 class="page-title small-title" th:text="${internship.title}">Data Science Trainee</h1>
+
+                <span class="status-chip"
+                      th:classappend="${internship.status == 'APPROVED'} ? ' chip-approved' :
+                                      (${internship.status == 'PENDING_ADMIN_APPROVAL'} ? ' chip-pending' :
+                                      (${internship.status == 'REJECTED'} ? ' chip-rejected' : ' chip-closed'))"
+                      th:text="${internship.status}">
+                    APPROVED
+                </span>
+            </div>
+        </div>
+
+        <div class="view-tabs">
+            <a th:href="@{'/company/internships/view/' + ${internship.id} + '?tab=overview'}"
+               th:class="'view-tab ' + (${activeTab == 'overview'} ? 'active' : '')">
+                Overview
+            </a>
+
+            <a th:href="@{'/company/internships/view/' + ${internship.id} + '?tab=applicants'}"
+               th:class="'view-tab ' + (${activeTab == 'applicants'} ? 'active' : '')">
+                Applicants (4)
+            </a>
+
+            <a th:href="@{'/company/internships/view/' + ${internship.id} + '?tab=marking'}"
+               th:class="'view-tab ' + (${activeTab == 'marking'} ? 'active' : '')">
+                Marking Guide
+            </a>
+        </div>
+
+        <!-- OVERVIEW TAB -->
+        <div th:if="${activeTab == 'overview'}">
+
+            <div class="view-card">
+                <div class="view-info-grid">
+                    <div class="view-info-item">
+                        <div class="view-label">Type</div>
+                        <div class="view-value">Trainee</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label">Location</div>
+                        <div class="view-value" th:text="${internship.location}">Onsite</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label">Duration</div>
+                        <div class="view-value" th:text="${internship.duration}">3 months</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label">Deadline</div>
+                        <div class="view-value" th:text="${internship.deadline}">2026-05-15</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label">GPA Requirement</div>
+                        <div class="view-value">
+                            <th:block th:if="${internship.minGpa != null && internship.maxGpa != null}">
+                                <span th:text="${internship.minGpa + ' - ' + internship.maxGpa}">3.2 - 4.0</span>
+                            </th:block>
+                            <th:block th:if="${internship.minGpa != null && internship.maxGpa == null}">
+                                <span th:text="${'Min ' + internship.minGpa}">Min 3.2</span>
+                            </th:block>
+                            <th:block th:if="${internship.minGpa == null && internship.maxGpa != null}">
+                                <span th:text="${'Max ' + internship.maxGpa}">Max 4.0</span>
+                            </th:block>
+                            <th:block th:if="${internship.minGpa == null && internship.maxGpa == null}">
+                                <span style="color:var(--text-muted)">Not specified</span>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label">Vacancies</div>
+                        <div class="view-value">5</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-card">
+                <h3 class="view-section-title">Description</h3>
+                <p class="view-description" th:text="${internship.description}">
+                    Work with our data team on ML models and analytics dashboards.
+                </p>
+            </div>
+
+            <div class="view-card">
+                <h3 class="view-section-title">Required Skills</h3>
+
+                <div class="skills-wrap">
+                    <span class="skill-badge"
+                          th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}"
+                          th:text="${#strings.trim(skill)}">
+                        Python
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- APPLICANTS TAB -->
+        <div th:if="${activeTab == 'applicants'}">
+            <div class="applicants-display-card">
+
+                <div class="applicant-display-item" th:each="a : ${applicants}">
+                    <div class="applicant-left">
+                        <div class="applicant-display-name" th:text="${a.name}">Ashan Fernando</div>
+                        <div class="applicant-display-meta">
+                            <span th:text="${a.university}">University of Colombo</span>
+                            <span> · </span>
+                            <span>GPA: </span>
+                            <span th:text="${a.gpa}">3.75</span>
+                        </div>
+                    </div>
+
+                    <div class="applicant-right">
+                        <div class="applicant-score">
+                            Score: <span th:text="${a.score}">54</span>
+                        </div>
+
+                        <span class="badge-status"
+                              th:classappend="${a.status == 'Shortlisted'} ? ' st-approved' :
+                                              (${a.status == 'Scored'} ? ' st-scored' : ' st-pending')"
+                              th:text="${a.status}">
+                            Shortlisted
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MARKING GUIDE TAB -->
+        <div th:if="${activeTab == 'marking'}">
+            <div class="view-card">
+                <h3 class="view-section-title">Evaluation Criteria</h3>
+
+                <div class="view-info-grid">
+                    <div class="view-info-item">
+                        <div class="view-label"><i class="bi bi-book" style="color:#3b82f6; margin-right:6px;"></i>GPA Weight</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #3b82f6;">30%</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label"><i class="bi bi-tools" style="color:#8b5cf6; margin-right:6px;"></i>Skills Weight</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #8b5cf6;">40%</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label"><i class="bi bi-briefcase" style="color:#f59e0b; margin-right:6px;"></i>Experience Weight</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #f59e0b;">20%</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label"><i class="bi bi-award" style="color:#10b981; margin-right:6px;"></i>Certificates Weight</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #10b981;">10%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions" style="border-top:none; padding-top:0; margin-top:18px;">
+            <a th:href="@{/company/internships}" class="btn">Back</a>
+        </div>
+
+    </div>
+
+</section>
+</body>
+</html>
