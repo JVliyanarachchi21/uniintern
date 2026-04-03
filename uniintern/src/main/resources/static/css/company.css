@@ -19,6 +19,30 @@
   --success-text: #16a34a;
 }
 
+/* ===== Public Portal Pages Specific Styles ===== */
+body.public-portal-page {
+    background-color: #e3eff9 !important;
+}
+
+/* Small styling for validation states from application-template */
+.pub-form-control:invalid:not(:placeholder-shown):focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+}
+
+.pub-form-control:valid:not(:placeholder-shown):focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+}
+
+.form-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(17, 24, 39, 0.5);
+    margin-top: 6px;
+    font-weight: 500;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -3498,7 +3522,8 @@ textarea.pub-form-control {
   padding: 0;
   background: transparent;
 }
-
+
+
 /* --- Internships Listing Additions --- */
 .listing-hero {
     padding: 10rem 0 5rem;
@@ -3965,13 +3990,23 @@ textarea.pub-form-control {
 }
 
 .skill-tag {
-    padding: 0.5rem 1rem;
-    background: rgba(84, 131, 179, 0.1);
-    border-radius: 8px;
+    padding: 0.55rem 1.2rem;
+    background: linear-gradient(135deg, rgba(193, 232, 255, 0.5) 0%, rgba(125, 160, 202, 0.2) 100%);
+    border-radius: 99px;
     font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--uni-secondary);
-    border: 1px solid rgba(84, 131, 179, 0.2);
+    font-weight: 700;
+    color: var(--color-dark);
+    border: 1px solid rgba(84, 131, 179, 0.35);
+    box-shadow: 0 2px 8px rgba(2, 16, 36, 0.04);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.skill-tag:hover {
+    background: linear-gradient(135deg, rgba(193, 232, 255, 0.7) 0%, rgba(125, 160, 202, 0.35) 100%);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(2, 16, 36, 0.08);
 }
 
 .preview-action {
