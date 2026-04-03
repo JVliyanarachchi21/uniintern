@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify OTP | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+</head>
+<body style="background-color: var(--bg-main); margin: 0; font-family: 'Inter', Roboto, Arial, sans-serif;">
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: var(--bg-white); width: 100%; max-width: 440px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); padding: 48px 40px; text-align: center; border: 1px solid var(--border-soft);">
+
+        <!-- Brand -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 30px;">
+            <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 54px; height: auto; border-radius: 4px;">
+            <div style="color: var(--text-dark); font-weight: 800; font-size: 22px;">UniIntern</div>
+        </div>
+
+        <!-- Header -->
+        <h2 style="margin: 0 0 12px; font-size: 32px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px;">Verify your email</h2>
+        <p style="margin: 0 0 16px; color: var(--text-muted); font-size: 16px;">An OTP has been sent to</p>
+
+        <!-- Email Pill -->
+        <div style="display: inline-block; background: var(--color-light); color: var(--color-dark); font-weight: 700; font-size: 14px; padding: 10px 20px; border-radius: 999px; margin-bottom: 32px; border: 1px solid var(--border-soft);" th:text="${email}">
+            student@my.sliit.lk
+        </div>
+
+        <p th:if="${otpError}" th:text="${otpError}" style="color:#ef4444; font-size:14px; margin-top:-16px; margin-bottom:20px; font-weight:600;"></p>
+
+        <!-- Form -->
+        <form method="post" th:action="@{/student/verify-otp}" style="text-align: left;">
+            <input type="hidden" name="email" th:value="${email}">
+            
+            <div style="margin-bottom: 24px;">
+                <label for="otp" style="display: block; font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 8px;">Enter OTP</label>
+                <input id="otp" type="text" name="otp" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric" autocomplete="one-time-code" required
+                       style="width: 100%; box-sizing: border-box; padding: 14px 16px; border: 1px solid var(--border-soft); border-radius: 12px; font-size: 15px; outline: none; background: var(--bg-white); color: var(--text-dark); transition: all 0.2s;">
+                <p id="otpHint" style="margin: 6px 0 0; font-size: 12px; color: transparent; font-weight: 600; min-height: 16px;"></p>
+            </div>
+
+            <button type="submit" style="width: 100%; background: var(--color-dark); color: var(--bg-white); font-weight: 600; font-size: 16px; padding: 14px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(5, 38, 89, 0.2);">
+                Verify and Continue
+            </button>
+        </form>
+
+        <!-- Footer Links -->
+        <div style="margin-top: 28px; font-size: 14px; font-weight: 600;">
+            <a href="#" style="color: var(--color-primary); text-decoration: none;">Resend OTP</a>
+            <span style="color: var(--text-muted); margin: 0 8px;">•</span>
+            <a th:href="@{/student/register}" style="color: var(--color-primary); text-decoration: none;">Back to registration</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const otpInput = document.getElementById("otp");
+    const otpHint = document.getElementById("otpHint");
+
+    // We can interact with CSS vars via getComputedStyle if needed, 
+    // but mapping specific hexes for JS states is fine here.
+    const primaryColor = "#5483B3"; // var(--color-primary)
+    const softBorder = "#d9e4f1"; // var(--border-soft)
+
+    // Add CSS focus state simulation for inline styles
+    otpInput.addEventListener("focus", function() {
+        this.style.borderColor = primaryColor;
+        this.style.boxShadow = "0 0 0 4px rgba(84, 131, 179, 0.1)";
+    });
+    otpInput.addEventListener("blur", function() {
+        this.style.borderColor = softBorder;
+        this.style.boxShadow = "none";
+    });
+
+    otpInput.addEventListener("input", function () {
+        const original = this.value;
+        let cleaned = original.replace(/\D/g, "");
+
+        if (original !== cleaned) {
+            otpHint.textContent = "Only numbers are allowed.";
+            otpHint.style.color = "#ef4444";
+        } else if (cleaned.length === 6) {
+            otpHint.style.color = "transparent";
+        }
+
+        if (cleaned.length > 6) {
+            cleaned = cleaned.slice(0, 6);
+            otpHint.textContent = "OTP must be exactly 6 digits.";
+            otpHint.style.color = "#ef4444";
+        }
+
+        this.value = cleaned;
+    });
+
+    otpInput.addEventListener("keypress", function (e) {
+        if (!/[0-9]/.test(e.key)) {
+            e.preventDefault();
+            otpHint.textContent = "Only numbers are allowed.";
+            otpHint.style.color = "#ef4444";
+            return;
+        }
+
+        if (this.value.length >= 6) {
+            e.preventDefault();
+            otpHint.textContent = "OTP must be exactly 6 digits.";
+            otpHint.style.color = "#ef4444";
+        }
+    });
+
+    otpInput.addEventListener("paste", function (e) {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData("text");
+        let cleaned = pasted.replace(/\D/g, "");
+
+        if (pasted !== cleaned) {
+            otpHint.textContent = "Only numbers are allowed.";
+            otpHint.style.color = "#ef4444";
+        }
+
+        if (cleaned.length > 6) {
+            cleaned = cleaned.slice(0, 6);
+            otpHint.textContent = "OTP must be exactly 6 digits.";
+            otpHint.style.color = "#ef4444";
+        }
+
+        this.value = cleaned;
+    });
+
+    otpInput.addEventListener("blur", function () {
+        if (this.value.length === 6) {
+            otpHint.style.color = "transparent";
+        }
+    });
+</script>
+
+</body>
+</html>

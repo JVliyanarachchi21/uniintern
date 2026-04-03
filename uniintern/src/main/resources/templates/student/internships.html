@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Browse Internships | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('internships')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+
+  <section class="content" style="padding: 32px 40px; background: var(--bg-main);">
+    <style>
+      /* Custom slider styling for Chrome/Safari/Firefox */
+      input[type=range].custom-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+      }
+      input[type=range].custom-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        background: var(--bg-white);
+        border: 2px solid var(--color-dark);
+        cursor: pointer;
+        margin-top: -6px;
+      }
+      input[type=range].custom-slider::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 6px;
+        cursor: pointer;
+        background: var(--success-text);
+        border-radius: 99px;
+      }
+      select.custom-select {
+        appearance: none;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center;
+        background-color: var(--bg-main);
+        background-size: 16px;
+      }
+    </style>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h1 style="font-size: 24px; font-weight: 800; color: var(--text-dark); margin: 0; letter-spacing: -0.5px;">Browse Internships</h1>
+      <button style="display: flex; align-items: center; gap: 8px; background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 8px; padding: 10px 16px; font-size: 14px; font-weight: 600; color: var(--text-dark); cursor: pointer; transition: 0.2s;">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        Filters
+      </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div style="position: relative; margin-bottom: 24px;">
+      <svg style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted);" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" placeholder="Search internships..." style="width: 100%; box-sizing: border-box; padding: 14px 16px 14px 44px; border: 1px solid var(--border-soft); border-radius: 8px; font-size: 15px; background: var(--bg-white); outline: none; color: var(--text-dark); transition: border-color 0.2s;">
+    </div>
+
+    <!-- Filter Card -->
+    <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; display: grid; grid-template-columns: 1fr 1fr 1.5fr 1.5fr; gap: 32px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02);">
+      
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Location</label>
+        <select class="custom-select" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 14px; color: var(--text-dark); outline: none;">
+          <option>All Locations</option>
+          <option>Colombo</option>
+          <option>Kandy</option>
+          <option>Galle</option>
+        </select>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Type</label>
+        <select class="custom-select" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 14px; color: var(--text-dark); outline: none;">
+          <option>All Types</option>
+          <option>Internship</option>
+          <option>Trainee</option>
+        </select>
+      </div>
+
+      <div style="display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding-bottom: 6px;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Min GPA: 0.0</span>
+        <input type="range" min="0" max="4" value="0" step="0.1" class="custom-slider">
+      </div>
+
+      <div style="display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding-bottom: 6px;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Min Skill Match: 0%</span>
+        <input type="range" min="0" max="100" value="0" class="custom-slider">
+      </div>
+
+    </div>
+
+    <!-- Internship Cards Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+      <!-- Card 1 -->
+      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">Frontend Developer Intern</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">TechCorp Solutions</p>
+          </div>
+          <div style="border: 1px solid #f59e0b; color: #d97706; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            67% match
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Colombo</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Hybrid</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 6 months</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 3</span>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">React</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">TypeScript</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">CSS</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">Deadline: 2026-04-15</div>
+          <button disabled style="background: var(--bg-main); color: var(--text-muted); border: 1px solid var(--border-soft); padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: not-allowed; opacity: 0.9;">Applied</button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">Data Science Intern</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">DataMinds Analytics</p>
+          </div>
+          <div style="border: 1px solid #f59e0b; color: #d97706; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            67% match
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Kandy</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> On-site</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 4 months</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 3.2</span>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Python</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Machine Learning</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">SQL</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+          <div style="font-size: 13.5px; color: #ef4444; font-weight: 600;">Deadline: 2026-03-30 (Passed)</div>
+          <button disabled style="background: var(--bg-main); color: var(--text-muted); border: 1px solid var(--border-soft); padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: not-allowed; opacity: 0.9;">Applied</button>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">IoT Developer Intern</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">GreenLeaf Innovations</p>
+          </div>
+          <div style="border: 1px solid var(--border-soft); color: var(--text-muted); padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            33% match
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Galle</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> On-site</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 3 months</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 2.8</span>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Python</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">IoT</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Arduino</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">Deadline: 2026-05-01</div>
+          <button style="background: var(--color-dark); color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(5, 38, 89, 0.2);">Apply</button>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">Backend Engineer Intern</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">FinEdge Systems</p>
+          </div>
+          <div style="border: 1px solid var(--border-soft); color: var(--text-muted); padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            0% match
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Colombo</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Hybrid</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 6 months</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 3</span>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Java</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Spring Boot</span>
+          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">MySQL</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">Deadline: 2026-04-20</div>
+          <button style="background: var(--color-dark); color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(5, 38, 89, 0.2);">Apply</button>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</main>
+
+</body>
+</html>

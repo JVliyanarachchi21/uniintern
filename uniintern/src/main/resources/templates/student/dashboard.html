@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('dashboard')"></div>
+
+<main class="main dashboard-main-content">
+  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+
+  <section class="dashboard-page-container">
+    
+    <div class="dashboard-greeting">
+      <h1>Welcome back, <span th:text="${fullName}">Student</span>!</h1>
+      <p>Here's your internship overview.</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="dashboard-stats-row">
+      
+      <!-- Profile Stat -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-title">Profile</div>
+          <div class="stat-value"><span th:text="${profileCompletion}">85</span>%</div>
+          <div class="stat-progress">
+            <div class="stat-progress-bar">
+              <div class="stat-progress-fill" th:style="'width:' + ${profileCompletion} + '%'"></div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-icon icon-profile">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Active Applications Stat -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-title">Active<br>Applications</div>
+          <div class="stat-value" th:text="${activeApplications}">8</div>
+        </div>
+        <div class="stat-icon icon-apps">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Interviews Stat -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-title">Interviews</div>
+          <div class="stat-value" th:text="${interviews}">2</div>
+        </div>
+        <div class="stat-icon icon-interviews">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Notifications Stat -->
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-title">Notifications</div>
+          <div class="stat-value" th:text="${notificationCount}">3</div>
+        </div>
+        <div class="stat-icon icon-notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+          </svg>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Action Buttons Row -->
+    <div class="action-buttons-row">
+      <a class="btn-dashboard btn-outline" th:href="@{/student/profile}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+        Complete Profile
+      </a>
+      <a class="btn-dashboard btn-primary" th:href="@{/student/internships}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z" /></svg>
+        Browse Internships
+      </a>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid-row">
+      
+      <!-- Latest Notifications -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <svg class="panel-icon icon-bell" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+          </svg>
+          <h2>Latest Notifications</h2>
+        </div>
+        <div class="notification-list">
+          <div class="notification-item" th:each="n, stat : ${latestNotifications}">
+            <div class="notif-dot" th:classappend="${stat.index == 0 ? 'dot-green' : 'dot-blue'}"></div>
+            <div class="notif-content">
+              <span class="notif-text" th:text="${n.text}">Notification text here...</span>
+              <span class="notif-date" th:text="${n.date}">2026-02-14</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Internships -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <svg class="panel-icon icon-trend" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+          </svg>
+          <h2>Recent Internships</h2>
+        </div>
+        <div class="internships-list">
+          <div class="internship-item" th:each="i : ${recentInternships}">
+            <div class="internship-info">
+              <h3 th:text="${i.title}">Frontend Developer Intern</h3>
+              <p><span th:text="${i.company}">TechCorp Solutions</span> &bull; <span th:text="${i.location}">Colombo</span></p>
+            </div>
+            <div class="internship-date">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span th:text="${i.deadline}">2026-04-15</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</main>
+
+</body>
+</html>
