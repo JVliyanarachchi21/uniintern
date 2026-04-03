@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Payment History',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+    <div class="payments-history-header">
+        <div>
+            <h1 class="page-title">Payment History</h1>
+            <p class="page-sub">View your promotion payment records</p>
+        </div>
+    </div>
+
+    <div class="table-card payment-history-card">
+        <table class="table payment-history-table">
+            <thead>
+            <tr>
+                <th>Payment ID</th>
+                <th>Date</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th class="actions-col">Receipt</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="p : ${payments}">
+                <td th:text="${p.id}">PAY-001</td>
+                <td th:text="${p.date}">2026-01-20</td>
+                <td th:text="${p.plan}">Featured Internship — 7 Days</td>
+                <td class="amount-cell" th:text="${p.amount}">LKR 5,000</td>
+
+                <td>
+                    <span class="badge-status"
+                          th:classappend="${p.status == 'Active'} ? ' st-approved' : ' st-expired'"
+                          th:text="${p.status}">
+                        Active
+                    </span>
+                </td>
+
+                <td class="actions-col">
+                    <button type="button"
+                            class="receipt-btn"
+                            th:attr="data-id=${p.id},
+                                     data-date=${p.date},
+                                     data-plan=${p.plan},
+                                     data-amount=${p.amount},
+                                     data-status=${p.status}"
+                            onclick="openReceiptModal(this)">
+                        ⬇ Receipt
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="receipt-modal">
+        <div class="receipt-modal-content">
+            <div class="receipt-modal-header">
+                <div class="receipt-title-wrap">
+                    <span class="receipt-icon">🧾</span>
+                    <h2>Payment Receipt</h2>
+                </div>
+                <button type="button" class="receipt-close" onclick="closeReceiptModal()">×</button>
+            </div>
+
+            <div class="receipt-brand">
+                <h3>UniIntern</h3>
+                <p>Payment Receipt</p>
+            </div>
+
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-info-grid">
+                <div class="receipt-row">
+                    <span>Receipt No</span>
+                    <strong id="receiptId">PAY-001</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Date</span>
+                    <strong id="receiptDate">2026-01-20</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Company</span>
+                    <strong>TechCorp Lanka</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Email</span>
+                    <strong>hr@techcorp.lk</strong>
+                </div>
+            </div>
+
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-info-grid">
+                <div class="receipt-row">
+                    <span>Plan</span>
+                    <strong id="receiptPlan">Featured Internship — 7 Days</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Status</span>
+                    <span id="receiptStatus" class="badge-status st-approved">Active</span>
+                </div>
+            </div>
+
+            <div class="receipt-total-box">
+                <span>Total Paid</span>
+                <strong id="receiptAmount">LKR 5,000</strong>
+            </div>
+
+            <div class="receipt-note">
+                This is a simulated receipt for demonstration purposes.<br>
+                UniIntern © 2026
+            </div>
+
+            <div class="receipt-actions">
+                <button type="button" class="btn primary receipt-print-btn" onclick="printReceipt()">
+                    🖨 Print / Save PDF
+                </button>
+                <button type="button" class="btn receipt-cancel-btn" onclick="closeReceiptModal()">×</button>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script src="/js/company.js"></script>
+</body>
+</html>

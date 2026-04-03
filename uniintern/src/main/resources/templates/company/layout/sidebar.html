@@ -1,0 +1,75 @@
+<div th:fragment="sidebar" class="sidebar">
+
+   <div class="sidebar-brand">
+    <img src="/images/logo.png" alt="UniIntern" class="logo-img">
+    <span class="brand-text">UniIntern</span>
+</div>
+
+    <ul class="sidebar-menu">
+
+        <li>
+            <a th:href="@{/company/dashboard}" th:classappend="${page=='dashboard'} ? 'active' : ''">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/profile}" th:classappend="${page=='profile'} ? 'active' : ''">
+                <i class="bi bi-building"></i>
+                <span>Company Profile</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/internships/new}" th:classappend="${page=='new'} ? 'active' : ''">
+                <i class="bi bi-plus-circle"></i>
+                <span>Post Internship</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/internships}" th:classappend="${page=='internships'} ? 'active' : ''">
+                <i class="bi bi-briefcase"></i>
+                <span>My Internships</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/applicants}" th:classappend="${page=='applicants'} ? 'active' : ''">
+                <i class="bi bi-people"></i>
+                <span>Applicants</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/promotions}" th:classappend="${page=='promotions'} ? 'active' : ''">
+                <i class="bi bi-star"></i>
+                <span>Promotions</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/payments/history}" th:classappend="${page=='payments'} ? 'active' : ''">
+                <i class="bi bi-credit-card"></i>
+                <span>Payments</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/settings}" th:classappend="${page=='settings'} ? 'active' : ''">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="sidebar-footer">
+        <a th:href="@{/company/login}">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+</div>
