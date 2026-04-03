@@ -1,0 +1,219 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <style>
+    .schedule-shell{
+      max-width:980px;
+      margin:0 auto;
+    }
+
+    .schedule-hero{
+      background:linear-gradient(135deg, #052659 0%, #5483B3 100%);
+      color:#fff;
+      border-radius:28px;
+      padding:30px;
+      box-shadow:0 20px 50px rgba(5,38,89,0.18);
+      margin-bottom:22px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .schedule-hero::after{
+      content:"";
+      position:absolute;
+      top:-60px;
+      right:-80px;
+      width:220px;
+      height:220px;
+      background:rgba(255,255,255,0.08);
+      border-radius:50%;
+    }
+
+    .schedule-kicker{
+      display:inline-block;
+      background:rgba(255,255,255,0.16);
+      border:1px solid rgba(255,255,255,0.18);
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:12px;
+    }
+
+    .schedule-hero h1{
+      margin:0 0 10px 0;
+      font-size:46px;
+      line-height:1.05;
+    }
+
+    .schedule-hero p{
+      margin:0;
+      max-width:760px;
+      color:rgba(255,255,255,0.90);
+      font-size:16px;
+      line-height:1.7;
+    }
+
+    .schedule-card{
+      background:#fff;
+      border:1px solid #E5E7EB;
+      border-radius:24px;
+      padding:28px;
+      box-shadow:0 16px 40px rgba(2,16,36,0.08);
+    }
+
+    .schedule-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .schedule-field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .schedule-field-full{
+      grid-column:1 / -1;
+    }
+
+    .schedule-label{
+      font-weight:800;
+      color:#111827;
+      font-size:14px;
+    }
+
+    .schedule-input{
+      width:100%;
+      border:1px solid #D1D5DB;
+      background:#F9FAFB;
+      border-radius:16px;
+      padding:15px 16px;
+      font-size:15px;
+      color:#111827;
+      outline:none;
+      transition:0.2s ease;
+    }
+
+    .schedule-input:focus{
+      border-color:#5483B3;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(84,131,179,0.16);
+    }
+
+    .schedule-help{
+      font-size:13px;
+      color:#6B7280;
+      line-height:1.5;
+    }
+
+    .schedule-error{
+      font-size:13px;
+      color:#DC2626;
+      font-weight:700;
+      line-height:1.4;
+    }
+
+    .schedule-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:24px;
+    }
+
+    .schedule-btn{
+      border:none;
+      border-radius:16px;
+      padding:14px 22px;
+      font-weight:800;
+      font-size:15px;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .schedule-btn-primary{
+      background:linear-gradient(135deg, #10B981, #059669);
+      color:#fff;
+      box-shadow:0 14px 30px rgba(16,185,129,0.20);
+    }
+
+    .schedule-btn-secondary{
+      background:#F3F4F6;
+      border:1px solid #E5E7EB;
+      color:#111827;
+    }
+
+    .schedule-note{
+      margin-top:22px;
+      background:#EFF6FF;
+      border:1px solid #BFDBFE;
+      color:#1E3A8A;
+      border-radius:18px;
+      padding:16px 18px;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    @media (max-width: 760px){
+      .schedule-grid{
+        grid-template-columns:1fr;
+      }
+
+      .schedule-hero h1{
+        font-size:36px;
+      }
+    }
+  </style>
+
+  <div class="schedule-shell">
+
+    <div class="schedule-hero">
+      <div class="schedule-kicker">Interview Management</div>
+      <h1>Schedule Interview</h1>
+      <p>Create a professional interview record with proper validation, timing control, and a cleaner workflow for the admin scheduling process.</p>
+    </div>
+
+    <div class="schedule-card">
+      <form th:action="@{/admin/schedule}" method="post">
+        <div class="schedule-grid">
+
+          <div class="schedule-field">
+            <label class="schedule-label">Candidate Name</label>
+            <input class="schedule-input" type="text" name="candidateName" th:value="${candidateName}" placeholder="Enter candidate full name" required>
+            <div class="schedule-help">Only letters and spaces are allowed.</div>
+            <div class="schedule-error" th:if="${candidateNameError}" th:text="${candidateNameError}"></div>
+          </div>
+
+          <div class="schedule-field">
+            <label class="schedule-label">Internship Title</label>
+            <input class="schedule-input" type="text" name="internshipTitle" th:value="${internshipTitle}" placeholder="Enter internship title" required>
+            <div class="schedule-help">Example: Frontend Developer Intern, Data Analyst Intern.</div>
+            <div class="schedule-error" th:if="${internshipTitleError}" th:text="${internshipTitleError}"></div>
+          </div>
+
+          <div class="schedule-field schedule-field-full">
+            <label class="schedule-label">Interview Date & Time</label>
+            <input class="schedule-input" type="datetime-local" name="datetime" th:value="${datetime}" required>
+            <div class="schedule-help">The interview must be scheduled at least 5 minutes in the future.</div>
+            <div class="schedule-error" th:if="${datetimeError}" th:text="${datetimeError}"></div>
+          </div>
+
+        </div>
+
+        <div class="schedule-actions">
+          <button type="submit" class="schedule-btn schedule-btn-primary">Schedule Interview</button>
+          <a th:href="@{/admin/scheduling}" class="schedule-btn schedule-btn-secondary">Back to Scheduling</a>
+        </div>
+      </form>
+
+      <div class="schedule-note">
+        This form now blocks empty fields, invalid candidate names, bad date values, and past interview times with real backend validation.
+      </div>
+    </div>
+
+  </div>
+
+</div>

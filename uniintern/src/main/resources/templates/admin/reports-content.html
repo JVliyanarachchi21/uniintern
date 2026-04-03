@@ -1,0 +1,55 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">System Reports</h1>
+  <p class="subtitle">Generate downloadable administrative reports from real database records.</p>
+
+  <div class="panel" style="margin-bottom:20px;">
+    <h3 th:text="${portalName}">UniIntern Portal</h3>
+    <p>
+      <strong>Generated On:</strong>
+      <span th:text="${generatedOn}">2026-03-25T10:00</span>
+    </p>
+  </div>
+
+  <div class="grid-2">
+
+    <div class="panel">
+      <h3>Company Verification Report</h3>
+      <ul class="activity">
+        <li>Total Companies - <span th:text="${totalCompanies}">0</span></li>
+        <li>Pending Verification - <span th:text="${pendingCompanies}">0</span></li>
+        <li>Verified Companies - <span th:text="${verifiedCompanies}">0</span></li>
+        <li>Rejected Companies - <span th:text="${rejectedCompanies}">0</span></li>
+      </ul>
+      <div style="margin-top:16px;">
+        <a href="/admin/reports/companies/download" class="btn btn-primary">Download Company Report</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Internship Approval Report</h3>
+      <ul class="activity">
+        <li>Pending Internships - <span th:text="${pendingInternships}">0</span></li>
+        <li>Approved Internships - <span th:text="${approvedInternships}">0</span></li>
+        <li>Rejected Internships - <span th:text="${rejectedInternships}">0</span></li>
+      </ul>
+      <div style="margin-top:16px;">
+        <a href="/admin/reports/internships/download" class="btn btn-primary">Download Internship Report</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Interview Scheduling Report</h3>
+      <ul class="activity">
+        <li>Scheduled Interviews - <span th:text="${scheduledInterviews}">0</span></li>
+        <li>Completed Interviews - <span th:text="${completedInterviews}">0</span></li>
+        <li>Cancelled Interviews - <span th:text="${cancelledInterviews}">0</span></li>
+      </ul>
+      <div style="margin-top:16px;">
+        <a href="/admin/reports/interviews/download" class="btn btn-primary">Download Interview Report</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>

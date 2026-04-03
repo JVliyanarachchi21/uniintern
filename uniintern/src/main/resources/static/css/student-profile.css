@@ -1,0 +1,373 @@
+/* 
+  Advanced Student Profile CSS 
+  - Fully mapped to global app.css variables
+  - Removes inline styles
+*/
+
+.profile-page-container {
+    padding: 32px 40px;
+    background-color: var(--bg-main);
+    min-height: calc(100vh - 64px);
+    font-family: 'Inter', Roboto, sans-serif;
+}
+
+.profile-header-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0 0 28px 0;
+    letter-spacing: -0.5px;
+}
+
+/* Premium Card Container */
+.profile-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.profile-card:hover {
+    box-shadow: var(--shadow-soft);
+}
+
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.profile-card-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+}
+
+.profile-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    letter-spacing: -0.2px;
+}
+
+.profile-card-title span {
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 15px;
+    margin-left: 6px;
+}
+
+/* Grids for Forms */
+.profile-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.profile-grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+/* Form Inputs */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.form-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14.5px;
+    color: var(--text-dark);
+    outline: none;
+    transition: all 0.25s ease;
+    font-family: 'Inter', Roboto, sans-serif;
+}
+
+.form-input:focus {
+    background: var(--bg-white);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(84, 131, 179, 0.15);
+}
+
+.form-input[readonly] {
+    background: var(--bg-main);
+    border-color: transparent;
+    color: var(--text-muted);
+    cursor: default;
+}
+.form-input[readonly]:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* Skills Badges */
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.skill-badge {
+    background: var(--success-bg);
+    color: var(--success-text);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.skill-badge:hover {
+    background: #d1f4df;
+    border-color: #bbf0cf;
+}
+
+.skill-remove {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.skill-remove:hover {
+    opacity: 1;
+}
+
+/* Adding Items Form Row */
+.add-item-row {
+    display: flex;
+    gap: 12px;
+}
+
+.add-item-input {
+    flex: 1;
+}
+
+.btn-icon-add {
+    background: var(--bg-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    width: 50px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon-add:hover {
+    background: var(--border-soft);
+    color: var(--color-dark);
+}
+
+/* Experience / Cert List Items */
+.list-item {
+    background: var(--bg-main);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.list-item:hover {
+    background: var(--bg-white);
+    border-color: var(--border-soft);
+    box-shadow: 0 2px 8px rgba(2, 16, 36, 0.03);
+}
+
+.list-item-delete {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.list-item-delete:hover {
+    color: #ef4444;
+}
+
+.list-item h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 6px 0;
+}
+
+.list-item .meta {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin: 0 0 10px 0;
+    font-weight: 500;
+}
+
+.list-item .desc {
+    font-size: 14px;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Cert Item (row based) */
+.cert-item {
+    background: var(--bg-main);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.cert-item:hover {
+    background: var(--bg-white);
+    border-color: var(--border-soft);
+}
+
+.cert-item span {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* File Upload */
+.file-upload-box {
+    background: var(--bg-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.file-upload-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-file {
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-file:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.file-status {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.file-name {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Save Button */
+.btn-save-profile {
+    background: var(--color-dark);
+    color: var(--bg-white);
+    border: 1px solid var(--color-dark);
+    border-radius: 10px;
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(5, 38, 89, 0.2);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-save-profile:hover {
+    background: var(--color-darkest);
+    border-color: var(--color-darkest);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 38, 89, 0.3);
+}
+
+/* Add Buttons */
+.btn-outline-add {
+    background: var(--bg-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-add:hover {
+    background: var(--bg-white);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+@media(max-width: 992px) {
+    .profile-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .profile-grid-4 {
+        grid-template-columns: 1fr 1fr;
+    }
+    .profile-page-container {
+        padding: 24px;
+    }
+}
+
+@media(max-width: 640px) {
+    .profile-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}

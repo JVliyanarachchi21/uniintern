@@ -1,0 +1,34 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Audit Logs</h1>
+  <p class="subtitle">Track important actions performed in the system.</p>
+
+  <div class="panel">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date & Time</th>
+          <th>Action</th>
+          <th>Target Type</th>
+          <th>Target Name</th>
+          <th>Performed By</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:if="${#lists.isEmpty(logs)}">
+          <td colspan="5" style="color:#6B7280;">No audit logs found.</td>
+        </tr>
+
+        <tr th:each="log : ${logs}">
+          <td th:text="${log.performedAt}">2026-01-01T10:00</td>
+          <td th:text="${log.action}">APPROVED</td>
+          <td th:text="${log.targetType}">COMPANY</td>
+          <td th:text="${log.targetName}">TechVentures Inc.</td>
+          <td th:text="${log.performedBy}">ADMIN</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

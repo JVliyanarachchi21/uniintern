@@ -12,15 +12,16 @@
 
   <aside class="sidebar">
     <div class="brand">
-      <span class="brand-icon">🎓</span>
+      <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 46px; height: auto; border-radius: 4px; margin-right: 8px;">
       <span class="brand-text">UniIntern</span>
     </div>
 
     <nav class="nav">
       <a th:href="@{/admin/dashboard}" th:classappend="${active=='dashboard'} ? 'active' : ''">Dashboard</a>
       <a th:href="@{/admin/companies}" th:classappend="${active=='companies'} ? 'active' : ''">Company Approvals</a>
+      <a th:href="@{/admin/companies/all}" th:classappend="${active=='companies-all'} ? 'active' : ''">Company History</a>
       <a th:href="@{/admin/internships}" th:classappend="${active=='internships'} ? 'active' : ''">Internship Approvals</a>
-      <a th:href="@{/admin/filtering}" th:classappend="${active=='filtering'} ? 'active' : ''">Filtering Results</a>
+      <a th:href="@{/admin/internships/all}" th:classappend="${active=='internships-all'} ? 'active' : ''">Internship History</a>
       <a th:href="@{/admin/scheduling}" th:classappend="${active=='scheduling'} ? 'active' : ''">Interview Scheduling</a>
       <a th:href="@{/admin/reports}" th:classappend="${active=='reports'} ? 'active' : ''">System Reports</a>
       <a th:href="@{/admin/audit}" th:classappend="${active=='audit'} ? 'active' : ''">Audit Logs</a>
