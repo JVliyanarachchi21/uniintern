@@ -60,18 +60,25 @@
     </div>
 
     <div class="promo-select-box" id="promoSelectSection" style="display: none; animation: fadeIn 0.4s ease-out;">
-        <label for="promoInternship">Select Internship to Promote</label>
-        <select id="promoInternship" onchange="checkInternshipSelection()">
-            <option value="">Choose an approved internship</option>
-            <option>Software Engineering Intern</option>
-            <option>Data Science Trainee</option>
-        </select>
+        <form id="promoForm" action="/company/promotions/process" method="POST">
+            <label for="promoInternship">Select Internship to Promote</label>
+            <select id="promoInternship" name="internshipId" onchange="checkInternshipSelection()" required style="width: 100%; margin-bottom: 20px;">
+                <option value="">Choose an approved internship</option>
+                <option th:each="internship : ${internships}" 
+                        th:value="${internship.id}" 
+                        th:text="${internship.title}">Software Engineering Intern</option>
+            </select>
 
-        <div class="promo-bottom-actions">
-            <button type="button" id="proceedBtn" class="btn primary promo-pay-btn" style="opacity: 0.5; pointer-events: none; transition: 0.3s;" onclick="window.location.href='/company/payments/checkout'">
-                 Proceed to Payment
-            </button>
-        </div>
+            <input type="hidden" name="promoType" id="formPromoType">
+            <input type="hidden" name="price" id="formPrice">
+            <input type="hidden" name="days" id="formDays">
+            
+            <div class="promo-bottom-actions">
+                <button type="submit" id="proceedBtn" class="btn primary promo-pay-btn" style="opacity: 0.5; pointer-events: none; transition: 0.3s;">
+                     Proceed to Payment
+                </button>
+            </div>
+        </form>
     </div>
 
 </section>

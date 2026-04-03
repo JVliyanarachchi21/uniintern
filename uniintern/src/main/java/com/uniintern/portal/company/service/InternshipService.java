@@ -21,6 +21,9 @@ public class InternshipService {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private PromotionService promotionService;
+
     // Save internship
     public Internship save(Internship internship) {
         return internshipRepository.save(internship);
@@ -81,6 +84,9 @@ public class InternshipService {
             } else {
                 dto.setCompanyName("Unknown Company");
             }
+            
+            // Set promotion status
+            dto.setPromoted(promotionService.isInternshipPromoted(internship.getId()));
             
             return dto;
         }).collect(Collectors.toList());
