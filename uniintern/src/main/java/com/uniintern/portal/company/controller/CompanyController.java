@@ -101,10 +101,23 @@ public class CompanyController {
     }
 
     @GetMapping("/internships/preview")
-public String internshipPreview(Model model) {
-    model.addAttribute("page", "internships");
-    return "company/internship-preview";
-}
+    public String internshipPreview(@RequestParam(value = "id", required = false) Long id, Model model) {
+        if (id == null) {
+            return "redirect:/company/internships/listing";
+        }
+        
+        com.uniintern.portal.company.entity.Internship internship = internshipService.getById(id);
+        if (internship == null) {
+            return "redirect:/company/internships/listing";
+        }
+        
+        com.uniintern.portal.company.entity.Company company = companyService.findById(internship.getCompanyId());
+        
+        model.addAttribute("internship", internship);
+        model.addAttribute("company", company);
+        model.addAttribute("page", "internships");
+        return "company/internship-preview";
+    }
 
 @GetMapping("/internships/application-template")
 public String applicationTemplate(Model model) {
@@ -113,9 +126,17 @@ public String applicationTemplate(Model model) {
 }
 
 @GetMapping("/internships/listing")
-public String internshipsListing(Model model) {
-    java.util.List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings();
+public String internshipsListing(
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @RequestParam(value = "companyId", required = false) Long companyId,
+        @RequestParam(value = "type", required = false) String type,
+        Model model) {
+    java.util.List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings(keyword, companyId, type);
     model.addAttribute("internships", internships);
+    model.addAttribute("companies", companyService.getAllCompanies());
+    model.addAttribute("keyword", keyword);
+    model.addAttribute("companyId", companyId);
+    model.addAttribute("type", type);
     return "company/internships-listing";
 }
 
@@ -285,7 +306,7 @@ public String internshipsListing(Model model) {
         model.addAttribute("page", "promotions");
         
         // Fetch real approved internships for the dropdown
-        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings();
+        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings(null, null, null);
         model.addAttribute("internships", internships);
         
         return "company/promotions";

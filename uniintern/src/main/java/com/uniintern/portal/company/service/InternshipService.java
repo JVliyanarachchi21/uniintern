@@ -40,8 +40,31 @@ public class InternshipService {
     }
 
     // Get approved internships
-    public List<InternshipListingDto> getApprovedInternshipsListings() {
+    public List<InternshipListingDto> getApprovedInternshipsListings(String keyword, Long companyId, String type) {
         List<Internship> approvedList = internshipRepository.findByStatus("APPROVED");
+        
+        if (companyId != null) {
+            approvedList = approvedList.stream().filter(i -> companyId.equals(i.getCompanyId())).collect(Collectors.toList());
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.toLowerCase();
+            approvedList = approvedList.stream().filter(i -> {
+                boolean matchMain = (i.getTitle() != null && i.getTitle().toLowerCase().contains(kw)) ||
+                                    (i.getDescription() != null && i.getDescription().toLowerCase().contains(kw));
+                if (matchMain) return true;
+                if (i.getCompanyId() != null) {
+                    Company company = companyService.findById(i.getCompanyId());
+                    return company != null && company.getCompanyName() != null && company.getCompanyName().toLowerCase().contains(kw);
+                }
+                return false;
+            }).collect(Collectors.toList());
+        }
+        if (type != null && !type.trim().isEmpty() && !type.equals("All Types")) {
+            String typ = type.toLowerCase();
+            approvedList = approvedList.stream().filter(i -> 
+                i.getTitle() != null && i.getTitle().toLowerCase().contains(typ)
+            ).collect(Collectors.toList());
+        }
         
         return approvedList.stream().map(internship -> {
             InternshipListingDto dto = new InternshipListingDto();

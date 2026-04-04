@@ -231,11 +231,13 @@
                 
                 <div class="banners-grid">
                     <article class="banner-card reveal" th:each="banner : ${banners}">
-                        <div class="banner-content">
-                            <div class="banner-badge">PROMOTED</div>
+                        <div class="banner-org-img" style="flex-shrink: 0;">
+                            <img th:if="${banner.logoPath != null}" th:src="${banner.logoPath}" src="/images/logo-placeholder.png" alt="Org Logo" style="width: 52px; height: 52px; border-radius: 12px; object-fit: cover; background: #ffffff; border: 3px solid rgba(255, 255, 255, 0.15);">
+                        </div>
+                        
+                        <div class="banner-main" style="flex-grow: 1; min-width: 0; padding-right: 1rem;">
                             <h3 th:text="${banner.title}">Software Engineering Intern</h3>
                             <div class="banner-org">
-                                <img th:if="${banner.logoPath != null}" th:src="${banner.logoPath}" src="/images/logo-placeholder.png" alt="Org Logo">
                                 <span th:text="${banner.companyName}">Tech Solutions</span>
                             </div>
                             <div class="banner-info">
@@ -243,9 +245,11 @@
                                 <span class="divider"></span>
                                 <span th:text="${banner.postedAgo}">1 day ago</span>
                             </div>
-                            <div class="banner-cta">
-                                <a th:href="@{'/student/internships'}" class="btn-banner">Details</a>
-                            </div>
+                        </div>
+                        
+                        <div class="banner-cta">
+                            <div class="banner-badge">PROMOTED</div>
+                            <a th:href="@{/company/internships/preview(id=${banner.id})}" class="btn-banner">Details</a>
                         </div>
                     </article>
                 </div>
