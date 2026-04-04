@@ -34,6 +34,12 @@ public class Internship {
 
     private LocalDateTime createdAt;
 
+    private Integer skillsWeight;
+    private Integer gpaWeight;
+    private Integer experienceWeight;
+    private Integer certificatesWeight;
+    private Integer topNCandidates;
+
     public Internship() {
     }
 
@@ -131,5 +137,45 @@ public class Internship {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Integer getSkillsWeight() {
+        return skillsWeight;
+    }
+
+    public void setSkillsWeight(Integer skillsWeight) {
+        this.skillsWeight = skillsWeight;
+    }
+
+    public Integer getGpaWeight() {
+        return gpaWeight;
+    }
+
+    public void setGpaWeight(Integer gpaWeight) {
+        this.gpaWeight = gpaWeight;
+    }
+
+    public Integer getExperienceWeight() {
+        return experienceWeight;
+    }
+
+    public void setExperienceWeight(Integer experienceWeight) {
+        this.experienceWeight = experienceWeight;
+    }
+
+    public Integer getCertificatesWeight() {
+        return certificatesWeight;
+    }
+
+    public void setCertificatesWeight(Integer certificatesWeight) {
+        this.certificatesWeight = certificatesWeight;
+    }
+
+    public Integer getTopNCandidates() {
+        return topNCandidates;
+    }
+
+    public void setTopNCandidates(Integer topNCandidates) {
+        this.topNCandidates = topNCandidates;
     }
 }

@@ -67,10 +67,9 @@
                     We connect ambitious students with world-class companies, startups, and agencies. Start your journey with opportunities that truly matter.
                 </p>
 
-                <form class="listing-search-wrapper" th:action="@{/company/internships/listing}" method="get">
-                    <input type="text" name="keyword" th:value="${keyword}" class="listing-search-input" placeholder="Search internships, companies, or keywords..." oninput="if(this.value.trim() === '') this.form.submit();">
+                <form class="listing-search-form" th:action="@{/company/internships/listing}" method="get" style="display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 1rem; width: 100%; max-width: 85rem; margin: 4rem auto 0; padding: 0 1rem;">
                     
-                    <select name="companyId" class="listing-select" onchange="this.form.submit()" style="border: none; background: transparent; padding: 0 0.5rem; outline: none; cursor: pointer; color: var(--color-darkest); font-family: 'Inter', sans-serif; font-weight: 500; border-left: 1px solid rgba(84, 131, 179, 0.2);">
+                    <select name="companyId" onchange="this.form.submit()" style="border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.85); padding: 0.8rem 2.5rem 0.8rem 1.2rem; border-radius: 999px; outline: none; cursor: pointer; color: var(--color-darkest); font-family: 'Inter', sans-serif; font-weight: 500; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23052659%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; box-shadow: 0 12px 32px rgba(5, 38, 89, 0.08); flex: 0 0 200px; width: 200px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; height: 3.5rem;">
                         <option value="">All Companies</option>
                         <option th:each="company : ${companies}" 
                                 th:value="${company.id}" 
@@ -78,7 +77,12 @@
                                 th:selected="${companyId != null and companyId == company.id}"></option>
                     </select>
                     
-                    <select name="type" class="listing-select" onchange="this.form.submit()" style="border: none; background: transparent; padding: 0 0.5rem; outline: none; cursor: pointer; color: var(--color-darkest); font-family: 'Inter', sans-serif; font-weight: 500; border-left: 1px solid rgba(84, 131, 179, 0.2);">
+                    <div class="listing-search-wrapper" style="margin: 0; flex: 1 1 auto; width: 100%; max-width: 60rem;">
+                        <input type="text" name="keyword" th:value="${keyword}" class="listing-search-input" placeholder="Search internships, companies, or keywords..." oninput="if(this.value.trim() === '') this.form.submit();" style="flex: 1; min-width: 380px; padding: 0 1rem; border: none; background:transparent; outline: none;">
+                        <button type="submit" class="btn btn-primary btn-large" style="margin: 0; padding: 0.8rem 1.8rem; border-radius: 999px; flex-shrink: 0;">Find Internships</button>
+                    </div>
+                    
+                    <select name="type" onchange="this.form.submit()" style="border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.85); padding: 0.8rem 2.5rem 0.8rem 1.2rem; border-radius: 999px; outline: none; cursor: pointer; color: var(--color-darkest); font-family: 'Inter', sans-serif; font-weight: 500; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23052659%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; box-shadow: 0 12px 32px rgba(5, 38, 89, 0.08); flex: 0 0 200px; width: 200px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; height: 3.5rem;">
                         <option value="" th:selected="${type == null or type == ''}">All Types</option>
                         <option value="Software Engineering" th:selected="${type == 'Software Engineering'}">Software Engineering</option>
                         <option value="Data Science" th:selected="${type == 'Data Science'}">Data Science</option>
@@ -88,7 +92,6 @@
                         <option value="Design" th:selected="${type == 'Design'}">Design / UI/UX</option>
                     </select>
 
-                    <button type="submit" class="btn btn-primary btn-large" style="margin: 0; padding: 0.8rem 1.8rem; border-radius: 999px;">Find Internships</button>
                 </form>
             </div>
         </section>
