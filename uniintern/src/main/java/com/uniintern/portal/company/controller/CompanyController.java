@@ -238,7 +238,12 @@ public String internshipsListing(
         Long mockCompanyId = 1L;
         List<Internship> internships = internshipService.getByCompanyId(mockCompanyId);
 
+        java.util.Set<Long> promotedIds = promotionService.getActiveBannerPromotions().stream()
+                .map(com.uniintern.portal.company.entity.Promotion::getInternshipId)
+                .collect(java.util.stream.Collectors.toSet());
+
         model.addAttribute("internships", internships);
+        model.addAttribute("promotedIds", promotedIds);
         return "company/internships";
     }
 
@@ -463,7 +468,8 @@ public String updateInternship(
         @RequestParam(value = "minGpa", required = false) String minGpa,
         @RequestParam(value = "maxGpa", required = false) String maxGpa,
         @RequestParam("deadline") String deadline,
-        @RequestParam(value = "requiredSkills", required = false) String requiredSkills
+        @RequestParam(value = "requiredSkills", required = false) String requiredSkills,
+        @RequestParam(value = "action", required = false) String action
 ) {
     Internship internship = internshipService.getById(id);
 
@@ -486,8 +492,16 @@ public String updateInternship(
         internship.setMaxGpa(null);
     }
 
+    if ("submit".equals(action)) {
+        internship.setStatus("PENDING_ADMIN_APPROVAL");
+    }
+
     internshipService.save(internship);
 
+    if ("submit".equals(action)) {
+        return "redirect:/company/internships";
+    }
+    
     return "redirect:/company/internships/view/" + internship.getId();
 }
 
