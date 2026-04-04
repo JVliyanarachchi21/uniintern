@@ -23,6 +23,10 @@ public class CompanyService {
         return companyRepository.findById(id).orElse(null);
     }
 
+    public java.util.List<Company> getAllCompanies() {
+        return companyRepository.findAll();
+    }
+
     public Company getOrCreateMockCompany() {
         return companyRepository.findAll().stream().findFirst().orElseGet(() -> {
             Company dummy = new Company();

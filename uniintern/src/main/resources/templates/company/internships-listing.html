@@ -67,10 +67,29 @@
                     We connect ambitious students with world-class companies, startups, and agencies. Start your journey with opportunities that truly matter.
                 </p>
 
-                <div class="listing-search-wrapper">
-                    <input type="text" class="listing-search-input" placeholder="Search internships, companies, or keywords...">
-                    <button class="btn btn-primary btn-large" style="margin: 0; padding: 0.8rem 1.8rem; border-radius: 999px;">Find Internships</button>
-                </div>
+                <form class="listing-search-wrapper" th:action="@{/company/internships/listing}" method="get">
+                    <input type="text" name="keyword" th:value="${keyword}" class="listing-search-input" placeholder="Search internships, companies, or keywords..." oninput="if(this.value.trim() === '') this.form.submit();">
+                    
+                    <select name="companyId" class="listing-select" onchange="this.form.submit()" style="border: none; background: transparent; padding: 0 0.5rem; outline: none; cursor: pointer; color: var(--color-darkest); font-family: 'Inter', sans-serif; font-weight: 500; border-left: 1px solid rgba(84, 131, 179, 0.2);">
+                        <option value="">All Companies</option>
+                        <option th:each="company : ${companies}" 
+                                th:value="${company.id}" 
+                                th:text="${company.companyName}"
+                                th:selected="${companyId != null and companyId == company.id}"></option>
+                    </select>
+                    
+                    <select name="type" class="listing-select" onchange="this.form.submit()" style="border: none; background: transparent; padding: 0 0.5rem; outline: none; cursor: pointer; color: var(--color-darkest); font-family: 'Inter', sans-serif; font-weight: 500; border-left: 1px solid rgba(84, 131, 179, 0.2);">
+                        <option value="" th:selected="${type == null or type == ''}">All Types</option>
+                        <option value="Software Engineering" th:selected="${type == 'Software Engineering'}">Software Engineering</option>
+                        <option value="Data Science" th:selected="${type == 'Data Science'}">Data Science</option>
+                        <option value="QA" th:selected="${type == 'QA'}">Quality Assurance</option>
+                        <option value="Business Analyst" th:selected="${type == 'Business Analyst'}">Business Analyst</option>
+                        <option value="Marketing" th:selected="${type == 'Marketing'}">Marketing</option>
+                        <option value="Design" th:selected="${type == 'Design'}">Design / UI/UX</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-primary btn-large" style="margin: 0; padding: 0.8rem 1.8rem; border-radius: 999px;">Find Internships</button>
+                </form>
             </div>
         </section>
 

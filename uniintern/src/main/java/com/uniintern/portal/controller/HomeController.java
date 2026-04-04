@@ -24,7 +24,7 @@ public class HomeController {
         
         // Map to listings
         List<com.uniintern.portal.company.dto.InternshipListingDto> banners = bannerPromos.stream()
-                .map(p -> internshipService.getApprovedInternshipsListings().stream()
+                .map(p -> internshipService.getApprovedInternshipsListings(null, null, null).stream()
                         .filter(i -> i.getId().equals(p.getInternshipId()))
                         .findFirst()
                         .orElse(null))

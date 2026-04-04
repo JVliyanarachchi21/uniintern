@@ -24,7 +24,7 @@ public class StudentInternshipsController {
         model.addAttribute("matchMin", 50);
 
         // Real internship cards from database
-        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings();
+        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings(null, null, null);
         model.addAttribute("internships", internships);
 
         return "student/internships";
