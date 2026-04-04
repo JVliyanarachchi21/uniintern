@@ -22,13 +22,14 @@ public class HomeController {
         // Fetch active home page banner promotions
         List<com.uniintern.portal.company.entity.Promotion> bannerPromos = promotionService.getActiveBannerPromotions();
         
-        // Map to listings
-        List<com.uniintern.portal.company.dto.InternshipListingDto> banners = bannerPromos.stream()
-                .map(p -> internshipService.getApprovedInternshipsListings(null, null, null).stream()
-                        .filter(i -> i.getId().equals(p.getInternshipId()))
-                        .findFirst()
-                        .orElse(null))
-                .filter(java.util.Objects::nonNull)
+        List<Long> promotedInternshipIds = bannerPromos.stream()
+                .map(com.uniintern.portal.company.entity.Promotion::getInternshipId)
+                .distinct()
+                .collect(Collectors.toList());
+        
+        // Map to listings effectively and guaranteeing uniqueness
+        List<com.uniintern.portal.company.dto.InternshipListingDto> banners = internshipService.getApprovedInternshipsListings(null, null, null).stream()
+                .filter(i -> promotedInternshipIds.contains(i.getId()))
                 .collect(Collectors.toList());
         
         model.addAttribute("banners", banners);

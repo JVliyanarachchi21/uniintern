@@ -165,18 +165,14 @@
           </div>
 
           <div class="field">
-            <label for="status">Submission Type</label>
-            <select id="status" name="status">
-              <option value="DRAFT">Save as Draft</option>
-              <option value="PENDING">Submit for Approval</option>
-            </select>
+            <!-- Empty space since we removed the weird select -->
           </div>
         </div>
       </div>
 
       <div class="form-actions internship-form-actions">
-        <button type="button" class="btn" onclick="alert('Saved as Draft (UI only)')">Save Draft</button>
-        <button type="submit" class="btn primary">Submit for Approval</button>
+        <button type="submit" name="status" value="DRAFT" class="btn">Save Draft</button>
+        <button type="submit" name="status" value="PENDING" class="btn primary">Submit for Approval</button>
       </div>
 
     </form>

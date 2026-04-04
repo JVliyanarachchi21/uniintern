@@ -63,7 +63,15 @@
 
             <div class="form-actions">
                 <a th:href="@{'/company/internships/view/' + ${internship.id}}" class="btn">Cancel</a>
-                <button type="submit" class="btn primary">Update Internship</button>
+                
+                <th:block th:if="${internship.status == 'DRAFT'}">
+                    <button type="submit" name="action" value="save_draft" class="btn">Update Draft</button>
+                    <button type="submit" name="action" value="submit" class="btn primary" style="background:#16a34a; border-color:#16a34a;">Submit for Approval</button>
+                </th:block>
+                
+                <th:block th:unless="${internship.status == 'DRAFT'}">
+                    <button type="submit" name="action" value="update" class="btn primary">Update Internship</button>
+                </th:block>
             </div>
 
         </form>
