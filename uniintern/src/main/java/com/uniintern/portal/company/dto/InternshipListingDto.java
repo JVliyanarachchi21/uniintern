@@ -1,6 +1,5 @@
 package com.uniintern.portal.company.dto;
 
-import java.time.LocalDate;
 
 public class InternshipListingDto {
     private Long id;

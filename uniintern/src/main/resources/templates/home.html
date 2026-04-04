@@ -220,6 +220,38 @@
             </div>
         </section>
 
+        <!-- Featured Banners Section -->
+        <section class="featured-banners-section" th:if="${banners != null and not #lists.isEmpty(banners)}">
+            <div class="container section-shell">
+                <div class="section-head reveal">
+                    <span class="eyebrow-pill">Featured Opportunities</span>
+                    <h2>Premium Internship Picks</h2>
+                    <p>Exclusive openings from verified company partners</p>
+                </div>
+                
+                <div class="banners-grid">
+                    <article class="banner-card reveal" th:each="banner : ${banners}">
+                        <div class="banner-content">
+                            <div class="banner-badge">PROMOTED</div>
+                            <h3 th:text="${banner.title}">Software Engineering Intern</h3>
+                            <div class="banner-org">
+                                <img th:if="${banner.logoPath != null}" th:src="${banner.logoPath}" src="/images/logo-placeholder.png" alt="Org Logo">
+                                <span th:text="${banner.companyName}">Tech Solutions</span>
+                            </div>
+                            <div class="banner-info">
+                                <span th:text="${banner.location}">Colombo, SL</span>
+                                <span class="divider"></span>
+                                <span th:text="${banner.postedAgo}">1 day ago</span>
+                            </div>
+                            <div class="banner-cta">
+                                <a th:href="@{'/student/internships'}" class="btn-banner">Details</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
         <section class="features-section" id="features">
             <div class="feature-glow"></div>
             <div class="container section-shell">

@@ -3595,23 +3595,32 @@ textarea.pub-form-control {
 
 .internships-grid-v2 {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 2.2rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
     margin-top: 2.5rem;
 }
 
 .job-card-v2 {
     background: linear-gradient(145deg, var(--white) 0%, rgba(244, 247, 251, 0.6) 100%);
     border-radius: 20px;
-    padding: 2.2rem;
+    padding: 1.8rem 2.2rem;
     border: 1px solid rgba(84, 131, 179, 0.15);
     box-shadow: 0 8px 24px rgba(2, 16, 36, 0.03);
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
-    flex-direction: column;
-    height: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
     position: relative;
     overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .job-card-v2 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.2rem;
+    }
 }
 
 .job-card-v2::before {
@@ -3640,10 +3649,7 @@ textarea.pub-form-control {
 }
 
 .card-top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.6rem;
+    flex-shrink: 0;
 }
 
 .c-logo-box {
