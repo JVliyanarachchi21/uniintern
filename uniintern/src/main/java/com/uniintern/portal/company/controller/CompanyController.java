@@ -252,7 +252,12 @@ public String internshipsListing(
             @RequestParam(value = "minGpa", required = false) String minGpa,
             @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam(value = "skills", required = false) String skills,
-            @RequestParam(value = "status", required = false) String status
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "wSkills", required = false) Integer wSkills,
+            @RequestParam(value = "wGpa", required = false) Integer wGpa,
+            @RequestParam(value = "wExp", required = false) Integer wExp,
+            @RequestParam(value = "wCert", required = false) Integer wCert,
+            @RequestParam(value = "topN", required = false) Integer topN
     ) {
         Internship internship = new Internship();
 
@@ -277,6 +282,12 @@ public String internshipsListing(
         } else {
             internship.setStatus("PENDING_ADMIN_APPROVAL");
         }
+
+        internship.setSkillsWeight(wSkills != null ? wSkills : 0);
+        internship.setGpaWeight(wGpa != null ? wGpa : 0);
+        internship.setExperienceWeight(wExp != null ? wExp : 0);
+        internship.setCertificatesWeight(wCert != null ? wCert : 0);
+        internship.setTopNCandidates(topN != null ? topN : 10);
 
         internship.setCreatedAt(LocalDateTime.now());
 
