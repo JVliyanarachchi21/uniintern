@@ -89,6 +89,12 @@ public class InternshipService {
             dto.setPromoted(promotionService.isInternshipPromoted(internship.getId()));
             
             return dto;
+        }).sorted((a, b) -> {
+            // Promoted first
+            if (a.isPromoted() && !b.isPromoted()) return -1;
+            if (!a.isPromoted() && b.isPromoted()) return 1;
+            // Then newest first (using ID as a proxy for chronology)
+            return b.getId().compareTo(a.getId());
         }).collect(Collectors.toList());
     }
 

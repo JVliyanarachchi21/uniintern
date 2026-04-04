@@ -79,7 +79,7 @@
 
             <div class="payment-actions">
                 <button type="button" class="btn cancel-btn" onclick="window.location.href='/company/promotions'">Cancel</button>
-                <button type="submit" class="btn primary pay-btn" th:text="${'Pay LKR ' + #numbers.formatDecimal(price, 0, 'COMMA', 0, 'POINT')}">Pay Now</button>
+                <button type="submit" class="btn primary pay-btn" th:text="${'Pay LKR ' + #numbers.formatInteger(price, 1, 'COMMA')}">Pay Now</button>
             </div>
         </form>
 

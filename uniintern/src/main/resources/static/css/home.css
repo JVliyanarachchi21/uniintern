@@ -1097,4 +1097,115 @@ svg {
         width: 100%;
     }
 }
+
+/* Featured Banners Section */
+.featured-banners-section {
+    background: #ffffff;
+    padding: 3rem 0;
+    border-bottom: 1px solid rgba(84, 131, 179, 0.1);
+}
+
+.banners-grid {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.banner-card {
+    flex: 0 1 380px;
+    background: #ffffff;
+    border: 1px solid rgba(84, 131, 179, 0.15);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(2, 16, 36, 0.04);
+}
+
+.banner-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(2, 16, 36, 0.08);
+    border-color: var(--uni-mid);
+}
+
+.banner-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(240, 122, 18, 0.1);
+    color: var(--uni-orange);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.banner-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--uni-primary);
+    margin: 0 0 0.75rem;
+}
+
+.banner-org {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(84, 131, 179, 0.08);
+}
+
+.banner-org img {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #f8fafc;
+    border: 1px solid rgba(84, 131, 179, 0.1);
+    flex-shrink: 0;
+}
+
+.banner-org span {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--uni-secondary);
+}
+
+.banner-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+}
+
+.banner-info .divider {
+    width: 3px;
+    height: 3px;
+    background: var(--uni-mid);
+    border-radius: 50%;
+    opacity: 0.4;
+}
+
+.banner-cta {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-banner {
+    padding: 0.6rem 1.4rem;
+    background: var(--uni-primary);
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-banner:hover {
+    background: var(--uni-secondary);
+    transform: scale(1.02);
 }

@@ -292,20 +292,19 @@ public String internshipsListing(Model model) {
     }
 
     @PostMapping("/promotions/process")
-    public String processPromotion(
-            @RequestParam(value = "internshipId", required = false) Long internshipId,
-            @RequestParam(value = "promoType", required = false) String promoType,
-            @RequestParam(value = "price", required = false) Double price,
-            @RequestParam(value = "days", required = false) Integer days,
-            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+    public String processPromotion(@RequestParam("internshipId") Long internshipId,
+                                   @RequestParam(value = "type", required = false, defaultValue = "Featured Internship") String type,
+                                   @RequestParam(value = "price", required = false, defaultValue = "5000.0") Double price,
+                                   @RequestParam(value = "days", required = false, defaultValue = "7") Integer days,
+                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         
-        System.out.println("Processing promotion for Internship: " + internshipId + ", Plan: " + promoType);
+        System.out.println("Processing promotion for Internship: " + internshipId + ", Plan: " + type + ", Price: " + price);
         
         // Redirect to checkout page with parameters
-        redirectAttributes.addAttribute("internshipId", internshipId != null ? internshipId : 0L);
-        redirectAttributes.addAttribute("type", promoType != null ? promoType : "Featured");
-        redirectAttributes.addAttribute("price", price != null ? price : 5000.0);
-        redirectAttributes.addAttribute("days", days != null ? days : 7);
+        redirectAttributes.addAttribute("internshipId", internshipId);
+        redirectAttributes.addAttribute("type", type);
+        redirectAttributes.addAttribute("price", price);
+        redirectAttributes.addAttribute("days", days);
         
         System.out.println("Redirecting to /company/payments/checkout");
         return "redirect:/company/payments/checkout";

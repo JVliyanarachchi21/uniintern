@@ -47,6 +47,13 @@ public class PromotionService {
                 .collect(Collectors.toList());
     }
 
+    public List<Promotion> getActiveBannerPromotions() {
+        return promotionRepository.findByStatusAndEndDateAfter("ACTIVE", LocalDateTime.now())
+                .stream()
+                .filter(p -> p.getType().contains("Homepage Banner"))
+                .collect(Collectors.toList());
+    }
+
     public List<Promotion> getAllPromotionsForCompany(Long companyId) {
         return promotionRepository.findByCompanyId(companyId);
     }

@@ -146,10 +146,20 @@
       
       <style>
         .featured-highlight {
-            border: 1.5px solid #f59e0b !important;
-            background: linear-gradient(to bottom, #fffdfa, #ffffff) !important;
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.08) !important;
-            transform: translateY(-2px);
+            border: 2px solid #f59e0b !important;
+            background: linear-gradient(135deg, #fffdf5 0%, #ffffff 100%) !important;
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.15) !important;
+            transform: translateY(-4px);
+            z-index: 10;
+        }
+        .featured-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #f59e0b;
         }
       </style>
 
