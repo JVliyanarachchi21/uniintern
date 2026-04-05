@@ -115,18 +115,20 @@
 
                 <div class="field">
                     <label for="password">Password</label>
-                    <div class="input-wrap">
+                    <div class="input-wrap" style="position: relative; display: flex; align-items: center;">
                         <span class="input-icon">🔒</span>
-                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required style="width: 100%; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-dark); padding-right: 40px;">
+                        <span class="toggle-password" style="position: absolute; right: 15px; cursor: pointer; color: #64748b; font-size: 18px; user-select: none;" title="Toggle Password Visibility">👁</span>
                     </div>
                     <span class="error-msg" id="passwordError"></span>
                 </div>
 
                 <div class="field">
                     <label for="confirmPassword">Confirm Password</label>
-                    <div class="input-wrap">
+                    <div class="input-wrap" style="position: relative; display: flex; align-items: center;">
                         <span class="input-icon">🔐</span>
-                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required style="width: 100%; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-dark); padding-right: 40px;">
+                        <span class="toggle-password" style="position: absolute; right: 15px; cursor: pointer; color: #64748b; font-size: 18px; user-select: none;" title="Toggle Password Visibility">👁</span>
                     </div>
                     <span class="error-msg" id="confirmPasswordError"></span>
                 </div>
@@ -146,5 +148,19 @@
 </div>
 
 <script src="/js/company-auth.js"></script>
+<script>
+    document.querySelectorAll('.toggle-password').forEach(icon => {
+        icon.addEventListener('click', function() {
+            const passwordInput = this.previousElementSibling;
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁';
+            }
+        });
+    });
+</script>
 </body>
 </html>

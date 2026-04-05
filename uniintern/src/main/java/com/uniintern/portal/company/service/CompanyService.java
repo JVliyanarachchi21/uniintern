@@ -23,6 +23,10 @@ public class CompanyService {
         return companyRepository.findById(id).orElse(null);
     }
 
+    public Company findByEmail(String email) {
+        return companyRepository.findByEmail(email).orElse(null);
+    }
+
     public java.util.List<Company> getAllCompanies() {
         return companyRepository.findAll();
     }
@@ -44,7 +48,10 @@ public class CompanyService {
     }
 
     public void updateProfile(Long id, String companyName, String industry, String email, String phone, String website, String address, String description, String logoPath) {
-        Company company = getOrCreateMockCompany(); // Always use our mock company
+        Company company = findById(id);
+        if (company == null) {
+            throw new IllegalArgumentException("Company not found");
+        }
         company.setCompanyName(companyName);
         company.setIndustry(industry);
         company.setEmail(email);
@@ -105,11 +112,11 @@ public class CompanyService {
             throw new IllegalArgumentException("Invalid OTP");
         }
         
-        // OTP matches, mark as verified
+        // OTP matches, mark as verified and pending approval from admin
         company.setEmailVerified(true);
         company.setVerificationCode(null);
         company.setVerificationCodeExpiresAt(null);
-        company.setStatus("ACTIVE");
+        company.setStatus("PENDING_APPROVAL");
         companyRepository.save(company);
         
         return true;

@@ -67,7 +67,7 @@
             <h2>Welcome back</h2>
             <p class="auth-sub">Sign in to your recruiter portal</p>
 
-            <form th:action="@{/company/dashboard}" method="get">
+            <form th:action="@{/company/login}" method="post">
                 <div th:if="${error}" style="background: #fee2e2; color: #ef4444; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
                     <span th:text="${error}"></span>
                 </div>
@@ -85,13 +85,14 @@
 
                 <div class="field">
                     <label for="password">Password</label>
-                    <div class="input-wrap">
+                    <div class="input-wrap" style="position: relative; display: flex; align-items: center;">
                         <span class="input-icon">🔒</span>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required style="width: 100%; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-dark); padding-right: 40px;">
+                        <span class="toggle-password" style="position: absolute; right: 15px; cursor: pointer; color: #64748b; font-size: 18px; user-select: none;" title="Toggle Password Visibility">👁</span>
                     </div>
                 </div>
 
-                <div class="demo-box">
+                <div class="demo-box" style="display: none;">
                     <div class="demo-title">Demo Credentials</div>
                     <div>hr@techcorp.lk / password123</div>
                 </div>
@@ -110,5 +111,17 @@
 
 </div>
 
+<script>
+    document.querySelector('.toggle-password').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            this.textContent = '🙈';
+        } else {
+            passwordInput.type = 'password';
+            this.textContent = '👁';
+        }
+    });
+</script>
 </body>
 </html>

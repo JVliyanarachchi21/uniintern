@@ -31,14 +31,16 @@ public class CompanyController {
     }
 
     @ModelAttribute
-    public void addCommonAttributes(Model model) {
-        try {
-            com.uniintern.portal.company.entity.Company company = companyService.getOrCreateMockCompany();
-            model.addAttribute("companyName", company.getCompanyName());
-            model.addAttribute("companyLogo", company.getLogoPath() != null ? company.getLogoPath() : "");
-        } catch (Exception e) {
-            model.addAttribute("companyName", "TechCorp Lanka");
-            model.addAttribute("companyLogo", "");
+    public void addCommonAttributes(Model model, jakarta.servlet.http.HttpSession session) {
+        if (session != null) {
+            Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+            if (companyId != null) {
+                com.uniintern.portal.company.entity.Company company = companyService.findById(companyId);
+                if (company != null) {
+                    model.addAttribute("companyName", company.getCompanyName());
+                    model.addAttribute("companyLogo", company.getLogoPath() != null ? company.getLogoPath() : "");
+                }
+            }
         }
     }
 
@@ -55,13 +57,31 @@ public class CompanyController {
     }
 
     @PostMapping("/login")
-    public String handleLogin(@RequestParam("email") String email, @RequestParam("password") String password, Model model) {
-        if ("hr@techcorp.lk".equals(email) && "password123".equals(password)) {
-            return "redirect:/company/dashboard";
-        } else {
+    public String handleLogin(@RequestParam("email") String email, @RequestParam("password") String password, Model model, jakarta.servlet.http.HttpSession session) {
+        com.uniintern.portal.company.entity.Company company = companyService.findByEmail(email);
+        
+        if (company == null || !company.getPassword().equals(password)) {
             model.addAttribute("error", "Invalid email or password");
             return "company/company-login";
         }
+        
+        if ("PENDING_VERIFICATION".equals(company.getStatus())) {
+            model.addAttribute("error", "Please verify your email to continue.");
+            return "company/company-login";
+        }
+        
+        if ("PENDING_APPROVAL".equals(company.getStatus())) {
+            model.addAttribute("error", "Your account is pending admin approval. Please wait.");
+            return "company/company-login";
+        }
+        
+        if (!"APPROVED".equals(company.getStatus()) && !"ACTIVE".equals(company.getStatus())) {
+            model.addAttribute("error", "Your account is currently disabled or rejected.");
+            return "company/company-login";
+        }
+        
+        session.setAttribute("loggedInCompanyId", company.getId());
+        return "redirect:/company/dashboard";
     }
 
     @GetMapping("/register")
@@ -172,14 +192,12 @@ public String internshipsListing(
     }
  
     @GetMapping("/profile")
-    public String profile(Model model) {
+    public String profile(Model model, jakarta.servlet.http.HttpSession session) {
         model.addAttribute("page", "profile");
-        try {
-            com.uniintern.portal.company.entity.Company company = companyService.getOrCreateMockCompany();
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId != null) {
+            com.uniintern.portal.company.entity.Company company = companyService.findById(companyId);
             model.addAttribute("company", company);
-        } catch (Exception e) {
-            // Provide a dummy company if completely fails
-            // ...
         }
         return "company/profile";
     }
@@ -194,9 +212,11 @@ public String internshipsListing(
             @RequestParam("address") String address,
             @RequestParam("description") String description,
             @RequestParam(value = "logoFile", required = false) org.springframework.web.multipart.MultipartFile logoFile,
-            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes,
+            jakarta.servlet.http.HttpSession session
     ) {
-        Long mockCompanyId = 1L;
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
         String logoPath = null;
 
         if (logoFile != null && !logoFile.isEmpty()) {
@@ -217,7 +237,7 @@ public String internshipsListing(
         }
 
         try {
-            companyService.updateProfile(mockCompanyId, companyName, industry, email, phone, website, address, description, logoPath);
+            companyService.updateProfile(companyId, companyName, industry, email, phone, website, address, description, logoPath);
             redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating profile: " + e.getMessage());
@@ -232,11 +252,12 @@ public String internshipsListing(
     }
 
     @GetMapping("/internships")
-    public String internships(Model model) {
+    public String internships(Model model, jakarta.servlet.http.HttpSession session) {
         model.addAttribute("page", "internships");
 
-        Long mockCompanyId = 1L;
-        List<Internship> internships = internshipService.getByCompanyId(mockCompanyId);
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+        List<Internship> internships = internshipService.getByCompanyId(companyId);
 
         java.util.Set<Long> promotedIds = promotionService.getActiveBannerPromotions().stream()
                 .map(com.uniintern.portal.company.entity.Promotion::getInternshipId)
@@ -262,11 +283,13 @@ public String internshipsListing(
             @RequestParam(value = "wGpa", required = false) Integer wGpa,
             @RequestParam(value = "wExp", required = false) Integer wExp,
             @RequestParam(value = "wCert", required = false) Integer wCert,
-            @RequestParam(value = "topN", required = false) Integer topN
+            @RequestParam(value = "topN", required = false) Integer topN,
+            jakarta.servlet.http.HttpSession session
     ) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         Internship internship = new Internship();
 
-        internship.setCompanyId(1L); // later replace with logged-in company id
+        internship.setCompanyId(companyId);
         internship.setTitle(title);
         internship.setDescription(description);
         internship.setLocation(location);
@@ -353,11 +376,13 @@ public String internshipsListing(
             @RequestParam("type") String type,
             @RequestParam("price") Double price,
             @RequestParam("days") Integer days,
-            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes,
+            jakarta.servlet.http.HttpSession session) {
         
         // Finalize transaction and activate promotion
-        Long mockCompanyId = 1L;
-        promotionService.createPromotion(internshipId, mockCompanyId, type, price, days);
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+        promotionService.createPromotion(internshipId, companyId, type, price, days);
         
         redirectAttributes.addAttribute("internshipId", internshipId);
         redirectAttributes.addAttribute("type", type);
@@ -395,11 +420,12 @@ public String internshipsListing(
     }
 
     @GetMapping("/payments/history")
-    public String paymentHistory(Model model) {
+    public String paymentHistory(Model model, jakarta.servlet.http.HttpSession session) {
         model.addAttribute("page", "payments");
 
-        Long mockCompanyId = 1L;
-        List<com.uniintern.portal.company.entity.Promotion> promos = promotionService.getAllPromotionsForCompany(mockCompanyId);
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+        List<com.uniintern.portal.company.entity.Promotion> promos = promotionService.getAllPromotionsForCompany(companyId);
         
         List<Map<String, Object>> payments = promos.stream().map(p -> {
             Map<String, Object> map = new java.util.HashMap<>();
