@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+    <style>
+        :root {
+            --color-primary: #5483B3;
+            --color-light: #C1E1C1;
+            --color-dark: #052659;
+            --bg-white: #FFFFFF;
+            --bg-main: #F8FAFC;
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --border-soft: #E2E8F0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .login-card {
+            background: var(--bg-white);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+            padding: 48px 40px;
+            text-align: center;
+            border: 1px solid var(--border-soft);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+
+        .brand-logo {
+            width: 50px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .brand-name {
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+            color: var(--color-dark);
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        p.subtitle {
+            margin: 0 0 32px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(84, 131, 179, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--color-dark);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(5, 38, 89, 0.1);
+        }
+
+        .btn-login:hover {
+            background: #0a3674;
+            transform: translateY(-1px);
+        }
+
+        .error-msg {
+            background: #fef2f2;
+            color: #ef4444;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 24px;
+            border: 1px solid #fee2e2;
+        }
+
+        .footer-links {
+            margin-top: 32px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .footer-links a {
+            color: var(--color-primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="brand">
+        <img th:src="@{/images/logooo.png}" alt="Logo" class="brand-logo">
+        <span class="brand-name">UniIntern</span>
+    </div>
+
+    <h2>Welcome back!</h2>
+    <p class="subtitle">Please enter your student credentials</p>
+
+    <div th:if="${error}" class="error-msg" th:text="${error}"></div>
+    <div th:if="${success}" class="success-msg" style="background:#f0fdf4; color:#16a34a; padding:12px; border-radius:8px; font-size:14px; margin-bottom:24px; border:1px solid #dcfce7;" th:text="${success}"></div>
+
+    <form th:action="@{/student/login}" method="post">
+        <div class="form-group">
+            <label for="email">University Email</label>
+            <input type="email" id="email" name="email" placeholder="e.g. IT23123456@my.sliit.lk" required th:value="${email}">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Your password" required>
+        </div>
+
+        <button type="submit" class="btn-login">Sign In</button>
+    </form>
+
+    <div class="footer-links">
+        Don't have an account? <a th:href="@{/student/register}">Sign Up</a>
+    </div>
+</div>
+
+</body>
+</html>
