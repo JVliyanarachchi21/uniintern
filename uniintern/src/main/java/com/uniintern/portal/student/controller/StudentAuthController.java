@@ -22,6 +22,7 @@ public class StudentAuthController {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
     @org.springframework.beans.factory.annotation.Qualifier("studentEmailService")
     private EmailService emailService;
 
@@ -48,24 +49,28 @@ public class StudentAuthController {
             Model model
     ) {
 
-        if (!email.matches("(?i)^[a-z]{2}\\d{8}@my\\.sliit\\.lk$")) {
-            model.addAttribute("error", "Email must be a valid SLIIT student email (e.g., IT23123456@my.sliit.lk)");
+        // 1. Validate Email Format
+        if (!email.matches("(?i)^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$")) {
+            model.addAttribute("error", "Please enter a valid email address.");
+            addRegistrationFieldsToModel(model, name, email, university, degreeProgram, regNo, nicNumber, gpa);
             return "student/register";
         }
 
+        // 2. Check if Email Already Exists (Properly)
         if (studentRepository.existsByEmail(email)) {
-            // For testing prototyping, we will allow you to overwrite your old mock registration
-            // so you don't get stuck on "Email already registered" when testing the OTP flow!
-            Student existing = studentRepository.findByEmail(email).get();
-            studentRepository.delete(existing);
-            studentRepository.flush();
+            model.addAttribute("error", "This email is already registered. Please sign in or use a different email.");
+            addRegistrationFieldsToModel(model, name, email, university, degreeProgram, regNo, nicNumber, gpa);
+            return "student/register";
         }
 
+        // 3. Password Match Check
         if (!password.equals(confirmPassword)) {
             model.addAttribute("error", "Passwords do not match");
+            addRegistrationFieldsToModel(model, name, email, university, degreeProgram, regNo, nicNumber, gpa);
             return "student/register";
         }
 
+        // 4. Create and Save Student
         Student student = new Student();
         student.setFullName(name);
         student.setEmail(email);
@@ -87,29 +92,44 @@ public class StudentAuthController {
         student.setCertifications("");
         student.setCvFilePath("");
 
-        studentRepository.save(student);
+        try {
+            studentRepository.save(student);
+        } catch (Exception e) {
+            model.addAttribute("error", "Database error: " + e.getMessage());
+            addRegistrationFieldsToModel(model, name, email, university, degreeProgram, regNo, nicNumber, gpa);
+            return "student/register";
+        }
 
-        // Generate 6-digit random OTP
+        // 5. Generate and Store OTP
         String otp = String.format("%06d", new Random().nextInt(999999));
-        
-        // Store the OTP
         otpStorage.put(email, otp);
 
         try {
-            // Send the OTP via the EmailService to their university email
             emailService.sendOtpEmail(email, otp);
             System.out.println("====== OTP EMAIL DISPATCHED TO " + email + " ======");
         } catch (Exception e) {
-            System.out.println("Failed to send OTP email (Check SMTP settings): " + e.getMessage());
+            System.out.println("Failed to send OTP email: " + e.getMessage());
             System.out.println("====== (FALLBACK) OTP FOR " + email + " is " + otp + " ======");
         }
 
-        return "redirect:/student/verify-otp?email=" + email;
+        return "redirect:/student/verify-otp?email=" + email + "&otp=" + otp;
+    }
+
+    private void addRegistrationFieldsToModel(Model model, String name, String email, String university, 
+                                             String degreeProgram, String regNo, String nicNumber, String gpa) {
+        model.addAttribute("name", name);
+        model.addAttribute("email", email);
+        model.addAttribute("university", university);
+        model.addAttribute("degreeProgram", degreeProgram);
+        model.addAttribute("regNo", regNo);
+        model.addAttribute("nicNumber", nicNumber);
+        model.addAttribute("gpa", gpa);
     }
 
     @GetMapping("/student/verify-otp")
-    public String verifyOtpPage(@RequestParam(required = false) String email, Model model) {
+    public String verifyOtpPage(@RequestParam(required = false) String email, @RequestParam(required = false) String otp, Model model) {
         model.addAttribute("email", email);
+        model.addAttribute("otpHint", otp);
         return "student/verify-otp";
     }
 

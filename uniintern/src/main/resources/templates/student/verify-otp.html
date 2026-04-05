@@ -26,6 +26,12 @@
         </div>
 
         <p th:if="${otpError}" th:text="${otpError}" style="color:#ef4444; font-size:14px; margin-top:-16px; margin-bottom:20px; font-weight:600;"></p>
+        
+        <!-- Dev Hint: OTP -->
+        <div th:if="${otpHint}" style="margin-bottom: 24px; padding: 12px; background: #fef9c3; border: 1px solid #fde047; border-radius: 12px; color: #854d0e; font-size: 14px; font-weight: 600;">
+            <span style="display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Dev/Testing Hint</span>
+            Your verification code is: <span style="font-size: 18px; color: #a16207; font-weight: 800; font-family: monospace;">[[${otpHint}]]</span>
+        </div>
 
         <!-- Form -->
         <form method="post" th:action="@{/student/verify-otp}" style="text-align: left;">
