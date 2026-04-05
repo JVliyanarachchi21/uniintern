@@ -34,6 +34,43 @@ public class StudentAuthController {
         return "student/register";
     }
 
+    @GetMapping("/student/login")
+    public String loginPage(Model model) {
+        return "student/login";
+    }
+
+    @PostMapping("/student/login")
+    public String handleLogin(
+            @RequestParam String email,
+            @RequestParam String password,
+            HttpSession session,
+            Model model
+    ) {
+        Optional<Student> studentOpt = studentRepository.findByEmail(email);
+
+        if (studentOpt.isEmpty()) {
+            model.addAttribute("error", "Invalid email or password");
+            model.addAttribute("email", email);
+            return "student/login";
+        }
+
+        Student student = studentOpt.get();
+
+        if (!student.getPassword().equals(password)) {
+            model.addAttribute("error", "Invalid email or password");
+            model.addAttribute("email", email);
+            return "student/login";
+        }
+
+        // Check if verified (unless we want to allow login during prototyping)
+        // if (student.getStatus() != StudentStatus.VERIFIED) {
+        //     return "redirect:/student/verify-otp?email=" + email;
+        // }
+
+        session.setAttribute("loggedInStudentId", student.getId());
+        return "redirect:/student/dashboard";
+    }
+
     @PostMapping("/student/register")
     public String handleRegister(
             @RequestParam String name,
