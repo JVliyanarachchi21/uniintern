@@ -72,7 +72,13 @@ public class CompanyService {
             throw new IllegalArgumentException("Passwords do not match");
         }
         if (companyRepository.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already registered");
+            Company existing = companyRepository.findByEmail(dto.getEmail()).orElse(null);
+            if (existing != null && !"APPROVED".equals(existing.getStatus()) && !"ACTIVE".equals(existing.getStatus())) {
+                companyRepository.delete(existing);
+                companyRepository.flush();
+            } else {
+                throw new IllegalArgumentException("Email already registered and approved. Please log in.");
+            }
         }
 
         Company company = new Company();

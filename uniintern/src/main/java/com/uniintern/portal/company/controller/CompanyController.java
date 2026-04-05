@@ -49,7 +49,7 @@ public class CompanyController {
                                @RequestParam(value = "success", required = false) String success,
                                Model model) {
         if ("true".equals(verified)) {
-            model.addAttribute("message", "Email verified successfully! You can now log in.");
+            model.addAttribute("message", "Email verified successfully! Your account is now pending admin approval. We will notify you via email once approved.");
         } else if (success != null) {
             model.addAttribute("message", "Registration successful! Please verify your email or log in.");
         }
@@ -112,7 +112,9 @@ public class CompanyController {
     public String handleVerifyOtp(@RequestParam("email") String email, @RequestParam("otp") String otp, Model model) {
         try {
             companyService.verifyOtp(email, otp);
-            return "redirect:/company/login?verified=true";
+            model.addAttribute("verified", true);
+            model.addAttribute("companyName", companyService.findByEmail(email).getCompanyName());
+            return "company/company-verify";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("email", email);

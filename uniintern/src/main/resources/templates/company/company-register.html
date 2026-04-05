@@ -118,7 +118,10 @@
                     <div class="input-wrap" style="position: relative; display: flex; align-items: center;">
                         <span class="input-icon">🔒</span>
                         <input type="password" id="password" name="password" placeholder="Create a password" required style="width: 100%; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-dark); padding-right: 40px;">
-                        <span class="toggle-password" style="position: absolute; right: 15px; cursor: pointer; color: #64748b; font-size: 18px; user-select: none;" title="Toggle Password Visibility">👁</span>
+                        <span class="toggle-password" style="position: absolute; right: 15px; cursor: pointer; color: #64748b; display: flex; align-items: center; user-select: none;" title="Toggle Password Visibility">
+                            <svg class="eye-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            <svg class="eye-icon visible" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
                     </div>
                     <span class="error-msg" id="passwordError"></span>
                 </div>
@@ -128,7 +131,10 @@
                     <div class="input-wrap" style="position: relative; display: flex; align-items: center;">
                         <span class="input-icon">🔐</span>
                         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required style="width: 100%; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-dark); padding-right: 40px;">
-                        <span class="toggle-password" style="position: absolute; right: 15px; cursor: pointer; color: #64748b; font-size: 18px; user-select: none;" title="Toggle Password Visibility">👁</span>
+                        <span class="toggle-password" style="position: absolute; right: 15px; cursor: pointer; color: #64748b; display: flex; align-items: center; user-select: none;" title="Toggle Password Visibility">
+                            <svg class="eye-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            <svg class="eye-icon visible" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
                     </div>
                     <span class="error-msg" id="confirmPasswordError"></span>
                 </div>
@@ -149,15 +155,20 @@
 
 <script src="/js/company-auth.js"></script>
 <script>
-    document.querySelectorAll('.toggle-password').forEach(icon => {
-        icon.addEventListener('click', function() {
+    document.querySelectorAll('.toggle-password').forEach(container => {
+        container.addEventListener('click', function() {
             const passwordInput = this.previousElementSibling;
+            const hiddenIcon = this.querySelector('.eye-icon.hidden');
+            const visibleIcon = this.querySelector('.eye-icon.visible');
+            
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                this.textContent = '🙈';
+                hiddenIcon.style.display = 'none';
+                visibleIcon.style.display = 'block';
             } else {
                 passwordInput.type = 'password';
-                this.textContent = '👁';
+                hiddenIcon.style.display = 'block';
+                visibleIcon.style.display = 'none';
             }
         });
     });
