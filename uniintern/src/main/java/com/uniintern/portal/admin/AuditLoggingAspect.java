@@ -37,10 +37,19 @@ public class AuditLoggingAspect {
 
     @AfterReturning(pointcut = "execution(* com.uniintern.portal.admin.AdminController.createInterview(..))", returning = "result")
     public void logInterviewCreation(JoinPoint joinPoint, Object result) {
-        // If it successfully redirects, we log it
         if (result != null && result.toString().startsWith("redirect:")) {
             saveLog("Schedule", "Interview", "New Interview Scheduled");
         }
+    }
+
+    @AfterReturning("execution(* com.uniintern.portal.admin.AdminController.reportIssue(..)) && args(subject, ..)")
+    public void logIssueReport(JoinPoint joinPoint, String subject) {
+        saveLog("Report", "System Issue", subject);
+    }
+
+    @AfterReturning("execution(* com.uniintern.portal.admin.AdminController.inviteAdmin(..)) && args(email, ..)")
+    public void logAdminInvite(JoinPoint joinPoint, String email) {
+        saveLog("Invite", "Staff Member", email);
     }
 
     private void saveLog(String action, String targetType, String targetName) {

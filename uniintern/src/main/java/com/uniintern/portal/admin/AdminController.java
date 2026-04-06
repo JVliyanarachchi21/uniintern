@@ -27,17 +27,20 @@ public class AdminController {
     private final InterviewRepository interviewRepository;
     private final AuditLogRepository auditLogRepository;
     private final AdminSchedulingService adminSchedulingService;
+    private final SystemMessageRepository systemMessageRepository;
 
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
             InterviewRepository interviewRepository,
             AuditLogRepository auditLogRepository,
-            AdminSchedulingService adminSchedulingService) {
+            AdminSchedulingService adminSchedulingService,
+            SystemMessageRepository systemMessageRepository) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
         this.auditLogRepository = auditLogRepository;
         this.adminSchedulingService = adminSchedulingService;
+        this.systemMessageRepository = systemMessageRepository;
     }
 
     @GetMapping({ "/dashboard", "" })
@@ -404,7 +407,24 @@ public class AdminController {
     }
 
     @GetMapping("/settings")
-    public String settings() {
+    public String settings(Model model) {
+        return "admin/settings";
+    }
+
+    @PostMapping("/settings/report")
+    public String reportIssue(@RequestParam String subject, @RequestParam String content, Model model) {
+        SystemMessage msg = new SystemMessage("BUG_REPORT", subject, content, "admin@uniintern.com");
+        systemMessageRepository.save(msg);
+        model.addAttribute("message", "Issue reported successfully to the system administrator.");
+        return "admin/settings";
+    }
+
+    @PostMapping("/settings/invite")
+    public String inviteAdmin(@RequestParam String email, Model model) {
+        SystemMessage msg = new SystemMessage("INVITE", "System Invitation", "Portal link sent to " + email, "admin@uniintern.com");
+        msg.setRecipientEmail(email);
+        systemMessageRepository.save(msg);
+        model.addAttribute("message", "Invitation link sent to " + email);
         return "admin/settings";
     }
 }
