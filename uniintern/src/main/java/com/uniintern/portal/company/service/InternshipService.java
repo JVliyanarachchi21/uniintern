@@ -130,4 +130,8 @@ public class InternshipService {
     public void delete(Long id) {
         internshipRepository.deleteById(id);
     }
+
+    public long countByCompanyIdAndStatus(Long companyId, String status) {
+        return internshipRepository.countByCompanyIdAndStatus(companyId, status);
+    }
 }

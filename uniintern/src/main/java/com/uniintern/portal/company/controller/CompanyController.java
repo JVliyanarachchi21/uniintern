@@ -163,31 +163,46 @@ public String internshipsListing(
 }
 
     @GetMapping({"/dashboard", "", "/"})
-    public String dashboard(Model model) {
+    public String dashboard(Model model, jakarta.servlet.http.HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+
         model.addAttribute("page", "dashboard");
 
-        model.addAttribute("activeInternships", 2);
-        model.addAttribute("pendingApproval", 1);
-        model.addAttribute("totalApplicants", 25);
-        model.addAttribute("shortlisted", 5);
-        model.addAttribute("activePromotions", 1);
+        com.uniintern.portal.company.entity.Company company = companyService.findById(companyId);
+        if (company == null) return "redirect:/company/login";
+        model.addAttribute("company", company);
 
-        List<Map<String, String>> recentApplicants = List.of(
-                Map.of("name", "Ashan Fernando", "uni", "University of Colombo", "status", "Shortlisted"),
-                Map.of("name", "Dilini Wickramasinghe", "uni", "University of Moratuwa", "status", "Shortlisted"),
-                Map.of("name", "Nuwan Bandara", "uni", "University of Peradeniya", "status", "Shortlisted"),
-                Map.of("name", "Sachini Rathnayake", "uni", "SLIIT", "status", "Shortlisted"),
-                Map.of("name", "Tharaka Jayasuriya", "uni", "NSBM", "status", "Shortlisted")
-        );
-        model.addAttribute("recentApplicants", recentApplicants);
+        // Real Counts
+        long activeInternships = internshipService.countByCompanyIdAndStatus(companyId, "APPROVED");
+        long pendingApproval = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
+        long activePromotions = promotionService.countActivePromotionsForCompany(companyId);
 
-        List<Map<String, String>> notifications = List.of(
-                Map.of("date", "2/24/2026", "message", "Your internship 'Software Engineering Intern' has been approved!"),
-                Map.of("date", "2/23/2026", "message", "Featured promotion for 'Software Engineering Intern' is now active."),
-                Map.of("date", "2/22/2026", "message", "5 new applicants for 'Data Science Trainee'."),
-                Map.of("date", "2/20/2026", "message", "Your internship 'QA Engineering Intern' was rejected. Reason: Incomplete description."),
-                Map.of("date", "1/15/2026", "message", "Welcome to UniIntern! Complete your company profile to attract more candidates.")
-        );
+        model.addAttribute("activeInternships", activeInternships);
+        model.addAttribute("pendingApproval", pendingApproval);
+        model.addAttribute("totalApplicants", 0);
+        model.addAttribute("shortlisted", 0);
+        model.addAttribute("activePromotions", activePromotions);
+
+        // Recent Internships (instead of mock applicants)
+        List<Internship> recentInternships = internshipService.getByCompanyId(companyId);
+        List<Internship> latestActivities = recentInternships.stream()
+                .sorted((a, b) -> b.getId().compareTo(a.getId()))
+                .limit(5)
+                .collect(java.util.stream.Collectors.toList());
+        model.addAttribute("recentActivities", latestActivities);
+
+        // Real-world Notifications
+        java.util.List<Map<String, String>> notifications = new java.util.ArrayList<>();
+        if (pendingApproval > 0) {
+            notifications.add(Map.of("date", "Today", "message", pendingApproval + " internship(s) are currently pending admin approval."));
+        }
+        if (activePromotions > 0) {
+            notifications.add(Map.of("date", "Recent", "message", "You have " + activePromotions + " active promotion(s) running."));
+        }
+        if (notifications.isEmpty()) {
+            notifications.add(Map.of("date", "Welcome", "message", "Welcome to UniIntern! Complete your company profile to attract more candidates."));
+        }
         model.addAttribute("notifications", notifications);
 
         return "company/dashboard";
@@ -199,6 +214,8 @@ public String internshipsListing(
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId != null) {
             com.uniintern.portal.company.entity.Company company = companyService.findById(companyId);
+            if (company == null) return "redirect:/company/login";
+            
             model.addAttribute("company", company);
         }
         return "company/profile";
