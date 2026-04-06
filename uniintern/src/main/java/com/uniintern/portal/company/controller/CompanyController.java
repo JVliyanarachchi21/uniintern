@@ -261,9 +261,7 @@ public String internshipsListing(
         if (companyId == null) return "redirect:/company/login";
         List<Internship> internships = internshipService.getByCompanyId(companyId);
 
-        java.util.Set<Long> promotedIds = promotionService.getActiveBannerPromotions().stream()
-                .map(com.uniintern.portal.company.entity.Promotion::getInternshipId)
-                .collect(java.util.stream.Collectors.toSet());
+        java.util.Set<Long> promotedIds = new java.util.HashSet<>(promotionService.getPromotedInternshipIds());
 
         model.addAttribute("internships", internships);
         model.addAttribute("promotedIds", promotedIds);
@@ -343,15 +341,27 @@ public String internshipsListing(
     }
 
     @GetMapping("/promotions")
-    public String promotions(Model model) {
+    public String promotions(Model model, jakarta.servlet.http.HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+
         model.addAttribute("page", "promotions");
         
-        // Fetch real approved internships for the dropdown
-        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings(null, null, null);
-        model.addAttribute("internships", internships);
+        // Fetch only approved internships for this company
+        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = 
+            internshipService.getApprovedInternshipsListings(null, companyId, null);
+            
+        // Filter out internships that already have an active promotion
+        java.util.Set<Long> promotedIds = new java.util.HashSet<>(promotionService.getPromotedInternshipIds());
+        List<com.uniintern.portal.company.dto.InternshipListingDto> eligibleInternships = internships.stream()
+                .filter(i -> !promotedIds.contains(i.getId()))
+                .collect(java.util.stream.Collectors.toList());
+                
+        model.addAttribute("internships", eligibleInternships);
         
         return "company/promotions";
     }
+
 
     @PostMapping("/promotions/process")
     public String processPromotion(@RequestParam("internshipId") Long internshipId,
