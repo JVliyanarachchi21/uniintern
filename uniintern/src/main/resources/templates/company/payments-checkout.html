@@ -11,7 +11,7 @@
 
         <h1 class="page-title">Payment Checkout</h1>
 
-        <form id="checkoutForm" action="/company/payments/complete" method="POST">
+        <form id="checkoutForm" action="/company/payments/complete" method="POST" onsubmit="return validatePaymentForm()">
             <!-- Hidden context fields -->
             <input type="hidden" name="internshipId" th:value="${internshipId}">
             <input type="hidden" name="type" th:value="${promoType}">
@@ -51,29 +51,29 @@
 
                 <div class="field">
                     <label for="cardName">Cardholder Name</label>
-                    <input type="text" id="cardName" required>
+                    <input type="text" id="cardName" name="cardName" required>
                 </div>
 
                 <div class="field">
                     <label for="cardNumber">Card Number</label>
-                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+                    <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" required>
                 </div>
 
                 <div class="grid-2">
                     <div class="field">
                         <label for="expiry">Expiry (MM/YY)</label>
-                        <input type="text" id="expiry" placeholder="MM/YY" required>
+                        <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required>
                     </div>
 
                     <div class="field">
                         <label for="cvv">CVV</label>
-                        <input type="text" id="cvv" placeholder="123" required>
+                        <input type="text" id="cvv" name="cvv" placeholder="123" required>
                     </div>
                 </div>
 
                 <div class="field">
                     <label for="billingEmail">Billing Email</label>
-                    <input type="email" id="billingEmail" placeholder="e.g. finance@company.com" required>
+                    <input type="email" id="billingEmail" name="billingEmail" placeholder="e.g. finance@company.com" required>
                 </div>
             </div>
 
@@ -85,8 +85,110 @@
 
     </div>
 
-</section>
+<script th:inline="javascript">
+    // Inline validation to ensure it's always loaded correctly
+    function showFieldError(input, message) {
+        if (!input) return;
+        input.style.borderColor = "#ef4444";
+        input.style.boxShadow = "0 0 0 1px #ef4444";
+        
+        let container = input.parentNode;
+        let errorDiv = container.querySelector('.inline-error-msg');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.className = 'inline-error-msg';
+            errorDiv.style.color = '#ef4444';
+            errorDiv.style.fontSize = '12px';
+            errorDiv.style.marginTop = '4px';
+            container.appendChild(errorDiv);
+        }
+        errorDiv.textContent = message;
+    }
 
+    function clearFieldError(input) {
+        if (!input) return;
+        input.style.borderColor = "";
+        input.style.boxShadow = "";
+        let errorDiv = input.parentNode.querySelector('.inline-error-msg');
+        if (errorDiv) errorDiv.remove();
+    }
+
+    function validatePaymentForm() {
+        console.log("Validation started...");
+        const cardName = document.getElementById("cardName");
+        const cardNumber = document.getElementById("cardNumber");
+        const expiry = document.getElementById("expiry");
+        const cvv = document.getElementById("cvv");
+        const email = document.getElementById("billingEmail");
+
+        let isValid = true;
+
+        // Helper to validate a field
+        const check = (input, condition, message) => {
+            if (!condition) {
+                showFieldError(input, message);
+                isValid = false;
+            } else {
+                clearFieldError(input);
+            }
+        };
+
+        // Name
+        check(cardName, cardName.value.trim().length > 2, "Please enter a valid cardholder name.");
+
+        // Card Number
+        const rawCardNum = cardNumber.value.replace(/\s/g, '');
+        check(cardNumber, rawCardNum.length === 16 && /^\d+$/.test(rawCardNum), "Card number must be 16 digits.");
+
+        // Expiry (MM/Y or MM/YY) - Flexible parsing
+        const expiryVal = expiry.value.trim();
+        if (!expiryVal.includes('/')) {
+            alert("Card expiry date must contain a / (e.g. 12/26 or 12/7).");
+            expiry.focus();
+            return false;
+        }
+
+        const [mStr, yStr] = expiryVal.split('/');
+        const month = parseInt(mStr);
+        // If year is single digit (e.g. 7), treat as 2027. If 2 digits (e.g. 27), treat as 2027.
+        const yearSuffix = yStr.length === 1 ? "200" + yStr : (yStr.length === 2 ? "20" + yStr : yStr);
+        const year = parseInt(yearSuffix);
+        
+        const now = new Date();
+        const curY = now.getFullYear();
+        const curM = now.getMonth() + 1;
+
+        if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
+            alert("Please enter a valid expiry date.");
+            expiry.focus();
+            isValid = false;
+        } else if (year < curY || (year === curY && month < curM)) {
+            alert("This card has expired. Please use a valid card.");
+            expiry.focus();
+            isValid = false;
+        } else {
+            clearFieldError(expiry);
+        }
+
+        // CVV
+        check(cvv, cvv.value.length >= 3 && cvv.value.length <= 4 && /^\d+$/.test(cvv.value), "CVV must be 3 or 4 digits.");
+
+        // Email
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        check(email, emailPattern.test(email.value.trim()), "Please enter a valid billing email.");
+
+        if (!isValid) {
+            console.log("Validation FAILED.");
+            const firstError = document.querySelector('.inline-error-msg');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false; // STOP SUBMISSION
+        }
+
+        console.log("Validation SUCCESS.");
+        return true; // PROCEED
+    }
+</script>
 <script src="/js/company.js"></script>
 </body>
+
 </html>
