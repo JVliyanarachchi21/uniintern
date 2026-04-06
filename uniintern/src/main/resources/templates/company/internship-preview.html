@@ -55,11 +55,13 @@
             <div class="preview-top">
                 <div class="preview-top-left">
                     <div class="preview-logo">
-                        <img src="https://ui-avatars.com/api/?name=TechCorp+Lanka&background=0D8ABC&color=fff&size=256" alt="TechCorp Lanka Logo">
+                        <img th:if="${company != null and (company.logoPath == null or company.logoPath.isEmpty())}" th:src="'https://ui-avatars.com/api/?name=' + ${company.companyName} + '&background=0D8ABC&color=fff&size=256'" th:alt="${company.companyName} + ' Logo'">
+                        <img th:if="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" th:src="${company.logoPath}" th:alt="${company.companyName} + ' Logo'">
+                        <img th:if="${company == null}" src="https://ui-avatars.com/api/?name=UniIntern&background=0D8ABC&color=fff&size=256" alt="UniIntern Logo">
                     </div>
                     <div>
-                        <h2 class="preview-title">Software Engineering Intern</h2>
-                        <div class="preview-company-name">TechCorp Lanka</div>
+                        <h2 class="preview-title" th:text="${internship.title}">Software Engineering Intern</h2>
+                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'UniIntern Platform'}">UniIntern Platform</div>
                     </div>
                 </div>
                 <div class="preview-badges">
@@ -77,7 +79,7 @@
                     </div>
                     <div class="detail-content">
                         <span>Location</span>
-                        <strong>Colombo / Hybrid</strong>
+                        <strong th:text="${internship.location}">Colombo / Hybrid</strong>
                     </div>
                 </div>
 
@@ -87,7 +89,7 @@
                     </div>
                     <div class="detail-content">
                         <span>Duration</span>
-                        <strong>6 Months</strong>
+                        <strong th:text="${internship.duration}">6 Months</strong>
                     </div>
                 </div>
 
@@ -97,7 +99,7 @@
                     </div>
                     <div class="detail-content">
                         <span>Deadline</span>
-                        <strong>2026-05-30</strong>
+                        <strong th:text="${internship.deadline}">2026-05-30</strong>
                     </div>
                 </div>
 
@@ -107,14 +109,14 @@
                     </div>
                     <div class="detail-content">
                         <span>Minimum GPA</span>
-                        <strong>3.00</strong>
+                        <strong th:text="${internship.minGpa != null ? internship.minGpa : 'N/A'}">3.00</strong>
                     </div>
                 </div>
             </div>
 
             <div class="preview-body">
                 <h3>About this Internship</h3>
-                <p>We are looking for a motivated Software Engineering Intern to join our team. The selected candidate will work on real-world projects, support development tasks, and collaborate with experienced software engineers in an agile environment to build modern scalable web applications serving millions of users daily.</p>
+                <p th:text="${internship.description}">We are looking for a motivated Software Engineering Intern to join our team... </p>
                 
                 <h3>Responsibilities</h3>
                 <ul>
@@ -126,16 +128,12 @@
 
                 <h3>Required Skills</h3>
                 <div class="skill-tags">
-                    <span class="skill-tag">Java</span>
-                    <span class="skill-tag">Spring Boot</span>
-                    <span class="skill-tag">PostgreSQL</span>
-                    <span class="skill-tag">Git</span>
-                    <span class="skill-tag">HTML / CSS</span>
+                    <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${skill.trim()}">Java</span>
                 </div>
             </div>
 
             <div class="preview-action">
-                <a th:href="@{/company/internships/application-template}" class="btn btn-primary btn-large">Apply Now</a>
+                <a th:href="@{/company/internships/application-template(id=${internship.id})}" class="btn btn-primary btn-large">Apply Now</a>
             </div>
         </div>
     </main>

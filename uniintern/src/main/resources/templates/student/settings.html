@@ -280,43 +280,51 @@
                 <p>Manage your account, preferences, and security settings.</p>
             </div>
 
+            <!-- Success/Error Alerts -->
+            <div th:if="${success}" style="background: var(--success-bg); color: var(--success-text); padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-weight: 600; font-size: 14px; border: 1px solid #bbf7d0;">
+                <span th:text="${success}">Success message...</span>
+            </div>
+            <div th:if="${error}" style="background: #fee2e2; color: #dc2626; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-weight: 600; font-size: 14px; border: 1px solid #fecaca;">
+                <span th:text="${error}">Error message...</span>
+            </div>
+
             <!-- Block 1: Contact Email -->
-            <div class="setting-block">
+            <form th:action="@{/student/settings/update-email}" method="post" class="setting-block">
                 <div class="setting-body">
                     <h3 class="setting-title">Contact Email</h3>
                     <p class="setting-desc">This is the email tied to your UniIntern account. It will be used for all critical notifications.</p>
                     <div class="form-row">
-                        <input type="email" class="form-input" value="ashan@university.edu" readonly>
+                        <input type="email" name="email" class="form-input" th:value="${student.email}">
                     </div>
                 </div>
                 <div class="setting-footer">
                     <div class="footer-hint">Please verify your new email if you choose to change it.</div>
-                    <button type="button" class="btn-light">Update Email</button>
+                    <button type="submit" class="btn-light">Update Email</button>
                 </div>
-            </div>
+            </form>
 
             <!-- Block 2: Change Password -->
-            <div class="setting-block">
+            <form th:action="@{/student/settings/change-password}" method="post" class="setting-block">
                 <div class="setting-body">
                     <h3 class="setting-title">Change Password</h3>
                     <p class="setting-desc">Update your password to keep your account secure. Use a strong password.</p>
                     
                     <div class="form-row">
                         <label class="form-label">Current Password</label>
-                        <input type="password" class="form-input">
+                        <input type="password" name="currentPassword" class="form-input" required>
                     </div>
                     <div class="form-row">
                         <label class="form-label">New Password</label>
-                        <input type="password" class="form-input">
+                        <input type="password" name="newPassword" class="form-input" required>
                     </div>
                 </div>
                 <div class="setting-footer">
-                    <button type="button" class="btn-black">Save Password</button>
+                    <button type="submit" class="btn-black">Save Password</button>
                 </div>
-            </div>
+            </form>
 
             <!-- Block 3: Security Preferences -->
-            <div class="setting-block">
+            <form th:action="@{/student/settings/update-preferences}" method="post" class="setting-block">
                 <div class="setting-body">
                     <h3 class="setting-title">Security Preferences</h3>
                     <p class="setting-desc">Manage how your account is authenticated and protected against unauthorized access.</p>
@@ -327,7 +335,7 @@
                             <p>Add an extra verification step when signing in.</p>
                         </div>
                         <label class="switch">
-                            <input type="checkbox">
+                            <input type="checkbox" name="twoFactorEnabled" th:checked="${student.twoFactorEnabled}">
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -338,7 +346,7 @@
                             <p>Receive email alerts for new login attempts.</p>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <input type="checkbox" name="loginAlertsEnabled" th:checked="${student.loginAlertsEnabled}">
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -349,15 +357,15 @@
                             <p>Reduce verification prompts on trusted devices.</p>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <input type="checkbox" name="rememberDeviceEnabled" th:checked="${student.rememberDeviceEnabled}">
                             <span class="slider"></span>
                         </label>
                     </div>
                 </div>
                 <div class="setting-footer">
-                    <button type="button" class="btn-light">Save Preferences</button>
+                    <button type="submit" class="btn-light">Save Preferences</button>
                 </div>
-            </div>
+            </form>
 
             <!-- Block 4: Recent Security Activity -->
             <div class="setting-block">

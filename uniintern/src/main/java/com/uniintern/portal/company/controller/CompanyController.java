@@ -1,20 +1,21 @@
 package com.uniintern.portal.company.controller;
 
-import com.uniintern.portal.company.entity.Internship;
-import com.uniintern.portal.company.service.InternshipService;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import com.uniintern.portal.company.entity.Internship;
+import com.uniintern.portal.company.service.InternshipService;
 
 @Controller
 @RequestMapping("/company")
@@ -23,10 +24,13 @@ public class CompanyController {
     private final InternshipService internshipService;
     private final com.uniintern.portal.company.service.CompanyService companyService;
 
-    public CompanyController(InternshipService internshipService, com.uniintern.portal.company.service.CompanyService companyService) {
+    public CompanyController(InternshipService internshipService, com.uniintern.portal.company.service.CompanyService companyService, com.uniintern.portal.student.service.NotificationService notificationService) {
         this.internshipService = internshipService;
         this.companyService = companyService;
+        this.notificationService = notificationService;
     }
+
+    private final com.uniintern.portal.student.service.NotificationService notificationService;
 
     @ModelAttribute
     public void addCommonAttributes(Model model) {
@@ -99,16 +103,35 @@ public class CompanyController {
     }
 
     @GetMapping("/internships/preview")
-public String internshipPreview(Model model) {
-    model.addAttribute("page", "internships");
-    return "company/internship-preview";
-}
+    public String internshipPreview(@RequestParam("id") Long id, Model model, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        com.uniintern.portal.company.entity.Internship internship = internshipService.getById(id);
+        if (internship == null) {
+            redirectAttributes.addFlashAttribute("error", "The requested internship could not be found.");
+            return "redirect:/company/internships/listing";
+        }
+        
+        model.addAttribute("internship", internship);
+        if (internship.getCompanyId() != null) {
+            com.uniintern.portal.company.entity.Company company = companyService.findById(internship.getCompanyId());
+            model.addAttribute("company", company);
+        }
+        
+        model.addAttribute("page", "internships");
+        return "company/internship-preview";
+    }
 
-@GetMapping("/internships/application-template")
-public String applicationTemplate(Model model) {
-    model.addAttribute("page", "internships");
-    return "company/application-template";
-}
+    @GetMapping("/internships/application-template")
+    public String applicationTemplate(@RequestParam("id") Long id, Model model, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        com.uniintern.portal.company.entity.Internship internship = internshipService.getById(id);
+        if (internship == null) {
+            redirectAttributes.addFlashAttribute("error", "The requested internship could not be found.");
+            return "redirect:/company/internships/listing";
+        }
+        
+        model.addAttribute("internship", internship);
+        model.addAttribute("page", "internships");
+        return "company/application-template";
+    }
 
 @GetMapping("/internships/listing")
 public String internshipsListing(Model model) {
@@ -229,7 +252,11 @@ public String internshipsListing(Model model) {
             @RequestParam(value = "minGpa", required = false) String minGpa,
             @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam(value = "skills", required = false) String skills,
-            @RequestParam(value = "status", required = false) String status
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
+            @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
+            @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
+            @RequestParam(value = "wCert", defaultValue = "10") Integer wCert
     ) {
         Internship internship = new Internship();
 
@@ -255,9 +282,20 @@ public String internshipsListing(Model model) {
             internship.setStatus("PENDING_ADMIN_APPROVAL");
         }
 
+        internship.setSkillsWeight(wSkills);
+        internship.setGpaWeight(wGpa);
+        internship.setExperienceWeight(wExp);
+        internship.setCertificatesWeight(wCert);
+
         internship.setCreatedAt(LocalDateTime.now());
 
         internshipService.save(internship);
+
+        // Broadcast notification if not a draft
+        if (!"DRAFT".equalsIgnoreCase(status)) {
+            notificationService.broadcastNotification("New Internship Posted", 
+                "A new internship opportunity '" + title + "' is now available!", "Internship");
+        }
 
         return "redirect:/company/internships";
     }
@@ -348,7 +386,11 @@ public String updateInternship(
         @RequestParam(value = "minGpa", required = false) String minGpa,
         @RequestParam(value = "maxGpa", required = false) String maxGpa,
         @RequestParam("deadline") String deadline,
-        @RequestParam(value = "requiredSkills", required = false) String requiredSkills
+        @RequestParam(value = "requiredSkills", required = false) String requiredSkills,
+        @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
+        @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
+        @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
+        @RequestParam(value = "wCert", defaultValue = "10") Integer wCert
 ) {
     Internship internship = internshipService.getById(id);
 
@@ -370,6 +412,11 @@ public String updateInternship(
     } else {
         internship.setMaxGpa(null);
     }
+
+    internship.setSkillsWeight(wSkills);
+    internship.setGpaWeight(wGpa);
+    internship.setExperienceWeight(wExp);
+    internship.setCertificatesWeight(wCert);
 
     internshipService.save(internship);
 

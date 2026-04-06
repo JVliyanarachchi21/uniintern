@@ -26,11 +26,39 @@ public class StudentAuthController {
     @org.springframework.beans.factory.annotation.Qualifier("studentEmailService")
     private EmailService emailService;
 
+    @Autowired
+    private com.uniintern.portal.student.repository.StudentApplicationRepository studentApplicationRepository;
+
+    @Autowired
+    private com.uniintern.portal.student.service.NotificationService notificationService;
+
     // A simple in-memory cache for OTPs mapped by email (for prototyping purposes)
     private final Map<String, String> otpStorage = new HashMap<>();
 
     @GetMapping("/student/register")
-    public String registerPage() {
+    public String registerPage(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String university,
+            @RequestParam(required = false) String degree,
+            @RequestParam(required = false) String gpa,
+            @RequestParam(required = false) String skills,
+            @RequestParam(required = false) String experience,
+            @RequestParam(required = false) Long internshipId,
+            @RequestParam(required = false) String coverLetter,
+            Model model
+    ) {
+        String fullName = (firstName != null ? firstName : "") + (lastName != null ? " " + lastName : "");
+        model.addAttribute("name", fullName.trim());
+        model.addAttribute("email", email);
+        model.addAttribute("university", university);
+        model.addAttribute("degreeProgram", degree);
+        model.addAttribute("gpa", gpa);
+        model.addAttribute("skills", skills);
+        model.addAttribute("experience", experience);
+        model.addAttribute("internshipId", internshipId);
+        model.addAttribute("coverLetter", coverLetter);
         return "student/register";
     }
 
@@ -81,8 +109,12 @@ public class StudentAuthController {
             @RequestParam String degreeProgram,
             @RequestParam String regNo,
             @RequestParam String nicNumber,
-            @RequestParam String gpa,
+            @RequestParam(required = false) String gpa,
             @RequestParam(required = false) String terms,
+            @RequestParam(required = false) String preSkills,
+            @RequestParam(required = false) String preExperience,
+            @RequestParam(required = false) Long internshipId,
+            @RequestParam(required = false) String coverLetter,
             Model model
     ) {
 
@@ -118,20 +150,39 @@ public class StudentAuthController {
         student.setNicNumber(nicNumber);
         
         try {
-            student.setGpa(Double.parseDouble(gpa));
-        } catch (NumberFormatException e) {
+            if (gpa != null && !gpa.trim().isEmpty()) {
+                student.setGpa(Double.parseDouble(gpa));
+            } else {
+                student.setGpa(0.0);
+            }
+        } catch (NumberFormatException | NullPointerException e) {
             student.setGpa(0.0);
         }
 
         student.setAcademicYear("Not Set");
-        student.setSkills("");
-        student.setExperience("");
+        student.setSkills(preSkills != null ? preSkills : "");
+        student.setExperience(preExperience != null ? preExperience : "");
         student.setCertifications("");
         student.setCvFilePath("");
 
         try {
-            studentRepository.save(student);
+            Student savedStudent = studentRepository.save(student);
+            
+            // IF APPLYING VIA INTERNSHIP BROWSE
+            if (internshipId != null) {
+                com.uniintern.portal.student.model.StudentApplication application = new com.uniintern.portal.student.model.StudentApplication();
+                application.setStudentId(savedStudent.getId());
+                application.setInternshipId(internshipId);
+                application.setRemarks(coverLetter);
+                application.setStatus(com.uniintern.portal.student.model.ApplicationStatus.APPLIED);
+                studentApplicationRepository.save(application);
+                
+                // Create notification for application submission
+                notificationService.createNotification(savedStudent.getId(), "Application Submitted", "Your application has been successfully submitted.", "Application");
+            }
+
         } catch (Exception e) {
+            System.err.println("REGISTRATION FATAL ERROR: [ " + e.getClass().getSimpleName() + " ] - " + e.getMessage());
             model.addAttribute("error", "Database error: " + e.getMessage());
             addRegistrationFieldsToModel(model, name, email, university, degreeProgram, regNo, nicNumber, gpa);
             return "student/register";
@@ -149,6 +200,9 @@ public class StudentAuthController {
             System.out.println("====== (FALLBACK) OTP FOR " + email + " is " + otp + " ======");
         }
 
+        if (internshipId != null) {
+            return "redirect:/student/verify-otp?email=" + email + "&otp=" + otp + "&target=applications";
+        }
         return "redirect:/student/verify-otp?email=" + email + "&otp=" + otp;
     }
 
@@ -164,17 +218,26 @@ public class StudentAuthController {
     }
 
     @GetMapping("/student/verify-otp")
-    public String verifyOtpPage(@RequestParam(required = false) String email, @RequestParam(required = false) String otp, Model model) {
+    public String verifyOtpPage(@RequestParam(required = false) String email, 
+                                @RequestParam(required = false) String otp, 
+                                @RequestParam(required = false) String target,
+                                Model model) {
         model.addAttribute("email", email);
         model.addAttribute("otpHint", otp);
+        model.addAttribute("target", target);
         return "student/verify-otp";
     }
 
     @PostMapping("/student/verify-otp")
-    public String verifyOtp(@RequestParam String email, @RequestParam String otp, HttpSession session, Model model) {
+    public String verifyOtp(@RequestParam String email, 
+                            @RequestParam String otp, 
+                            @RequestParam(required = false) String target,
+                            HttpSession session, 
+                            Model model) {
 
         if (otp == null || !otp.matches("^\\d{6}$")) {
             model.addAttribute("email", email);
+            model.addAttribute("target", target);
             model.addAttribute("otpError", "OTP must contain exactly 6 digits");
             return "student/verify-otp";
         }
@@ -184,12 +247,14 @@ public class StudentAuthController {
         
         if (storedOtp == null) {
             model.addAttribute("email", email);
+            model.addAttribute("target", target);
             model.addAttribute("otpError", "OTP session expired or not found. Please register again.");
             return "student/verify-otp";
         }
 
         if (!storedOtp.equals(otp)) {
             model.addAttribute("email", email);
+            model.addAttribute("target", target);
             model.addAttribute("otpError", "Invalid OTP code. Please try again.");
             return "student/verify-otp";
         }
@@ -203,9 +268,16 @@ public class StudentAuthController {
             
             // Set student in session
             session.setAttribute("loggedInStudentId", student.getId());
+
+            // Create notification for account verification
+            notificationService.createNotification(student.getId(), "Account Verified", "Welcome to UniIntern! Your account has been successfully verified.", "Account");
         }
 
         otpStorage.remove(email);
+
+        if ("applications".equals(target)) {
+            return "redirect:/student/applications";
+        }
 
         return "redirect:/student/dashboard";
     }
