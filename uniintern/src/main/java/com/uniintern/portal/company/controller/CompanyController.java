@@ -39,6 +39,22 @@ public class CompanyController {
                 if (company != null) {
                     model.addAttribute("companyName", company.getCompanyName());
                     model.addAttribute("companyLogo", company.getLogoPath() != null ? company.getLogoPath() : "");
+                    
+                    // Add real-time notification count for the topbar badge
+                    long pendingCount = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
+                    long promoCount = promotionService.countActivePromotionsForCompany(companyId);
+                    long totalNotifications = 0;
+                    if (pendingCount > 0) totalNotifications++;
+                    if (promoCount > 0) totalNotifications++;
+                    if (totalNotifications == 0) totalNotifications = 1; // Welcome msg
+                    
+                    // If the user has already visited the notifications page, hide the badge
+                    Boolean notificationsRead = (Boolean) session.getAttribute("notificationsRead");
+                    if (notificationsRead != null && notificationsRead) {
+                        model.addAttribute("unreadCount", 0);
+                    } else {
+                        model.addAttribute("unreadCount", totalNotifications);
+                    }
                 }
             }
         }
@@ -337,6 +353,9 @@ public String internshipsListing(
         internship.setCreatedAt(LocalDateTime.now());
 
         internshipService.save(internship);
+        
+        // Reset notification badge to 'unread' after posting a new internship
+        session.setAttribute("notificationsRead", false);
 
         return "redirect:/company/internships";
     }
@@ -479,19 +498,32 @@ public String internshipsListing(
     }
 
     @GetMapping("/notifications")
-    public String notifications(Model model) {
+    public String notifications(Model model, jakarta.servlet.http.HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+
         model.addAttribute("page", "notifications");
 
-        List<Map<String, String>> notifications = List.of(
-                Map.of("date", "2/24/2026, 10:30:00 AM", "message", "Your internship 'Software Engineering Intern' has been approved!"),
-                Map.of("date", "2/23/2026, 2:00:00 PM", "message", "Featured promotion for 'Software Engineering Intern' is now active."),
-                Map.of("date", "2/22/2026, 9:15:00 AM", "message", "5 new applicants for 'Data Science Trainee'."),
-                Map.of("date", "2/20/2026, 4:45:00 PM", "message", "Your internship 'QA Engineering Intern' was rejected. Reason: Incomplete description."),
-                Map.of("date", "1/15/2026, 8:00:00 AM", "message", "Welcome to UniIntern! Complete your company profile to attract more candidates.")
-        );
+        // Fetch Real Stats for Notifications
+        long pendingApproval = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
+        long activePromotions = promotionService.countActivePromotionsForCompany(companyId);
+
+        java.util.List<Map<String, String>> notifications = new java.util.ArrayList<>();
+        if (pendingApproval > 0) {
+            notifications.add(Map.of("date", "Today", "message", "Your internship(s) are currently pending admin approval."));
+        }
+        if (activePromotions > 0) {
+            notifications.add(Map.of("date", "Recent", "message", "You have " + activePromotions + " active promotion(s) running."));
+        }
+        if (notifications.isEmpty()) {
+            notifications.add(Map.of("date", "Welcome", "message", "Welcome to UniIntern! Complete your company profile to attract more candidates."));
+        }
 
         model.addAttribute("notifications", notifications);
-        model.addAttribute("unreadCount", 0);
+        model.addAttribute("unreadCount", 0); // Force to 0 for this page
+        
+        // Mark as read in session
+        session.setAttribute("notificationsRead", true);
 
         return "company/notifications";
     }
