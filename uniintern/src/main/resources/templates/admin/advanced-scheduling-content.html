@@ -1,0 +1,51 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <div class="page-shell">
+    <div class="internships-header">
+      <div>
+        <h1 class="title">Advanced Scheduling Hub</h1>
+        <p class="subtitle">Quickly schedule interviews for applicants pre-approved by companies.</p>
+      </div>
+      <div>
+        <a th:href="@{/admin/scheduling}" class="btn primary">Back to Calendar</a>
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card" style="margin-top:20px;">
+      <div class="table-tools">
+        <input type="text" class="search" placeholder="Search approved applicants...">
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Candidate Name</th>
+            <th>University</th>
+            <th>Approved Role</th>
+            <th style="width:140px; text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${pendingInterviews.empty}">
+            <td colspan="4" style="text-align:center; padding:40px; color:#6b7280;">No approved applications pending interview scheduling.</td>
+          </tr>
+          <tr th:each="dto : ${pendingInterviews}">
+            <td>
+              <div style="font-weight:700; color:#111827;" th:text="${dto.studentName}">John Doe</div>
+            </td>
+            <td>
+              <div th:text="${dto.university}" style="color:#4b5563; font-size:13px;">SLIIT</div>
+            </td>
+            <td>
+              <span class="pill" th:text="${dto.internshipTitle}">Software Eng Intern</span>
+            </td>
+            <td style="text-align:right;">
+              <a th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" class="btn primary" style="padding:8px 14px; font-size:12px;">Quick Schedule</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

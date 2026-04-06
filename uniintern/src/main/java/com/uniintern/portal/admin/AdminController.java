@@ -26,15 +26,18 @@ public class AdminController {
     private final InternshipRepository internshipRepository;
     private final InterviewRepository interviewRepository;
     private final AuditLogRepository auditLogRepository;
+    private final AdminSchedulingService adminSchedulingService;
 
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
             InterviewRepository interviewRepository,
-            AuditLogRepository auditLogRepository) {
+            AuditLogRepository auditLogRepository,
+            AdminSchedulingService adminSchedulingService) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
         this.auditLogRepository = auditLogRepository;
+        this.adminSchedulingService = adminSchedulingService;
     }
 
     @GetMapping({ "/dashboard", "" })
@@ -151,19 +154,47 @@ public class AdminController {
         return "admin/interview-scheduling";
     }
 
+    @GetMapping("/scheduling/advanced")
+    public String advancedScheduling(Model model) {
+        List<PendingInterviewDto> pendingInterviews = adminSchedulingService.getPendingInterviews();
+        model.addAttribute("pendingInterviews", pendingInterviews);
+        return "admin/advanced-scheduling";
+    }
+
     @GetMapping("/schedule")
-    public String scheduleForm(Model model) {
+    public String scheduleForm(@RequestParam(required = false) Long applicationId,
+                               @RequestParam(required = false) String candidateName,
+                               @RequestParam(required = false) Long internshipId,
+                               Model model) {
         List<Internship> approvedInternships = internshipRepository.findByStatus("APPROVED");
         model.addAttribute("approvedInternships", approvedInternships);
-        model.addAttribute("candidateName", "");
-        model.addAttribute("internshipId", "");
+        
+        String prefilledCandidateName = candidateName == null ? "" : candidateName;
+        Long prefilledInternshipId = internshipId;
+
+        // Auto-fetch if applicationId is provided
+        if (applicationId != null) {
+            com.uniintern.portal.student.model.StudentApplication app = 
+                adminSchedulingService.getApplicationById(applicationId);
+            if (app != null) {
+                com.uniintern.portal.student.model.Student s = adminSchedulingService.getStudentById(app.getStudentId());
+                if (s != null) prefilledCandidateName = s.getFullName();
+                prefilledInternshipId = app.getInternshipId();
+            }
+        }
+
+        model.addAttribute("applicationId", applicationId);
+        model.addAttribute("candidateName", prefilledCandidateName);
+        model.addAttribute("internshipId", prefilledInternshipId);
+        
         model.addAttribute("datetime", "");
         model.addAttribute("showPopup", false);
         return "admin/schedule-form";
     }
 
     @PostMapping("/schedule")
-    public String createInterview(@RequestParam(required = false) String candidateName,
+    public String createInterview(@RequestParam(required = false) Long applicationId,
+            @RequestParam(required = false) String candidateName,
             @RequestParam(required = false) Long internshipId,
             @RequestParam(required = false) String datetime,
             Model model) {
@@ -176,38 +207,48 @@ public class AdminController {
 
         boolean hasError = false;
 
+        model.addAttribute("applicationId", applicationId);
         model.addAttribute("candidateName", cleanCandidateName);
         model.addAttribute("internshipId", internshipId);
         model.addAttribute("datetime", cleanDatetime);
 
         if (cleanCandidateName.isBlank()) {
+            model.addAttribute("candidateNameError", "Candidate name cannot be empty.");
             hasError = true;
         } else if (cleanCandidateName.length() < 3 || cleanCandidateName.length() > 80) {
+            model.addAttribute("candidateNameError", "Name must be between 3 and 80 characters.");
             hasError = true;
         } else if (!cleanCandidateName.matches("^[A-Za-z ]+$")) {
+            model.addAttribute("candidateNameError", "Only letters and spaces are allowed.");
             hasError = true;
         }
 
         Internship selectedInternship = null;
         if (internshipId == null) {
+            model.addAttribute("internshipIdError", "Please select an approved internship.");
             hasError = true;
         } else {
             selectedInternship = internshipRepository.findById(internshipId).orElse(null);
-            if (selectedInternship == null || selectedInternship.getStatus() != "APPROVED") {
+            if (selectedInternship == null || !"APPROVED".equals(selectedInternship.getStatus())) {
+                model.addAttribute("internshipIdError", "The selected internship is no longer valid or approved.");
                 hasError = true;
             }
         }
 
         LocalDateTime interviewDateTime = null;
         if (cleanDatetime.isBlank()) {
+            model.addAttribute("datetimeError", "Please select an interview date and time.");
             hasError = true;
         } else {
             try {
                 interviewDateTime = LocalDateTime.parse(cleanDatetime);
-                if (interviewDateTime.isBefore(LocalDateTime.now().plusMinutes(5))) {
+                // Relaxed to allow any time from now onwards
+                if (interviewDateTime.isBefore(LocalDateTime.now().minusMinutes(1))) {
+                    model.addAttribute("datetimeError", "Interview time cannot be in the past.");
                     hasError = true;
                 }
             } catch (DateTimeParseException e) {
+                model.addAttribute("datetimeError", "Invalid date format.");
                 hasError = true;
             }
         }
@@ -225,6 +266,16 @@ public class AdminController {
         interview.setStatus("SCHEDULED");
 
         interviewRepository.save(interview);
+
+        // Update the application status if this was an advanced match
+        if (applicationId != null) {
+            com.uniintern.portal.student.model.StudentApplication app = 
+                adminSchedulingService.getApplicationById(applicationId);
+            if (app != null) {
+                app.setStatus(com.uniintern.portal.student.model.ApplicationStatus.INTERVIEW_SCHEDULED);
+                adminSchedulingService.saveApplication(app);
+            }
+        }
 
         return "redirect:/admin/scheduling";
     }
