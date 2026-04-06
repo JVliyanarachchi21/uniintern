@@ -10,5 +10,7 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
     List<Internship> findByCompanyId(Long companyId);
     
     List<Internship> findByStatus(String status);
+    
+    long countByCompanyIdAndStatus(Long companyId, String status);
 
 }

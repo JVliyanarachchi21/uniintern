@@ -57,4 +57,8 @@ public class PromotionService {
     public List<Promotion> getAllPromotionsForCompany(Long companyId) {
         return promotionRepository.findByCompanyId(companyId);
     }
+
+    public long countActivePromotionsForCompany(Long companyId) {
+        return getActivePromotionsForCompany(companyId).size();
+    }
 }
