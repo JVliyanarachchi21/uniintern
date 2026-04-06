@@ -17,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/admin")
@@ -28,19 +30,22 @@ public class AdminController {
     private final AuditLogRepository auditLogRepository;
     private final AdminSchedulingService adminSchedulingService;
     private final SystemMessageRepository systemMessageRepository;
+    private final AdminReportService adminReportService;
 
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
             InterviewRepository interviewRepository,
             AuditLogRepository auditLogRepository,
             AdminSchedulingService adminSchedulingService,
-            SystemMessageRepository systemMessageRepository) {
+            SystemMessageRepository systemMessageRepository,
+            AdminReportService adminReportService) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
         this.auditLogRepository = auditLogRepository;
         this.adminSchedulingService = adminSchedulingService;
         this.systemMessageRepository = systemMessageRepository;
+        this.adminReportService = adminReportService;
     }
 
     @GetMapping({ "/dashboard", "" })
@@ -330,46 +335,30 @@ public class AdminController {
 
     @GetMapping("/reports/companies/download")
     public ResponseEntity<byte[]> downloadCompanyReport() {
-        StringBuilder csv = new StringBuilder();
-
-        csv.append("UniIntern Portal - Company Verification Report\n");
-        csv.append("Generated On,").append(LocalDateTime.now()).append("\n\n");
-        csv.append("Company Name,Email,Industry,Status,Created At\n");
-
-        for (Company company : companyRepository.findAll()) {
-            csv.append(csvEscape(company.getCompanyName())).append(",");
-            csv.append(csvEscape(company.getEmail())).append(",");
-            csv.append(csvEscape(company.getIndustry())).append(",");
-            csv.append(company.getStatus() != null ? company.getStatus() : "").append(",");
-            csv.append(company.getCreatedAt() != null ? company.getCreatedAt() : "").append("\n");
-        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("companies", companyRepository.findAll());
+        data.put("generatedOn", LocalDateTime.now());
+        
+        byte[] pdfBytes = adminReportService.generatePdf("company-pdf", data);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=company-report.csv")
-                .contentType(MediaType.parseMediaType("text/csv"))
-                .body(csv.toString().getBytes(StandardCharsets.UTF_8));
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=company-report.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 
     @GetMapping("/reports/internships/download")
     public ResponseEntity<byte[]> downloadInternshipReport() {
-        StringBuilder csv = new StringBuilder();
+        Map<String, Object> data = new HashMap<>();
+        data.put("internships", internshipRepository.findAll());
+        data.put("generatedOn", LocalDateTime.now());
 
-        csv.append("UniIntern Portal - Internship Approval Report\n");
-        csv.append("Generated On,").append(LocalDateTime.now()).append("\n\n");
-        csv.append("Title,Location,Min GPA,Deadline,Status\n");
-
-        for (Internship internship : internshipRepository.findAll()) {
-            csv.append(csvEscape(internship.getTitle())).append(",");
-            csv.append(csvEscape(internship.getLocation())).append(",");
-            csv.append(internship.getMinGpa()).append(",");
-            csv.append(internship.getDeadline() != null ? internship.getDeadline() : "").append(",");
-            csv.append(internship.getStatus() != null ? internship.getStatus() : "").append("\n");
-        }
+        byte[] pdfBytes = adminReportService.generatePdf("internship-pdf", data);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=internship-report.csv")
-                .contentType(MediaType.parseMediaType("text/csv"))
-                .body(csv.toString().getBytes(StandardCharsets.UTF_8));
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=internship-report.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 
     @GetMapping("/reports/interviews/download")
