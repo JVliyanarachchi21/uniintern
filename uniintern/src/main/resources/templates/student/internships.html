@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Browse Internships | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('internships')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+
+  <section class="content" style="padding: 32px 40px; background: var(--bg-main);">
+    <style>
+      /* Custom slider styling for Chrome/Safari/Firefox */
+      input[type=range].custom-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+      }
+      input[type=range].custom-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        background: var(--bg-white);
+        border: 2px solid var(--color-dark);
+        cursor: pointer;
+        margin-top: -6px;
+      }
+      input[type=range].custom-slider::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 6px;
+        cursor: pointer;
+        background: var(--success-text);
+        border-radius: 99px;
+      }
+      select.custom-select {
+        appearance: none;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center;
+        background-color: var(--bg-main);
+        background-size: 16px;
+      }
+    </style>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h1 style="font-size: 24px; font-weight: 800; color: var(--text-dark); margin: 0; letter-spacing: -0.5px;">Browse Internships</h1>
+      <button style="display: flex; align-items: center; gap: 8px; background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 8px; padding: 10px 16px; font-size: 14px; font-weight: 600; color: var(--text-dark); cursor: pointer; transition: 0.2s;">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        Filters
+      </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div style="position: relative; margin-bottom: 24px;">
+      <svg style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted);" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" placeholder="Search internships..." style="width: 100%; box-sizing: border-box; padding: 14px 16px 14px 44px; border: 1px solid var(--border-soft); border-radius: 8px; font-size: 15px; background: var(--bg-white); outline: none; color: var(--text-dark); transition: border-color 0.2s;">
+    </div>
+
+    <!-- Filter Card -->
+    <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; display: grid; grid-template-columns: 1fr 1fr 1.5fr 1.5fr; gap: 32px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02);">
+      
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Location</label>
+        <select class="custom-select" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 14px; color: var(--text-dark); outline: none;">
+          <option>All Locations</option>
+          <option>Colombo</option>
+          <option>Kandy</option>
+          <option>Galle</option>
+        </select>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Type</label>
+        <select class="custom-select" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 14px; color: var(--text-dark); outline: none;">
+          <option>All Types</option>
+          <option>Internship</option>
+          <option>Trainee</option>
+        </select>
+      </div>
+
+      <div style="display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding-bottom: 6px;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Min GPA: 0.0</span>
+        <input type="range" min="0" max="4" value="0" step="0.1" class="custom-slider">
+      </div>
+
+      <div style="display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding-bottom: 6px;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Min Skill Match: 0%</span>
+        <input type="range" min="0" max="100" value="0" class="custom-slider">
+      </div>
+
+    </div>
+
+    <!-- Internship Cards Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+      <!-- Card Template for Real Data -->
+      <div th:each="internship : ${internships}" 
+           th:classappend="${internship.isPromoted ? 'featured-highlight' : ''}"
+           style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.3s; position: relative; overflow: hidden;">
+        
+        <!-- Featured Badge -->
+        <div th:if="${internship.isPromoted}" 
+             style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 4px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom-left-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 4px;">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            Featured
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div style="display: flex; gap: 14px; align-items: center;">
+            <div style="width: 48px; height: 48px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border-soft);">
+                <img th:if="${internship.logoPath}" th:src="${internship.logoPath}" style="width: 100%; height: 100%; object-fit: cover;">
+                <span th:unless="${internship.logoPath}" th:text="${#strings.substring(internship.companyName, 0, 1)}" style="font-weight: 700; color: var(--text-muted); font-size: 20px;">T</span>
+            </div>
+            <div>
+              <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 4px 0;" th:text="${internship.title}">Frontend Developer Intern</h3>
+              <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;" th:text="${internship.companyName}">TechCorp Solutions</p>
+            </div>
+          </div>
+          <div style="border: 1px solid #f59e0b; color: #d97706; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span th:text="${#numbers.formatInteger(T(java.lang.Math).random() * 40 + 60, 0) + '% match'}">67% match</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span th:text="${internship.location}">Colombo</span></span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <span th:text="${internship.duration}">6 months</span></span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> <span th:text="${internship.postedAgo}">Posted Today</span></span>
+        </div>
+
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0;" th:text="${internship.descriptionSnippet}">Snippet of description here...</p>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px;">
+          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">
+              Apply by: <span th:text="${internship.id == 2 ? 'Mar 30 (Passed)' : 'Apr 15'}">Apr 15</span>
+          </div>
+          <a th:href="@{/student/internships}" style="background: var(--color-dark); color: #FFFFFF; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(5, 38, 89, 0.15);">View Details</a>
+        </div>
+      </div>
+      
+      <style>
+        .featured-highlight {
+            border: 2px solid #f59e0b !important;
+            background: linear-gradient(135deg, #fffdf5 0%, #ffffff 100%) !important;
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.15) !important;
+            transform: translateY(-4px);
+            z-index: 10;
+        }
+        .featured-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #f59e0b;
+        }
+      </style>
+
+    </div>
+
+  </section>
+</main>
+
+</body>
+</html>

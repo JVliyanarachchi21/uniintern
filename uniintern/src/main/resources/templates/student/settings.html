@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Security Settings | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+    <style>
+        .settings-page-bg {
+            background: var(--bg-main);
+            min-height: calc(100vh - 64px);
+        }
+        
+        .settings-container {
+            max-width: 840px;
+            margin: 0;
+        }
+
+        .settings-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-soft);
+            padding-bottom: 24px;
+        }
+
+        .settings-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+            letter-spacing: -1px;
+        }
+
+        .settings-header p {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Modern Vercel-style Card */
+        .setting-block {
+            background: var(--bg-white);
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 2px rgba(2, 16, 36, 0.02);
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .setting-block:hover {
+            border-color: #cbd5e1;
+        }
+
+        .setting-body {
+            padding: 24px 32px;
+        }
+
+        .setting-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0 0 6px 0;
+        }
+
+        .setting-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+            line-height: 1.5;
+        }
+
+        .setting-footer {
+            background: var(--bg-main);
+            border-top: 1px solid var(--border-soft);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .footer-hint {
+            margin-right: auto;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Form Controls */
+        .form-row {
+            margin-bottom: 16px;
+            max-width: 400px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-soft);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-dark);
+            background: var(--bg-white);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(84, 131, 179, 0.1);
+        }
+
+        .form-input:disabled, .form-input[readonly] {
+            background: var(--bg-main);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            border-color: transparent;
+        }
+
+        /* Buttons */
+        .btn-black {
+            background: var(--color-dark);
+            color: var(--bg-white);
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid var(--color-dark);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-black:hover {
+            background: var(--color-darkest);
+            border-color: var(--color-darkest);
+        }
+
+        .btn-light {
+            background: var(--bg-white);
+            color: var(--text-dark);
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid var(--border-soft);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-light:hover {
+            background: var(--bg-main);
+        }
+
+        .btn-danger {
+            background: #ef4444; /* Standard Red */
+            color: #FFFFFF;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #ef4444;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .btn-danger:disabled {
+            background: #fca5a5;
+            border-color: #fca5a5;
+            cursor: not-allowed;
+        }
+
+        /* Toggle Switches */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .toggle-row:first-child {
+            padding-top: 0;
+        }
+
+        .toggle-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .toggle-info p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border-soft);
+            transition: .3s;
+            border-radius: 22px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 2px; bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(2, 16, 36, 0.1);
+        }
+
+        input:checked + .slider { background-color: var(--success-text); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        /* Danger Zone styling */
+        .danger-zone {
+            border-color: #fca5a5;
+        }
+        
+        .danger-zone-body {
+            background: #fef2f2;
+        }
+
+        /* Activity List */
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-soft);
+        }
+        
+        .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .activity-item:first-child { padding-top: 0; }
+        
+        .activity-details h4 { margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        .activity-details p { margin: 0; font-size: 13px; color: var(--text-muted); }
+        .activity-time { font-size: 13px; color: var(--text-muted); }
+    </style>
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('settings')"></div>
+
+<main class="main settings-page-bg">
+
+    <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+
+    <section class="content" style="padding: 40px;">
+        
+        <div class="settings-container">
+            <div class="settings-header">
+                <h1>Settings</h1>
+                <p>Manage your account, preferences, and security settings.</p>
+            </div>
+
+            <!-- Block 1: Contact Email -->
+            <div class="setting-block">
+                <div class="setting-body">
+                    <h3 class="setting-title">Contact Email</h3>
+                    <p class="setting-desc">This is the email tied to your UniIntern account. It will be used for all critical notifications.</p>
+                    <div class="form-row">
+                        <input type="email" class="form-input" value="ashan@university.edu" readonly>
+                    </div>
+                </div>
+                <div class="setting-footer">
+                    <div class="footer-hint">Please verify your new email if you choose to change it.</div>
+                    <button type="button" class="btn-light">Update Email</button>
+                </div>
+            </div>
+
+            <!-- Block 2: Change Password -->
+            <div class="setting-block">
+                <div class="setting-body">
+                    <h3 class="setting-title">Change Password</h3>
+                    <p class="setting-desc">Update your password to keep your account secure. Use a strong password.</p>
+                    
+                    <div class="form-row">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-input">
+                    </div>
+                </div>
+                <div class="setting-footer">
+                    <button type="button" class="btn-black">Save Password</button>
+                </div>
+            </div>
+
+            <!-- Block 3: Security Preferences -->
+            <div class="setting-block">
+                <div class="setting-body">
+                    <h3 class="setting-title">Security Preferences</h3>
+                    <p class="setting-desc">Manage how your account is authenticated and protected against unauthorized access.</p>
+                    
+                    <div class="toggle-row">
+                        <div class="toggle-info">
+                            <h4>Two-Factor Authentication</h4>
+                            <p>Add an extra verification step when signing in.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div class="toggle-info">
+                            <h4>Login Alerts</h4>
+                            <p>Receive email alerts for new login attempts.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div class="toggle-info">
+                            <h4>Remember Trusted Device</h4>
+                            <p>Reduce verification prompts on trusted devices.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="setting-footer">
+                    <button type="button" class="btn-light">Save Preferences</button>
+                </div>
+            </div>
+
+            <!-- Block 4: Recent Security Activity -->
+            <div class="setting-block">
+                <div class="setting-body">
+                    <h3 class="setting-title">Recent Security Activity</h3>
+                    <p class="setting-desc" style="margin-bottom: 24px;">Review recent actions taken on your account. If you see something unfamiliar, change your password.</p>
+                    
+                    <div class="activity-item">
+                        <div class="activity-details">
+                            <h4>Password changed</h4>
+                            <p>From IP Server 192.168.1.5</p>
+                        </div>
+                        <div class="activity-time">Mar 21, 2026 • 10:30 AM</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-details">
+                            <h4>New login detected</h4>
+                            <p>MacBook Pro • Safari • Colombo</p>
+                        </div>
+                        <div class="activity-time">Mar 20, 2026 • 08:15 PM</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-details">
+                            <h4>Security preferences updated</h4>
+                            <p>Login alerts enabled</p>
+                        </div>
+                        <div class="activity-time">Mar 18, 2026 • 02:00 PM</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Block 5: Danger Zone -->
+            <div class="setting-block danger-zone">
+                <div class="setting-body danger-zone-body">
+                    <h3 class="setting-title" style="color: #ef4444;">Delete Account</h3>
+                    <p class="setting-desc" style="color: #991b1b;">Permanently delete your account and all of its contents from our servers. This action is not reversible.</p>
+                    
+                    <div style="display: flex; gap: 8px; align-items: center; color: #991b1b; font-size: 14px; margin-bottom: 8px;">
+                        <svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <strong>Cannot delete while active applications exist.</strong>
+                    </div>
+                </div>
+                <div class="setting-footer" style="background: var(--bg-white); border-top-color: #fca5a5;">
+                    <div class="footer-hint" style="color: #ef4444;">We will email you to confirm the deletion.</div>
+                    <button type="button" class="btn-danger" disabled>Delete My Account</button>
+                </div>
+            </div>
+            
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

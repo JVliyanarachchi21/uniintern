@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+      pageTitle='My Internships',
+      content=~{::body/content()})">
+
+<body>
+<section class="page-shell internships-page-shell">
+
+    <div class="internships-header modern-header">
+        <div>
+            <h1 class="page-title internships-title">My Internships</h1>
+            <p class="page-sub internships-sub">Manage your internship postings</p>
+        </div>
+
+        <a th:href="@{/company/internships/new}" class="btn primary">+ New Internship</a>
+    </div>
+
+    <div class="table-card internships-table-card modern-table-wrap">
+        <table class="table internships-table modern-internships-table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Applicants</th>
+                <th>Featured</th>
+                <th class="actions-col">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${#lists.isEmpty(internships)}">
+                <td colspan="6" class="empty-cell">
+                    No internships found.
+                </td>
+            </tr>
+
+            <tr th:each="internship : ${internships}">
+                <td class="internship-title-cell">
+                    <div class="internship-title-main" th:text="${internship.title}">Software Engineering Intern</div>
+                </td>
+
+                <td>
+                    <span class="badge-status"
+                          th:classappend="${internship.status == 'APPROVED'} ? ' st-approved' :
+                                          (${internship.status == 'PENDING_ADMIN_APPROVAL'} ? ' st-pending' :
+                                          (${internship.status == 'REJECTED'} ? ' st-rejected' : ' st-draft'))"
+                          th:text="${internship.status}">
+                        PENDING_ADMIN_APPROVAL
+                    </span>
+                </td>
+
+                <td th:text="${internship.deadline}">2026-03-05</td>
+
+                <td>
+                    <span class="count-pill">0</span>
+                </td>
+
+                <td>
+                    <span class="featured-pill" 
+                          th:classappend="${promotedIds != null and promotedIds.contains(internship.id)} ? 'featured-yes' : 'featured-no'"
+                          th:text="${promotedIds != null and promotedIds.contains(internship.id)} ? 'Yes' : 'No'">
+                        No
+                    </span>
+                </td>
+
+                <td class="actions-col">
+                    <div class="icon-actions modern-icon-actions">
+                        <a th:href="@{'/company/internships/view/' + ${internship.id}}"
+                           class="icon-btn icon-view" title="View">👁</a>
+
+                        <a th:href="@{'/company/internships/edit/' + ${internship.id}}"
+                           class="icon-btn icon-edit" title="Edit">✎</a>
+
+                        <a th:href="@{'/company/internships/delete/' + ${internship.id}}"
+                           class="icon-btn icon-delete"
+                           title="Delete"
+                           onclick="return confirm('Are you sure you want to delete this internship?');">🗑</a>
+
+                        <th:block th:if="${promotedIds != null and promotedIds.contains(internship.id)}">
+                            <span class="icon-btn icon-feature active" title="Already Featured" style="color: #fbbf24; background: rgba(245, 158, 11, 0.1); cursor: default;">★</span>
+                        </th:block>
+                        <th:block th:unless="${promotedIds != null and promotedIds.contains(internship.id)}">
+                            <a th:href="@{/company/promotions}" class="icon-btn icon-feature" title="Feature Setup">☆</a>
+                        </th:block>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<script src="/js/company.js"></script>
+</body>
+</html>

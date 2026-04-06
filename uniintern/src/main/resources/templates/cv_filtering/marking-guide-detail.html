@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{cv_filtering/fragments/layout :: head('Marking Guide Detail')}"></head>
+<body class="flex h-screen w-full bg-gray-100 overflow-hidden font-sans">
+    <div th:replace="~{cv_filtering/fragments/layout :: sidebar('MarkingGuideDetail')}"></div>
+    
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div th:replace="~{cv_filtering/fragments/layout :: header('MarkingGuideDetail')}"></div>
+        
+        <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
+            <div class="max-w-7xl mx-auto">
+                <div class="space-y-6 animate-fade-in">
+                    <div class="mb-8 flex justify-between items-end">
+                        <div>
+                            <a th:href="@{/marking-guides}" class="text-sm text-brand-600 hover:text-brand-800 flex items-center mb-2">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                Back to Marking Guides
+                            </a>
+                            <h2 class="text-2xl font-bold text-gray-900" th:text="${guide?.internshipTitle} ?: 'Marking Guide Detail'">Marking Guide Detail</h2>
+                            <p class="text-gray-500 mt-1" th:if="${guide != null}" th:text="${guide.company}">Company</p>
+                        </div>
+                    </div>
+
+                    <div th:if="${guide == null}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+                        <p class="text-gray-500">No marking guide found for this internship.</p>
+                    </div>
+
+                    <div th:if="${guide != null}" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Weights Card -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">Scoring Weights</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 bg-brand-50 rounded-lg">
+                                    <span class="text-brand-800 font-medium">Skills Weight</span>
+                                    <span class="text-brand-600 font-bold" th:text="${guide.skillsWeight} + '%'">50%</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
+                                    <span class="text-emerald-800 font-medium">GPA Weight</span>
+                                    <span class="text-emerald-600 font-bold" th:text="${guide.gpaWeight} + '%'">20%</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-accent-50 rounded-lg">
+                                    <span class="text-accent-800 font-medium">Experience Weight</span>
+                                    <span class="text-accent-600 font-bold" th:text="${guide.experienceWeight} + '%'">20%</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                                    <span class="text-purple-800 font-medium">Certifications Weight</span>
+                                    <span class="text-purple-600 font-bold" th:text="${guide.certWeight} + '%'">10%</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Total</span>
+                                    <span class="font-bold" th:text="${guide.skillsWeight + guide.gpaWeight + guide.experienceWeight + guide.certWeight} + '%'">100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Requirements Card -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">Requirements</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <span class="text-sm text-gray-500">Top N Selection</span>
+                                    <p class="text-xl font-bold text-gray-900" th:text="${guide.topN}">3</p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Required Skills</span>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        <span th:each="skill : ${guide.requiredSkills}" 
+                                              class="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded"
+                                              th:text="${skill}">Skill</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Status</span>
+                                    <div class="mt-2">
+                                        <span th:if="${guide.isValid}" class="px-2 py-1 text-xs font-medium rounded-full badge-valid">Valid</span>
+                                        <span th:if="${!guide.isValid}" class="px-2 py-1 text-xs font-medium rounded-full badge-invalid">Invalid</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

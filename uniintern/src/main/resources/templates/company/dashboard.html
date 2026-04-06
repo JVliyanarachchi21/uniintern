@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Dashboard',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+  <div class="dashboard-header" style="margin-bottom: 32px;">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-sub">Welcome back! Here's an overview of your recruitment activities.</p>
+  </div>
+
+  <div class="cards" style="margin-bottom: 36px;">
+    <div class="card stat-card">
+      <div class="stat-icon blue"><i class="bi bi-briefcase-fill"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="${activeInternships}">2</div>
+        <div class="label">Active Internships</div>
+      </div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-icon orange"><i class="bi bi-clock-fill"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="${pendingApproval}">1</div>
+        <div class="label">Pending Approval</div>
+      </div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-icon purple"><i class="bi bi-people-fill"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="${totalApplicants}">25</div>
+        <div class="label">Total Applicants</div>
+      </div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-icon green"><i class="bi bi-star-fill"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="${shortlisted}">5</div>
+        <div class="label">Shortlisted</div>
+      </div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-icon pink"><i class="bi bi-megaphone-fill"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="${activePromotions}">1</div>
+        <div class="label">Active Promotions</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions" style="margin-bottom: 36px;">
+    <a class="btn primary" th:href="@{/company/internships/new}">+ Post Internship</a>
+    <a class="btn" th:href="@{/company/promotions}">Request Featured</a>
+    <a class="btn" th:href="@{/company/applicants}">View Applicants</a>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-title">Recent Applicants</div>
+
+      <div th:each="a : ${recentApplicants}" class="applicant-row">
+        <div>
+          <div class="applicant-name" th:text="${a.name}">Ashan Fernando</div>
+          <div class="applicant-uni" th:text="${a.uni}">University of Colombo</div>
+        </div>
+        <div class="pill" th:text="${a.status}">Shortlisted</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Recent Notifications</div>
+
+      <div th:each="n : ${notifications}" class="note">
+        <div class="msg" th:text="${n.message}">Your internship has been approved!</div>
+        <div class="date" th:text="${n.date}">2/24/2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

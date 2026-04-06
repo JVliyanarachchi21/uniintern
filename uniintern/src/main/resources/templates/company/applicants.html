@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Applicants',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+    <div class="applicants-header">
+        <div>
+            <h1 class="page-title">Applicants</h1>
+            <p class="page-sub">Review and manage candidate applications</p>
+        </div>
+
+        <button type="button" class="btn export-btn" onclick="exportShortlisted()">
+            ⭳ Export Shortlisted
+        </button>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-grid">
+            <div class="field">
+                <label for="internshipFilter">Internship</label>
+                <select id="internshipFilter">
+                    <option>All Internships</option>
+                    <option>Software Engineering Intern</option>
+                    <option>Data Science Trainee</option>
+                    <option>UI/UX Design Intern</option>
+                    <option>DevOps Intern</option>
+                    <option>QA Engineering Intern</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter">
+                    <option>All</option>
+                    <option>Shortlisted</option>
+                    <option>Scored</option>
+                    <option>Rejected</option>
+                </select>
+            </div>
+
+            <div class="field slider-field">
+                <label for="scoreRange">Min Score: <span id="scoreValue">0</span></label>
+                <input type="range" id="scoreRange" min="0" max="100" value="0" oninput="updateScoreValue(this.value)">
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card applicants-table-card">
+        <table class="table applicants-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>University</th>
+                <th>GPA</th>
+                <th>Skill Match</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th class="actions-col">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="a : ${applicants}">
+                <td class="internship-title" th:text="${a.name}">Ashan Fernando</td>
+                <td th:text="${a.university}">University of Colombo</td>
+                <td th:text="${a.gpa}">3.25</td>
+                <td th:text="${a.skillMatch}">71%</td>
+                <td th:text="${a.score}">79</td>
+
+                <td>
+                    <span class="badge-status"
+                          th:classappend="${a.status == 'Shortlisted'} ? ' st-approved' :
+                                          (${a.status == 'Scored'} ? ' st-scored' : ' st-rejected')"
+                          th:text="${a.status}">
+                        Shortlisted
+                    </span>
+                </td>
+
+                <td>
+                    <div class="icon-actions">
+                        <button type="button" class="icon-btn" title="View" onclick="viewApplicant()">👁</button>
+                        <button type="button" class="icon-btn approve-btn" title="Shortlist" onclick="shortlistApplicant(this)">👤</button>
+                        <button type="button" class="icon-btn reject-btn" title="Reject" onclick="rejectApplicant(this)">👎</button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<script src="/js/company.js"></script>
+</body>
+</html>

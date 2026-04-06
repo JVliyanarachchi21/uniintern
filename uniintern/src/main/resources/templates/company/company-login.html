@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Login | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/company-auth.css}">
+</head>
+<body>
+
+<div class="auth-page">
+
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+        <div class="auth-left-content-wrapper">
+
+            <div class="brand-wrap">
+                <img th:src="@{/images/logo.png}" src="/images/logo.png" class="brand-logo" alt="UniIntern Logo">
+
+                <div class="brand-text-wrap">
+                    <h1 class="brand-name">UniIntern</h1>
+                    <p class="brand-tag">LAUNCH YOUR CAREER</p>
+                </div>
+            </div>
+
+            <div class="hero-badge">
+                Smarter internships for recruiters
+            </div>
+
+            <div class="auth-left-content">
+                <h2>Find the best interns for your company</h2>
+
+                <p>
+                    Post internships, manage applicants, and streamline your recruitment
+                    process — all in one place.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Post &amp; manage internship listings</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>AI-powered candidate scoring</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Streamlined interview scheduling</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
+        <div class="auth-card">
+
+            <div class="mini-logo-wrap">
+                <img th:src="@{/images/logo.png}" src="/images/logo.png" class="mini-logo-img" alt="UniIntern Logo">
+            </div>
+
+            <h2>Welcome back</h2>
+            <p class="auth-sub">Sign in to your recruiter portal</p>
+
+            <form th:action="@{/company/dashboard}" method="get">
+                <div th:if="${error}" style="background: #fee2e2; color: #ef4444; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
+                    <span th:text="${error}"></span>
+                </div>
+                <div th:if="${message}" style="background: #dcfce7; color: #15803d; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
+                    <span th:text="${message}"></span>
+                </div>
+                
+                <div class="field">
+                    <label for="email">Email</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">✉</span>
+                        <input type="email" id="email" name="email" placeholder="hr@techcorp.lk" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+
+                <div class="demo-box">
+                    <div class="demo-title">Demo Credentials</div>
+                    <div>hr@techcorp.lk / password123</div>
+                </div>
+
+                <button type="submit" class="auth-btn">Sign In</button>
+            </form>
+
+            <div class="auth-links">
+                <p>Need to verify your email? <a th:href="@{/company/verify}">Verify here</a></p>
+                <p>Don’t have an account? <a th:href="@{/company/register}">Create one</a></p>
+                <p><a th:href="@{/}">← Back to Home</a></p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

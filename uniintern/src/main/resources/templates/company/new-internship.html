@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Post Internship',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Post Internship</h1>
+      <p class="page-sub">Create a new internship posting and submit it for admin approval.</p>
+    </div>
+    <div class="page-header-actions">
+      <a th:href="@{/company/internships}" class="btn">Back to Internships</a>
+    </div>
+  </div>
+
+  <div class="alert">
+    Complete the form carefully. You can save as a draft first or submit it for approval when ready.
+  </div>
+
+  <div class="form-card internship-form-card">
+  <form th:action="@{/company/internships/new}" method="post" onsubmit="return validateInternshipForm()">
+
+      <div class="form-section">
+        <div class="section-title">Internship Details</div>
+
+        <div class="field">
+          <label for="title">Internship Title <span class="required">*</span></label>
+          <select id="title" name="title" required>
+            <option value="" disabled selected>Select an Internship Title</option>
+            <option value="Software Engineering Intern">Software Engineering Intern</option>
+            <option value="Data Science Intern">Data Science Intern</option>
+            <option value="Quality Assurance (QA) Intern">Quality Assurance (QA) Intern</option>
+            <option value="UI/UX Design Intern">UI/UX Design Intern</option>
+            <option value="Product Management Intern">Product Management Intern</option>
+            <option value="Business Analyst Intern">Business Analyst Intern</option>
+            <option value="Marketing & General Intern">Marketing & General Intern</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="description">Description <span class="required">*</span></label>
+          <textarea id="description" name="description" placeholder="Write internship responsibilities, requirements, benefits, and learning opportunities..." required minlength="100"></textarea>
+          <div class="hint" style="display: flex; justify-content: space-between;">
+              <span>Include responsibilities, qualifications, and what students will gain from this role.</span>
+              <span><span id="char-count" style="color: #ef4444; font-weight: 600;">0</span> / 100 min chars</span>
+          </div>
+        </div>
+
+        <div class="grid-3 compact-grid">
+          <div class="field">
+            <label for="location">Location <span class="required">*</span></label>
+            <select id="location" name="location" required>
+              <option value="" disabled selected>Select a Location</option>
+              <option value="Colombo 01 (Fort)">Colombo 01 (Fort)</option>
+              <option value="Colombo 02 (Slave Island)">Colombo 02 (Slave Island)</option>
+              <option value="Colombo 03 (Kollupitiya)">Colombo 03 (Kollupitiya)</option>
+              <option value="Colombo 04 (Bambalapitiya)">Colombo 04 (Bambalapitiya)</option>
+              <option value="Colombo 05 (Havelock Town)">Colombo 05 (Havelock Town)</option>
+              <option value="Colombo 07 (Cinnamon Gardens)">Colombo 07 (Cinnamon Gardens)</option>
+              <option value="Nawala">Nawala</option>
+              <option value="Rajagiriya">Rajagiriya</option>
+              <option value="Battaramulla">Battaramulla</option>
+              <option value="Dehiwala">Dehiwala</option>
+              <option value="Mount Lavinia">Mount Lavinia</option>
+              <option value="Moratuwa">Moratuwa</option>
+              <option value="Malabe">Malabe</option>
+              <option value="Nugegoda">Nugegoda</option>
+              <option value="Kelaniya">Kelaniya</option>
+              <option value="Wattala">Wattala</option>
+              <option value="Remote">Remote</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="duration">Duration <span class="required">*</span></label>
+            <select id="duration" name="duration" required>
+              <option value="">Select Duration</option>
+              <option>3 Months</option>
+              <option>6 Months</option>
+              <option>12 Months</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="deadline">Application Deadline <span class="required">*</span></label>
+            <input id="deadline" type="date" name="deadline" required>
+          </div>
+        </div>
+
+        <div class="grid-3 compact-grid">
+          <div class="field">
+            <label>GPA Requirement <span class="required">*</span></label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <input id="minGpa" type="number" name="minGpa" step="0.01" min="0" max="4" placeholder="Min (e.g. 2.50)" required>
+                <input id="maxGpa" type="number" name="maxGpa" step="0.01" min="0" max="4" placeholder="Max (e.g. 4.00)" required>
+            </div>
+        </div>
+          <div class="field">
+            <label for="vacancies">Number of Vacancies <span class="required">*</span></label>
+            <input id="vacancies" type="number" name="vacancies" min="1" placeholder="e.g. 2" required>
+          </div>
+
+          <div class="field">
+            <label for="workType">Work Type</label>
+            <select id="workType" name="workType">
+              <option>On-site</option>
+              <option>Remote</option>
+              <option>Hybrid</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="form-section">
+        <div class="section-title">Required Skills</div>
+
+        <div class="field">
+          <label for="skills">Skills (comma separated)</label>
+          <input id="skills" type="text" name="skills" placeholder="Java, Spring Boot, PostgreSQL, Git">
+          <div class="hint">Example: Java, Spring Boot, PostgreSQL, Git</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="form-section">
+        <div class="section-title">Ranking Settings</div>
+        <div class="hint section-hint">
+          Set the evaluation weights carefully. Total should equal 100%.
+        </div>
+
+        <div class="weight-grid">
+          <div class="field">
+            <label for="wSkills">Skills Weight (%)</label>
+            <input id="wSkills" class="small-input" type="number" name="wSkills" min="0" max="100" value="40">
+          </div>
+
+          <div class="field">
+            <label for="wGpa">GPA Weight (%)</label>
+            <input id="wGpa" class="small-input" type="number" name="wGpa" min="0" max="100" value="30">
+          </div>
+
+          <div class="field">
+            <label for="wExp">Experience Weight (%)</label>
+            <input id="wExp" class="small-input" type="number" name="wExp" min="0" max="100" value="20">
+          </div>
+
+          <div class="field">
+            <label for="wCert">Certificates Weight (%)</label>
+            <input id="wCert" class="small-input" type="number" name="wCert" min="0" max="100" value="10">
+          </div>
+        </div>
+
+        <div class="grid-2 compact-grid top-space">
+          <div class="field">
+            <label for="topN">Top N Candidates</label>
+            <input id="topN" type="number" name="topN" min="1" value="10">
+            <div class="hint">Number of candidates to shortlist automatically later.</div>
+          </div>
+
+          <div class="field">
+            <!-- Empty space since we removed the weird select -->
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions internship-form-actions">
+        <button type="submit" name="status" value="DRAFT" class="btn">Save Draft</button>
+        <button type="submit" name="status" value="PENDING" class="btn primary">Submit for Approval</button>
+      </div>
+
+    </form>
+  </div>
+
+</section>
+<script src="/js/company.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Logs / History')}"></head>
+<body class="flex h-screen w-full bg-gray-100 overflow-hidden font-sans">
+    <div th:replace="~{fragments/layout :: sidebar('LogsHistory')}"></div>
+    
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div th:replace="~{fragments/layout :: header('LogsHistory')}"></div>
+        
+        <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
+            <div class="max-w-7xl mx-auto">
+                <div class="space-y-6 animate-fade-in">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900">Logs / History</h2>
+                        <p class="text-gray-500 mt-1">System activity and filtering run history.</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 font-medium">Run ID</th>
+                                        <th class="px-6 py-4 font-medium">Internship</th>
+                                        <th class="px-6 py-4 font-medium">Started</th>
+                                        <th class="px-6 py-4 font-medium">Finished</th>
+                                        <th class="px-6 py-4 font-medium">Applicants</th>
+                                        <th class="px-6 py-4 font-medium">Result</th>
+                                        <th class="px-6 py-4 font-medium">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr th:if="${#lists.isEmpty(logs)}">
+                                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                            No logs found.
+                                        </td>
+                                    </tr>
+                                    <tr th:each="log : ${logs}" class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 text-gray-600" th:text="${log.runId}">run-1</td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-medium text-gray-900" th:text="${log.internshipTitle}">Title</div>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(log.startedAt, 'MMM dd, HH:mm')}">Date</td>
+                                        <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(log.finishedAt, 'MMM dd, HH:mm')}">Date</td>
+                                        <td class="px-6 py-4 text-gray-600" th:text="${log.applicantsProcessed}">0</td>
+                                        <td class="px-6 py-4">
+                                            <span th:class="'px-2 py-1 text-xs font-medium rounded-full ' + 
+                                                (${log.result == 'success'} ? 'badge-completed' : 'badge-failed')"
+                                                  th:text="${#strings.capitalize(log.result)}">Success</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600" th:text="${log.notes}">Notes</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
