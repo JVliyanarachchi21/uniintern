@@ -6,181 +6,88 @@
     <title>Student Login | UniIntern</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
-    <style>
-        :root {
-            --color-primary: #5483B3;
-            --color-light: #C1E1C1;
-            --color-dark: #052659;
-            --bg-white: #FFFFFF;
-            --bg-main: #F8FAFC;
-            --text-dark: #0F172A;
-            --text-muted: #64748B;
-            --border-soft: #E2E8F0;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-dark);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .login-card {
-            background: var(--bg-white);
-            width: 100%;
-            max-width: 440px;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-            padding: 48px 40px;
-            text-align: center;
-            border: 1px solid var(--border-soft);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 32px;
-        }
-
-        .brand-logo {
-            width: 50px;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .brand-name {
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: -0.5px;
-            color: var(--color-dark);
-        }
-
-        h2 {
-            margin: 0 0 8px;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        p.subtitle {
-            margin: 0 0 32px;
-            color: var(--text-muted);
-            font-size: 15px;
-        }
-
-        .form-group {
-            text-align: left;
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-dark);
-        }
-
-        input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-soft);
-            border-radius: 12px;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.2s;
-            box-sizing: border-box;
-        }
-
-        input:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 4px rgba(84, 131, 179, 0.1);
-        }
-
-        .btn-login {
-            width: 100%;
-            background: var(--color-dark);
-            color: #fff;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 8px;
-            box-shadow: 0 4px 12px rgba(5, 38, 89, 0.1);
-        }
-
-        .btn-login:hover {
-            background: #0a3674;
-            transform: translateY(-1px);
-        }
-
-        .error-msg {
-            background: #fef2f2;
-            color: #ef4444;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 24px;
-            border: 1px solid #fee2e2;
-        }
-
-        .footer-links {
-            margin-top: 32px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .footer-links a {
-            color: var(--color-primary);
-            font-weight: 700;
-            text-decoration: none;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
-<body>
+<body class="auth-body">
 
-<div class="login-card">
-    <div class="brand">
-        <img th:src="@{/images/logooo.png}" alt="Logo" class="brand-logo">
-        <span class="brand-name">UniIntern</span>
-    </div>
-
-    <h2>Welcome back!</h2>
-    <p class="subtitle">Please enter your student credentials</p>
-
-    <div th:if="${error}" class="error-msg" th:text="${error}"></div>
-    <div th:if="${success}" class="success-msg" style="background:#f0fdf4; color:#16a34a; padding:12px; border-radius:8px; font-size:14px; margin-bottom:24px; border:1px solid #dcfce7;" th:text="${success}"></div>
-
-    <form th:action="@{/student/login}" method="post">
-        <div class="form-group">
-            <label for="email">University Email</label>
-            <input type="email" id="email" name="email" placeholder="e.g. IT23123456@my.sliit.lk" required th:value="${email}">
+<div class="auth-shell">
+    
+    <!-- Left Sidebar -->
+    <div class="auth-left">
+        <div class="brand-row">
+            <div class="brand-logo" style="background:none; color:white;">
+                <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 54px; height: auto; border-radius: 4px;">
+            </div>
+            <div class="brand-column">
+                <div class="brand-text" style="font-family: 'Plus Jakarta Sans', sans-serif;">UniIntern</div>
+                <div class="brand-subtext" style="font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #A7F3D0; margin-top: -2px;">LAUNCH YOUR CAREER</div>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Your password" required>
+        <div class="auth-pill" style="margin-top: 50px;">
+            Smarter internships for students
         </div>
 
-        <button type="submit" class="btn-login">Sign In</button>
-    </form>
+        <div class="auth-copy">
+            <h1 style="font-family: 'Plus Jakarta Sans', sans-serif;">Find the best path for your career</h1>
+            <p>Create your student profile, apply for top internships, and manage your applications — all in one place.</p>
+        </div>
 
-    <div class="footer-links">
-        Don't have an account? <a th:href="@{/student/register}">Sign Up</a>
+        <div class="auth-features-list">
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Track & manage applications
+            </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Secure university verification
+            </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                One central student portal
+            </div>
+        </div>
     </div>
+
+    <!-- Right Form Pane -->
+    <div class="auth-right">
+        <div class="auth-card" style="max-width: 440px;">
+            <div class="auth-card-header" style="text-align:center; margin-bottom: 32px;">
+                <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; color: #0F172A; margin-bottom: 8px;">Welcome back!</h2>
+                <p style="color: #64748B; font-size: 15px;">Please enter your student credentials</p>
+            </div>
+
+            <div th:if="${error}" style="background:#fef2f2; color:#ef4444; padding:12px; border-radius:8px; font-size:14px; margin-bottom:24px; border:1px solid #fee2e2;" th:text="${error}"></div>
+            <div th:if="${success}" style="background:#f0fdf4; color:#16a34a; padding:12px; border-radius:8px; font-size:14px; margin-bottom:24px; border:1px solid #dcfce7;" th:text="${success}"></div>
+
+            <form th:action="@{/student/login}" method="post" class="auth-form">
+                <div class="form-group">
+                    <label for="email">University Email</label>
+                    <div class="input-with-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <input type="email" id="email" name="email" placeholder="e.g. IT23123456@my.sliit.lk" required th:value="${email}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn" style="background:#052659; box-shadow: 0 4px 12px rgba(5,38,89,0.2);">Sign In</button>
+            </form>
+
+            <div class="auth-footer" style="margin-top: 32px; font-size: 14px; color: #64748B;">
+                Don't have an account? <a th:href="@{/student/register}" style="color:#1D4ED8; font-weight: 700; text-decoration: none;">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </body>

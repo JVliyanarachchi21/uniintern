@@ -55,12 +55,13 @@
             
             <div style="text-align: center; margin-bottom: 2.5rem;">
                 <span class="card-top-badge" style="margin-bottom: 1.2rem; display: inline-block;">Application Form</span>
-                <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: var(--uni-primary); margin-bottom: 0.5rem; font-weight: 800; letter-spacing: -0.02em;">Software Engineering Intern</h2>
-                <p style="color: rgba(17,24,39,0.6); font-size: 1.05rem; font-weight: 500;">Please fill out the details below to complete your application.</p>
+                <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: var(--uni-primary); margin-bottom: 0.5rem; font-weight: 800; letter-spacing: -0.02em;" th:text="${internship.title}">Software Engineering Intern</h2>
+                <p style="color: rgba(17,24,39,0.6); font-size: 1.05rem; font-weight: 500;">Please fill out the details below to complete your application for <span th:text="${internship.title}" style="color: var(--uni-primary);">Software Engineering Intern</span>.</p>
             </div>
 
             <div class="pub-form-card">
-                <form action="#" method="post" id="internshipApplicationForm">
+                <form th:action="@{/student/register}" method="get" id="internshipApplicationForm">
+                    <input type="hidden" name="internshipId" th:value="${internship.id}">
                     
                     <!-- Section 1: Personal Details -->
                     <div class="pub-form-section">
@@ -130,7 +131,8 @@
                                 </svg>
                                 <div class="file-upload-text" id="uploadText">Click or drag file to this area to upload</div>
                                 <div class="file-upload-hint">Supported formats: PDF (Max. 5MB)</div>
-                                <input type="file" name="resumeFile" id="resumeFile" accept="application/pdf" required>
+                                <input type="file" id="resumeFile" accept="application/pdf">
+                                <input type="hidden" name="resumeFileName" id="resumeFileName">
                             </div>
                         </div>
                     </div>
@@ -177,7 +179,7 @@
 
                     <!-- Submit Actions -->
                     <div class="pub-form-actions">
-                        <a href="/company/internships/preview" class="btn btn-card-view">Cancel</a>
+                        <a th:href="@{/company/internships/preview(id=${internship.id})}" class="btn btn-card-view">Cancel</a>
                         <button type="submit" class="btn btn-card-apply" style="border:none; cursor:pointer;" id="submitBtn">Submit Application</button>
                     </div>
                 </form>
@@ -245,30 +247,13 @@
         }
     });
 
-    // Form Submission effect
+    // Form Submission: Carry details to registration
     document.getElementById('internshipApplicationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        if (this.checkValidity()) {
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = 'Submitting...';
-            btn.style.opacity = '0.7';
-            
-            setTimeout(() => {
-                const card = document.querySelector('.pub-form-card');
-                card.innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px;">
-                        <svg viewBox="0 0 24 24" style="width: 80px; height: 80px; stroke: #10b981; fill: none; stroke-width: 1.5; margin-bottom: 24px;">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="9 12 12 15 16 9"></polyline>
-                        </svg>
-                        <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--uni-primary); font-size: 1.8rem; margin-bottom: 0.8rem; font-weight: 800;">Application Submitted!</h3>
-                        <p style="color: rgba(17,24,39,0.7); font-size: 1.05rem; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;">Thank you for applying to the Software Engineering Intern position. Your application and resume have been successfully received.</p>
-                        <a href="/company/internships/listing" class="btn btn-card-view">Browse More Internships</a>
-                    </div>
-                `;
-            }, 800);
-        }
+        // We don't want to block the natural GET submission, 
+        // but we want to make sure skills and experience are included as params.
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = 'Saving details and redirecting...';
+        btn.style.opacity = '0.7';
     });
 
     // Reveal Animation on load

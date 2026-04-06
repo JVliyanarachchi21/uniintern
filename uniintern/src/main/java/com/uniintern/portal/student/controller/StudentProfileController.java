@@ -26,6 +26,15 @@ public class StudentProfileController {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private com.uniintern.portal.student.repository.StudentApplicationRepository studentApplicationRepository;
+
+    @Autowired
+    private com.uniintern.portal.company.service.InternshipService internshipService;
+
+    @Autowired
+    private com.uniintern.portal.company.service.CompanyService companyService;
+
     private static final String UPLOAD_DIR = "uploads/cv/";
 
     @GetMapping("/student/profile")
@@ -92,5 +101,44 @@ public class StudentProfileController {
         }
 
         return "redirect:/student/profile";
+    }
+
+    @GetMapping("/student/applications")
+    public String myApplications(HttpSession session, Model model) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) return "redirect:/student/login";
+
+        java.util.List<com.uniintern.portal.student.model.StudentApplication> apps = studentApplicationRepository.findByStudentId(studentId);
+        // Sort by appliedAt DESC
+        apps.sort((a, b) -> {
+            if (a.getAppliedAt() == null) return 1;
+            if (b.getAppliedAt() == null) return -1;
+            return b.getAppliedAt().compareTo(a.getAppliedAt());
+        });
+        
+        java.util.List<java.util.Map<String, Object>> displayApps = new java.util.ArrayList<>();
+
+        for (com.uniintern.portal.student.model.StudentApplication app : apps) {
+            java.util.Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", app.getId());
+            map.put("status", app.getStatus());
+            map.put("appliedAt", app.getAppliedAt());
+
+            com.uniintern.portal.company.entity.Internship internship = internshipService.getById(app.getInternshipId());
+            if (internship != null) {
+                map.put("title", internship.getTitle());
+                com.uniintern.portal.company.entity.Company company = companyService.findById(internship.getCompanyId());
+                map.put("companyName", company != null ? company.getCompanyName() : "Unknown Company");
+                map.put("logoPath", company != null ? company.getLogoPath() : null);
+            } else {
+                map.put("title", "Unknown Internship");
+                map.put("companyName", "N/A");
+            }
+            displayApps.add(map);
+        }
+
+        model.addAttribute("applications", displayApps);
+        model.addAttribute("activePage", "applications");
+        return "student/my-applications";
     }
 }
