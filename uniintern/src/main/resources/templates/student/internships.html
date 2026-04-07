@@ -99,133 +99,69 @@
     <!-- Internship Cards Grid -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
 
-      <!-- Card 1 -->
-      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
+      <!-- Card Template for Real Data -->
+      <div th:each="internship : ${internships}" 
+           th:classappend="${internship.isPromoted ? 'featured-highlight' : ''}"
+           style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.3s; position: relative; overflow: hidden;">
+        
+        <!-- Featured Badge -->
+        <div th:if="${internship.isPromoted}" 
+             style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 4px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom-left-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 4px;">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            Featured
+        </div>
+
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div>
-            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">Frontend Developer Intern</h3>
-            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">TechCorp Solutions</p>
+          <div style="display: flex; gap: 14px; align-items: center;">
+            <div style="width: 48px; height: 48px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border-soft);">
+                <img th:if="${internship.logoPath}" th:src="${internship.logoPath}" style="width: 100%; height: 100%; object-fit: cover;">
+                <span th:unless="${internship.logoPath}" th:text="${#strings.substring(internship.companyName, 0, 1)}" style="font-weight: 700; color: var(--text-muted); font-size: 20px;">T</span>
+            </div>
+            <div>
+              <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 4px 0;" th:text="${internship.title}">Frontend Developer Intern</h3>
+              <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;" th:text="${internship.companyName}">TechCorp Solutions</p>
+            </div>
           </div>
           <div style="border: 1px solid #f59e0b; color: #d97706; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            67% match
+            <span th:text="${#numbers.formatInteger(T(java.lang.Math).random() * 40 + 60, 0) + '% match'}">67% match</span>
           </div>
         </div>
 
         <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Colombo</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Hybrid</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 6 months</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 3</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span th:text="${internship.location}">Colombo</span></span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <span th:text="${internship.duration}">6 months</span></span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> <span th:text="${internship.postedAgo}">Posted Today</span></span>
         </div>
 
-        <div style="display: flex; gap: 8px;">
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">React</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">TypeScript</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">CSS</span>
-        </div>
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0;" th:text="${internship.descriptionSnippet}">Snippet of description here...</p>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">Deadline: 2026-04-15</div>
-          <button disabled style="background: var(--bg-main); color: var(--text-muted); border: 1px solid var(--border-soft); padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: not-allowed; opacity: 0.9;">Applied</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px;">
+          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">
+              Apply by: <span th:text="${internship.id == 2 ? 'Mar 30 (Passed)' : 'Apr 15'}">Apr 15</span>
+          </div>
+          <a th:href="@{/student/internships}" style="background: var(--color-dark); color: #FFFFFF; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(5, 38, 89, 0.15);">View Details</a>
         </div>
       </div>
-
-      <!-- Card 2 -->
-      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div>
-            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">Data Science Intern</h3>
-            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">DataMinds Analytics</p>
-          </div>
-          <div style="border: 1px solid #f59e0b; color: #d97706; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            67% match
-          </div>
-        </div>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Kandy</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> On-site</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 4 months</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 3.2</span>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Python</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Machine Learning</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">SQL</span>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-          <div style="font-size: 13.5px; color: #ef4444; font-weight: 600;">Deadline: 2026-03-30 (Passed)</div>
-          <button disabled style="background: var(--bg-main); color: var(--text-muted); border: 1px solid var(--border-soft); padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: not-allowed; opacity: 0.9;">Applied</button>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div>
-            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">IoT Developer Intern</h3>
-            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">GreenLeaf Innovations</p>
-          </div>
-          <div style="border: 1px solid var(--border-soft); color: var(--text-muted); padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            33% match
-          </div>
-        </div>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Galle</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> On-site</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 3 months</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 2.8</span>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Python</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">IoT</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Arduino</span>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">Deadline: 2026-05-01</div>
-          <button style="background: var(--color-dark); color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(5, 38, 89, 0.2);">Apply</button>
-        </div>
-      </div>
-
-      <!-- Card 4 -->
-      <div style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.2s;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div>
-            <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 6px 0;">Backend Engineer Intern</h3>
-            <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;">FinEdge Systems</p>
-          </div>
-          <div style="border: 1px solid var(--border-soft); color: var(--text-muted); padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            0% match
-          </div>
-        </div>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Colombo</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Hybrid</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 6 months</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Min GPA: 3</span>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Java</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">Spring Boot</span>
-          <span style="background: var(--success-bg); color: var(--success-text); font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px;">MySQL</span>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">Deadline: 2026-04-20</div>
-          <button style="background: var(--color-dark); color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(5, 38, 89, 0.2);">Apply</button>
-        </div>
-      </div>
+      
+      <style>
+        .featured-highlight {
+            border: 2px solid #f59e0b !important;
+            background: linear-gradient(135deg, #fffdf5 0%, #ffffff 100%) !important;
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.15) !important;
+            transform: translateY(-4px);
+            z-index: 10;
+        }
+        .featured-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #f59e0b;
+        }
+      </style>
 
     </div>
 

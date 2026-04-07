@@ -3,7 +3,7 @@
 
         <a th:href="@{/company/notifications}" class="notification-link">
             <i class="bi bi-bell"></i>
-            <span class="badge">2</span>
+            <span class="badge" th:if="${unreadCount != null && unreadCount > 0}" th:text="${unreadCount}">1</span>
         </a>
 
         <div class="profile-dropdown">

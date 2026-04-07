@@ -150,6 +150,65 @@ function editInternship() {
   alert("Edit internship (UI only)");
 }
 
+function selectCandidate(name) {
+    alert('Candidate ' + name + ' has been shortlisted. (Demo only)');
+}
+
+// Settings Tab Navigation
+function switchSettingsTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    
+    // Deactivate all tab buttons
+    document.querySelectorAll('.settings-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show active tab content
+    const activeContent = document.getElementById(tabName + '-tab');
+    if (activeContent) {
+        activeContent.style.display = 'block';
+    }
+    
+    // Activate clicked button head
+    const activeBtn = document.querySelector(`.settings-tab[onclick*="${tabName}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+
+    // Update URL without reload to persist tab state across refreshes/actions
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('tab', tabName);
+    window.history.pushState({}, '', currentUrl);
+}
+
+// Toggle Password Visibility
+function togglePasswordVisibility(inputId, iconElement) {
+    const passwordInput = document.getElementById(inputId);
+    if (!passwordInput) return;
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        iconElement.classList.remove('bi-eye');
+        iconElement.classList.add('bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        iconElement.classList.remove('bi-eye-slash');
+        iconElement.classList.add('bi-eye');
+    }
+}
+
+// Handle tab selection from URL on load
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname.includes('/settings')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab') || 'security';
+        switchSettingsTab(activeTab);
+    }
+});
+
 function copyInternship() {
   alert("Copy internship (UI only)");
 }
@@ -199,6 +258,21 @@ function selectPromoCard(card, planName, amount) {
   selectedPromotionPlan = planName;
   selectedPromotionAmount = amount;
 
+  // Sync to hidden form fields
+  const typeField = document.getElementById("formPromoType");
+  const priceField = document.getElementById("formPrice");
+  const daysField = document.getElementById("formDays");
+
+  if (typeField) typeField.value = planName;
+  if (priceField) priceField.value = amount;
+  
+  // Determine days from plan name
+  let days = 7;
+  if (planName.includes("14 Days")) days = 14;
+  if (daysField) daysField.value = days;
+
+  console.log("Promotion selected:", planName, amount, days);
+
   const section = document.getElementById("promoSelectSection");
   if (section) section.style.display = "block";
 }
@@ -235,60 +309,11 @@ function proceedToPayment() {
 }
 
 //promotion checkout js
-function payNow() {
-  const cardName = document.getElementById("cardName");
-  const cardNumber = document.getElementById("cardNumber");
-  const expiry = document.getElementById("expiry");
-  const cvv = document.getElementById("cvv");
-  const email = document.getElementById("billingEmail");
+// Payment Checkout Validation with Inline Errors
+// Payment validation functions moved to inline script in payments-checkout.html for reliability
 
-  let formValid = true;
 
-  [cardName, cardNumber, expiry, cvv, email].forEach(input => {
-      if (input && input.value.trim() === "") {
-          input.style.borderColor = "red";
-          formValid = false;
-      } else if (input) {
-          input.style.borderColor = "";
-      }
-  });
 
-  if (!formValid) {
-      alert("Please fill in all payment fields before proceeding.");
-      return;
-  }
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (email && !emailPattern.test(email.value.trim())) {
-      alert("Please enter a valid billing email address.");
-      email.style.borderColor = "red";
-      email.focus();
-      return;
-  }
-
-  if (cardNumber && cardNumber.value.replace(/\s/g, '').length < 16) {
-      alert("Card Number must be precisely 16 digits.");
-      cardNumber.style.borderColor = "red";
-      cardNumber.focus();
-      return;
-  }
-
-  if (expiry && expiry.value.length < 5) {
-      alert("Expiry date must completely match MM/YY format.");
-      expiry.style.borderColor = "red";
-      expiry.focus();
-      return;
-  }
-
-  if (cvv && cvv.value.length < 3) {
-      alert("CVV must be 3 or 4 digits.");
-      cvv.style.borderColor = "red";
-      cvv.focus();
-      return;
-  }
-
-  alert("Payment completed successfully! Promotion activated.");
-}
 
 
 //company history
@@ -395,54 +420,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (expiry) {
-        // MM/YY auto-slash and boundary checks
         expiry.addEventListener('input', function(e) {
-            let val = this.value.replace(/[^\d]/g, '').substring(0, 4);
+            let val = this.value.replace(/[^\d]/g, '');
             
             if (e.inputType === 'deleteContentBackward') {
-                this.value = val;
+                this.value = val.length >= 2 ? val.substring(0, 2) + '/' + val.substring(2, 4) : val;
                 return;
             }
 
+            // Smart Month Formatting
             if (val.length === 1 && parseInt(val) > 1) {
-                val = '0' + val + '/';
-            } else if (val.length === 2) {
-                let month = parseInt(val);
-                if (month === 0) {
-                    val = '01/';
-                } else if (month > 12) {
-                    val = '12/';
-                } else {
-                    val = val + '/';
-                }
-            } else if (val.length > 2) {
-                let monthStr = val.substring(0, 2);
-                let month = parseInt(monthStr);
-                if (month === 0) monthStr = '01';
-                else if (month > 12) monthStr = '12';
-                val = monthStr + '/' + val.substring(2);
+                val = '0' + val;
+            } else if (val.length >= 2) {
+                let month = parseInt(val.substring(0, 2));
+                if (month === 0) val = '01' + val.substring(2);
+                if (month > 12) val = '12' + val.substring(2);
             }
-            
-            this.value = val;
-        });
 
-        expiry.addEventListener('blur', function() {
-            if (this.value.length === 5) {
-                let parts = this.value.split('/');
-                let month = parseInt(parts[0]);
-                let year = parseInt("20" + parts[1]);
-                let now = new Date();
-                let currentYear = now.getFullYear();
-                let currentMonth = now.getMonth() + 1;
-
-                if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                    alert("This card has expired. Please use a valid card.");
-                    this.style.borderColor = "red";
-                    this.style.color = "red";
-                } else {
-                    this.style.borderColor = "";
-                    this.style.color = "";
-                }
+            // Apply slash
+            if (val.length >= 2) {
+                this.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+            } else {
+                this.value = val;
             }
         });
     }
@@ -454,6 +453,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
 
 // Ensure GPA input doesn't accept -, +, e, E and validates on blur/input
 document.addEventListener('DOMContentLoaded', () => {
