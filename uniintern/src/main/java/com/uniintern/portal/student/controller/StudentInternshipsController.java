@@ -78,6 +78,23 @@ public class StudentInternshipsController {
             } else {
                 map.put("skills", List.of());
             }
+    private final com.uniintern.portal.company.service.InternshipService internshipService;
+
+    public StudentInternshipsController(com.uniintern.portal.company.service.InternshipService internshipService) {
+        this.internshipService = internshipService;
+    }
+
+    @GetMapping("/student/internships")
+    public String internships(Model model) {
+
+        // Filters (mock defaults)
+        model.addAttribute("selectedLocation", "All");
+        model.addAttribute("selectedType", "All");
+        model.addAttribute("matchMin", 50);
+
+        // Real internship cards from database
+        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings(null, null, null);
+        model.addAttribute("internships", internships);
 
             map.put("isApplied", applicationStatusMap.containsKey(internship.getId()));
             displayInternships.add(map);
