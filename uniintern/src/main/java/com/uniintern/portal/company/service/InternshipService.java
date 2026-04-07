@@ -4,8 +4,13 @@ import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.dto.InternshipListingDto;
 import com.uniintern.portal.company.repository.InternshipRepository;
+import com.uniintern.portal.company.repository.PromotionRepository;
+import com.uniintern.portal.student.repository.StudentApplicationRepository;
+import com.uniintern.portal.student.repository.ApplicationScoreRepository;
+import com.uniintern.portal.student.model.StudentApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -24,6 +29,15 @@ public class InternshipService {
 
     @Autowired
     private PromotionService promotionService;
+
+    @Autowired
+    private PromotionRepository promotionRepository;
+
+    @Autowired
+    private StudentApplicationRepository studentApplicationRepository;
+
+    @Autowired
+    private ApplicationScoreRepository applicationScoreRepository;
 
     // Save internship
     public Internship save(Internship internship) {
@@ -127,8 +141,22 @@ public class InternshipService {
         return internshipRepository.findById(id).orElse(null);
     }
 
-    // Delete internship
+    // Delete internship with cascading cleanup
+    @Transactional
     public void delete(Long id) {
+        // 1. Delete Promotions
+        promotionRepository.deleteByInternshipId(id);
+
+        // 2. Cleanup Student Applications and their Scores
+        List<StudentApplication> applications = studentApplicationRepository.findByInternshipId(id);
+        
+        for (StudentApplication app : applications) {
+            applicationScoreRepository.deleteByApplicationId(app.getId());
+        }
+        
+        studentApplicationRepository.deleteByInternshipId(id);
+
+        // 3. Delete Internship
         internshipRepository.deleteById(id);
     }
 

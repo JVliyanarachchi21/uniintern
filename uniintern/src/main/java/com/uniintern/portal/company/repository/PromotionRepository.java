@@ -2,6 +2,8 @@ package com.uniintern.portal.company.repository;
 
 import com.uniintern.portal.company.entity.Promotion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,9 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     
     List<Promotion> findByInternshipIdAndStatus(Long internshipId, String status);
     
-    // Find all active promotions for a specific date (usually now)
     List<Promotion> findByStatusAndEndDateAfter(String status, LocalDateTime date);
+
+    @Modifying
+    @Transactional
+    void deleteByInternshipId(Long internshipId);
 }

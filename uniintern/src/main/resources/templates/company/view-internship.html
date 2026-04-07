@@ -87,7 +87,12 @@
 
                     <div class="view-info-item">
                         <div class="view-label">Vacancies</div>
-                        <div class="view-value">5</div>
+                        <div class="view-value" th:text="${internship.vacancies != null ? internship.vacancies : 'Not specified'}">5</div>
+                    </div>
+
+                    <div class="view-info-item">
+                        <div class="view-label">Work Type</div>
+                        <div class="view-value" th:text="${internship.workType != null ? internship.workType : 'Not specified'}">On-site</div>
                     </div>
                 </div>
             </div>

@@ -357,14 +357,18 @@ public class CompanyController {
             @RequestParam("description") String description,
             @RequestParam("location") String location,
             @RequestParam("duration") String duration,
-            @RequestParam("deadline") String deadline,
+            @RequestParam(value = "deadline") String deadline,
             @RequestParam(value = "minGpa", required = false) String minGpa,
+            @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam(value = "skills", required = false) String skills,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
             @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
             @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
             @RequestParam(value = "wCert", defaultValue = "10") Integer wCert,
+            @RequestParam(value = "vacancies", required = false) Integer vacancies,
+            @RequestParam(value = "workType", required = false) String workType,
+            @RequestParam(value = "topN", defaultValue = "10") Integer topN,
             HttpSession session
     ) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
@@ -377,10 +381,16 @@ public class CompanyController {
         internship.setDuration(duration);
         internship.setDeadline(LocalDate.parse(deadline));
         internship.setRequiredSkills(skills);
+        internship.setVacancies(vacancies);
+        internship.setWorkType(workType);
+        internship.setTopNCandidates(topN);
         internship.setStatus("DRAFT".equalsIgnoreCase(status) ? "DRAFT" : "PENDING_ADMIN_APPROVAL");
 
         if (minGpa != null && !minGpa.isBlank()) {
             internship.setMinGpa(Double.parseDouble(minGpa));
+        }
+        if (maxGpa != null && !maxGpa.isBlank()) {
+            internship.setMaxGpa(Double.parseDouble(maxGpa));
         }
 
         internship.setSkillsWeight(wSkills);
@@ -476,12 +486,16 @@ public class CompanyController {
             @RequestParam("location") String location,
             @RequestParam("duration") String duration,
             @RequestParam(value = "minGpa", required = false) String minGpa,
+            @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam("deadline") String deadline,
             @RequestParam(value = "requiredSkills", required = false) String requiredSkills,
             @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
             @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
             @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
             @RequestParam(value = "wCert", defaultValue = "10") Integer wCert,
+            @RequestParam(value = "vacancies", required = false) Integer vacancies,
+            @RequestParam(value = "workType", required = false) String workType,
+            @RequestParam(value = "topN", defaultValue = "10") Integer topN,
             @RequestParam(value = "status", required = false) String status
     ) {
         Internship internship = internshipService.getById(id);
@@ -492,11 +506,19 @@ public class CompanyController {
         internship.setDuration(duration);
         internship.setRequiredSkills(requiredSkills);
         internship.setDeadline(LocalDate.parse(deadline));
+        internship.setVacancies(vacancies);
+        internship.setWorkType(workType);
+        internship.setTopNCandidates(topN);
 
         if (minGpa != null && !minGpa.isBlank()) {
             internship.setMinGpa(Double.parseDouble(minGpa));
         } else {
             internship.setMinGpa(null);
+        }
+        if (maxGpa != null && !maxGpa.isBlank()) {
+            internship.setMaxGpa(Double.parseDouble(maxGpa));
+        } else {
+            internship.setMaxGpa(null);
         }
 
         internship.setSkillsWeight(wSkills);
