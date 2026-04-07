@@ -31,7 +31,7 @@
             </nav>
 
             <div class="nav-actions desktop-actions">
-                <a class="btn btn-outline" th:href="@{/student/register}" href="/student/register">I&apos;m a Student</a>
+                <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
                 <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
             </div>
 
@@ -45,7 +45,7 @@
         <div class="mobile-menu" id="mobileMenu">
             <a th:href="@{/}" href="/">Home</a>
             <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
-            <a class="btn btn-outline" th:href="@{/student/register}" href="/student/register">I&apos;m a Student</a>
+            <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
             <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
         </div>
     </header>
@@ -55,6 +55,13 @@
             <div class="preview-top">
                 <div class="preview-top-left">
                     <div class="preview-logo">
+                        <img th:if="${company != null and (company.logoPath == null or company.logoPath.isEmpty())}" th:src="'https://ui-avatars.com/api/?name=' + ${company.companyName} + '&background=0D8ABC&color=fff&size=256'" th:alt="${company.companyName} + ' Logo'">
+                        <img th:if="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" th:src="${company.logoPath}" th:alt="${company.companyName} + ' Logo'">
+                        <img th:if="${company == null}" src="https://ui-avatars.com/api/?name=UniIntern&background=0D8ABC&color=fff&size=256" alt="UniIntern Logo">
+                    </div>
+                    <div>
+                        <h2 class="preview-title" th:text="${internship.title}">Software Engineering Intern</h2>
+                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'UniIntern Platform'}">UniIntern Platform</div>
                         <img th:if="${company != null and company.logoPath != null}" th:src="${company.logoPath}" alt="Company Logo">
                         <img th:unless="${company != null and company.logoPath != null}" th:src="'https://ui-avatars.com/api/?name=' + (${company != null ? company.companyName : 'Company'}) + '&background=0D8ABC&color=fff&size=256'" alt="Company Logo">
                     </div>
@@ -78,6 +85,7 @@
                     </div>
                     <div class="detail-content">
                         <span>Location</span>
+                        <strong th:text="${internship.location}">Colombo / Hybrid</strong>
                         <strong th:text="${internship.location != null ? internship.location : 'Flexible'}">Colombo / Hybrid</strong>
                     </div>
                 </div>
@@ -88,6 +96,7 @@
                     </div>
                     <div class="detail-content">
                         <span>Duration</span>
+                        <strong th:text="${internship.duration}">6 Months</strong>
                         <strong th:text="${internship.duration != null ? internship.duration : 'N/A'}">6 Months</strong>
                     </div>
                 </div>
@@ -98,6 +107,7 @@
                     </div>
                     <div class="detail-content">
                         <span>Deadline</span>
+                        <strong th:text="${internship.deadline}">2026-05-30</strong>
                         <strong th:text="${internship.deadline != null ? internship.deadline : 'Open'}">2026-05-30</strong>
                     </div>
                 </div>
@@ -108,6 +118,7 @@
                     </div>
                     <div class="detail-content">
                         <span>Minimum GPA</span>
+                        <strong th:text="${internship.minGpa != null ? internship.minGpa : 'N/A'}">3.00</strong>
                         <strong th:text="${internship.minGpa != null ? internship.minGpa : 'No minimum'}">3.00</strong>
                     </div>
                 </div>
@@ -115,6 +126,19 @@
 
             <div class="preview-body">
                 <h3>About this Internship</h3>
+                <p th:text="${internship.description}">We are looking for a motivated Software Engineering Intern to join our team... </p>
+                
+                <h3>Responsibilities</h3>
+                <ul>
+                    <li>Develop and maintain web application features</li>
+                    <li>Fix bugs and improve system performance</li>
+                    <li>Collaborate with developers and participate in code reviews</li>
+                    <li>Support testing and documentation activities</li>
+                </ul>
+
+                <h3>Required Skills</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${skill.trim()}">Java</span>
                 <p th:text="${internship.description != null ? internship.description : 'No description provided.'}">We are looking for a motivated Software Engineering Intern to join our team.</p>
 
                 <h3 th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}">Required Skills</h3>
@@ -124,7 +148,7 @@
             </div>
 
             <div class="preview-action">
-                <a th:href="@{/company/internships/application-template}" class="btn btn-primary btn-large">Apply Now</a>
+                <a th:href="@{/company/internships/application-template(id=${internship.id})}" class="btn btn-primary btn-large">Apply Now</a>
             </div>
         </div>
     </main>

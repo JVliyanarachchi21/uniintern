@@ -32,6 +32,11 @@ public class Internship {
 
     private String status;
 
+    private Integer skillsWeight;
+    private Integer gpaWeight;
+    private Integer experienceWeight;
+    private Integer certificatesWeight;
+
     private LocalDateTime createdAt;
 
     private Integer skillsWeight;
