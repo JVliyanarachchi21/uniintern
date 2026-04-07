@@ -1,6 +1,5 @@
 package com.uniintern.portal.company.dto;
 
-import java.time.LocalDate;
 
 public class InternshipListingDto {
     private Long id;
@@ -11,8 +10,17 @@ public class InternshipListingDto {
     private String duration;
     private String descriptionSnippet;
     private String postedAgo;
+    private boolean isPromoted;
 
     public InternshipListingDto() {
+    }
+
+    public boolean isPromoted() {
+        return isPromoted;
+    }
+
+    public void setPromoted(boolean promoted) {
+        isPromoted = promoted;
     }
 
     public Long getId() {
