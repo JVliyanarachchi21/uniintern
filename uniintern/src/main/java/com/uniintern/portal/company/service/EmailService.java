@@ -44,4 +44,18 @@ public class EmailService {
             System.err.println("Failed to send approval email to " + toEmail + ": " + e.getMessage());
         }
     }
+
+    public void sendPasswordResetOtp(String toEmail, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject("UniIntern - Reset Your Password");
+        message.setText("We received a request to reset your UniIntern recruiter password.\n\nYour OTP for password reset is: " + otp + "\n\nThis OTP will expire in 15 minutes. If you did not request this, please ignore this email.");
+        try {
+            javaMailSender.send(message);
+            System.out.println("Password Reset OTP Email sent to " + toEmail);
+        } catch (Exception e) {
+            System.err.println("Failed to send password reset email to " + toEmail + ": " + e.getMessage());
+        }
+    }
 }

@@ -17,6 +17,9 @@ public class CompanyInterceptor implements HandlerInterceptor {
         if (uri.startsWith("/company/login") || 
             uri.startsWith("/company/register") || 
             uri.startsWith("/company/verify") ||
+            uri.startsWith("/company/forgot-password") ||
+            uri.startsWith("/company/verify-reset-otp") ||
+            uri.startsWith("/company/reset-password") ||
             uri.startsWith("/company/internships/listing") ||
             uri.startsWith("/company/internships/preview") ||
             uri.startsWith("/company/internships/application-template") ||

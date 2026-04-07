@@ -150,6 +150,65 @@ function editInternship() {
   alert("Edit internship (UI only)");
 }
 
+function selectCandidate(name) {
+    alert('Candidate ' + name + ' has been shortlisted. (Demo only)');
+}
+
+// Settings Tab Navigation
+function switchSettingsTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    
+    // Deactivate all tab buttons
+    document.querySelectorAll('.settings-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show active tab content
+    const activeContent = document.getElementById(tabName + '-tab');
+    if (activeContent) {
+        activeContent.style.display = 'block';
+    }
+    
+    // Activate clicked button head
+    const activeBtn = document.querySelector(`.settings-tab[onclick*="${tabName}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+
+    // Update URL without reload to persist tab state across refreshes/actions
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('tab', tabName);
+    window.history.pushState({}, '', currentUrl);
+}
+
+// Toggle Password Visibility
+function togglePasswordVisibility(inputId, iconElement) {
+    const passwordInput = document.getElementById(inputId);
+    if (!passwordInput) return;
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        iconElement.classList.remove('bi-eye');
+        iconElement.classList.add('bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        iconElement.classList.remove('bi-eye-slash');
+        iconElement.classList.add('bi-eye');
+    }
+}
+
+// Handle tab selection from URL on load
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname.includes('/settings')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab') || 'security';
+        switchSettingsTab(activeTab);
+    }
+});
+
 function copyInternship() {
   alert("Copy internship (UI only)");
 }

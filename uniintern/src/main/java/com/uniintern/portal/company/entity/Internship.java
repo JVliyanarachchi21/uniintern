@@ -39,6 +39,8 @@ public class Internship {
     private Integer experienceWeight;
     private Integer certificatesWeight;
     private Integer topNCandidates;
+    private boolean approvedNotificationSeen = false;
+    private boolean rejectedNotificationSeen = false;
 
     public Internship() {
     }
@@ -177,5 +179,21 @@ public class Internship {
 
     public void setTopNCandidates(Integer topNCandidates) {
         this.topNCandidates = topNCandidates;
+    }
+
+    public boolean isApprovedNotificationSeen() {
+        return approvedNotificationSeen;
+    }
+
+    public void setApprovedNotificationSeen(boolean approvedNotificationSeen) {
+        this.approvedNotificationSeen = approvedNotificationSeen;
+    }
+
+    public boolean isRejectedNotificationSeen() {
+        return rejectedNotificationSeen;
+    }
+
+    public void setRejectedNotificationSeen(boolean rejectedNotificationSeen) {
+        this.rejectedNotificationSeen = rejectedNotificationSeen;
     }
 }

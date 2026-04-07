@@ -2,55 +2,62 @@ package com.uniintern.portal.company.controller;
 
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.service.InternshipService;
+import com.uniintern.portal.company.service.CompanyService;
+import com.uniintern.portal.company.service.PromotionService;
+import com.uniintern.portal.company.entity.Company;
+import com.uniintern.portal.company.dto.CompanyRegistrationDto;
+import com.uniintern.portal.company.dto.InternshipListingDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/company")
 public class CompanyController {
 
     private final InternshipService internshipService;
-    private final com.uniintern.portal.company.service.CompanyService companyService;
-    private final com.uniintern.portal.company.service.PromotionService promotionService;
+    private final CompanyService companyService;
+    private final PromotionService promotionService;
 
-    public CompanyController(InternshipService internshipService, com.uniintern.portal.company.service.CompanyService companyService, com.uniintern.portal.company.service.PromotionService promotionService) {
+    public CompanyController(InternshipService internshipService, CompanyService companyService, PromotionService promotionService) {
         this.internshipService = internshipService;
         this.companyService = companyService;
         this.promotionService = promotionService;
     }
 
     @ModelAttribute
-    public void addCommonAttributes(Model model, jakarta.servlet.http.HttpSession session) {
+    public void addCommonAttributes(Model model, HttpSession session) {
         if (session != null) {
             Long companyId = (Long) session.getAttribute("loggedInCompanyId");
             if (companyId != null) {
-                com.uniintern.portal.company.entity.Company company = companyService.findById(companyId);
+                Company company = companyService.findById(companyId);
                 if (company != null) {
                     model.addAttribute("companyName", company.getCompanyName());
                     model.addAttribute("companyLogo", company.getLogoPath() != null ? company.getLogoPath() : "");
                     
-                    // Add real-time notification count for the topbar badge
                     long pendingCount = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
                     long promoCount = promotionService.countActivePromotionsForCompany(companyId);
+                    long approvedCount = internshipService.countNewlyApproved(companyId);
+                    long rejectedCount = internshipService.countNewlyRejected(companyId);
+                    
                     long totalNotifications = 0;
                     if (pendingCount > 0) totalNotifications++;
                     if (promoCount > 0) totalNotifications++;
+                    totalNotifications += approvedCount;
+                    totalNotifications += rejectedCount;
+                    
                     if (totalNotifications == 0) totalNotifications = 1; // Welcome msg
                     
-                    // If the user has already visited the notifications page, hide the badge
                     Boolean notificationsRead = (Boolean) session.getAttribute("notificationsRead");
-                    if (notificationsRead != null && notificationsRead) {
+                    if (notificationsRead != null && notificationsRead && approvedCount == 0 && rejectedCount == 0) {
                         model.addAttribute("unreadCount", 0);
                     } else {
                         model.addAttribute("unreadCount", totalNotifications);
@@ -65,7 +72,7 @@ public class CompanyController {
                                @RequestParam(value = "success", required = false) String success,
                                Model model) {
         if ("true".equals(verified)) {
-            model.addAttribute("message", "Email verified successfully! Your account is now pending admin approval. We will notify you via email once approved.");
+            model.addAttribute("message", "Email verified successfully! Your account is now pending admin approval.");
         } else if (success != null) {
             model.addAttribute("message", "Registration successful! Please verify your email or log in.");
         }
@@ -73,8 +80,8 @@ public class CompanyController {
     }
 
     @PostMapping("/login")
-    public String handleLogin(@RequestParam("email") String email, @RequestParam("password") String password, Model model, jakarta.servlet.http.HttpSession session) {
-        com.uniintern.portal.company.entity.Company company = companyService.findByEmail(email);
+    public String handleLogin(@RequestParam("email") String email, @RequestParam("password") String password, Model model, HttpSession session) {
+        Company company = companyService.findByEmail(email);
         
         if (company == null || !company.getPassword().equals(password)) {
             model.addAttribute("error", "Invalid email or password");
@@ -87,12 +94,12 @@ public class CompanyController {
         }
         
         if ("PENDING_APPROVAL".equals(company.getStatus())) {
-            model.addAttribute("error", "Your account is pending admin approval. Please wait.");
+            model.addAttribute("error", "Your account is pending admin approval.");
             return "company/company-login";
         }
         
         if (!"APPROVED".equals(company.getStatus()) && !"ACTIVE".equals(company.getStatus())) {
-            model.addAttribute("error", "Your account is currently disabled or rejected.");
+            model.addAttribute("error", "Your account is currently disabled.");
             return "company/company-login";
         }
         
@@ -106,7 +113,7 @@ public class CompanyController {
     }
 
     @PostMapping("/register")
-    public String registerCompany(@ModelAttribute com.uniintern.portal.company.dto.CompanyRegistrationDto dto, Model model) {
+    public String registerCompany(@ModelAttribute CompanyRegistrationDto dto, Model model) {
         try {
             companyService.registerCompany(dto);
             return "redirect:/company/verify?email=" + dto.getEmail();
@@ -118,9 +125,7 @@ public class CompanyController {
     
     @GetMapping("/verify")
     public String verifyPageString(@RequestParam(value = "email", required = false) String email, Model model) {
-        if (email != null) {
-            model.addAttribute("email", email);
-        }
+        if (email != null) model.addAttribute("email", email);
         return "company/company-verify";
     }
 
@@ -129,7 +134,6 @@ public class CompanyController {
         try {
             companyService.verifyOtp(email, otp);
             model.addAttribute("verified", true);
-            model.addAttribute("companyName", companyService.findByEmail(email).getCompanyName());
             return "company/company-verify";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
@@ -138,58 +142,80 @@ public class CompanyController {
         }
     }
 
-    @GetMapping("/internships/preview")
-    public String internshipPreview(@RequestParam(value = "id", required = false) Long id, Model model) {
-        if (id == null) {
-            return "redirect:/company/internships/listing";
-        }
-        
-        com.uniintern.portal.company.entity.Internship internship = internshipService.getById(id);
-        if (internship == null) {
-            return "redirect:/company/internships/listing";
-        }
-        
-        com.uniintern.portal.company.entity.Company company = companyService.findById(internship.getCompanyId());
-        
-        model.addAttribute("internship", internship);
-        model.addAttribute("company", company);
-        model.addAttribute("page", "internships");
-        return "company/internship-preview";
+    @GetMapping("/forgot-password")
+    public String forgotPasswordPage() {
+        return "company/forgot-password";
     }
 
-@GetMapping("/internships/application-template")
-public String applicationTemplate(Model model) {
-    model.addAttribute("page", "internships");
-    return "company/application-template";
-}
+    @PostMapping("/forgot-password")
+    public String handleForgotPassword(@RequestParam("email") String email, Model model) {
+        try {
+            companyService.generatePasswordResetOtp(email);
+            model.addAttribute("email", email);
+            return "redirect:/company/verify-reset-otp?email=" + email;
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "company/forgot-password";
+        }
+    }
 
-@GetMapping("/internships/listing")
-public String internshipsListing(
-        @RequestParam(value = "keyword", required = false) String keyword,
-        @RequestParam(value = "companyId", required = false) Long companyId,
-        @RequestParam(value = "type", required = false) String type,
-        Model model) {
-    java.util.List<com.uniintern.portal.company.dto.InternshipListingDto> internships = internshipService.getApprovedInternshipsListings(keyword, companyId, type);
-    model.addAttribute("internships", internships);
-    model.addAttribute("companies", companyService.getAllCompanies());
-    model.addAttribute("keyword", keyword);
-    model.addAttribute("companyId", companyId);
-    model.addAttribute("type", type);
-    return "company/internships-listing";
-}
+    @GetMapping("/verify-reset-otp")
+    public String verifyResetOtpPage(@RequestParam("email") String email, Model model) {
+        model.addAttribute("email", email);
+        return "company/verify-reset-otp";
+    }
+
+    @PostMapping("/verify-reset-otp")
+    public String handleVerifyResetOtp(@RequestParam("email") String email, @RequestParam("otp") String otp, Model model) {
+        try {
+            companyService.verifyPasswordResetOtp(email, otp);
+            model.addAttribute("email", email);
+            model.addAttribute("otp", otp);
+            return "redirect:/company/reset-password?email=" + email + "&otp=" + otp;
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("email", email);
+            return "company/verify-reset-otp";
+        }
+    }
+
+    @GetMapping("/reset-password")
+    public String resetPasswordPage(@RequestParam("email") String email, @RequestParam("otp") String otp, Model model) {
+        model.addAttribute("email", email);
+        model.addAttribute("otp", otp);
+        return "company/reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String handleResetPassword(@RequestParam("email") String email, @RequestParam("otp") String otp, @RequestParam("newPassword") String newPassword, @RequestParam("confirmPassword") String confirmPassword, Model model) {
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match");
+            model.addAttribute("email", email);
+            model.addAttribute("otp", otp);
+            return "company/reset-password";
+        }
+        try {
+            companyService.resetPassword(email, newPassword);
+            model.addAttribute("message", "Password reset successful! Please log in with your new password.");
+            return "redirect:/company/login?success=true";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("email", email);
+            model.addAttribute("otp", otp);
+            return "company/reset-password";
+        }
+    }
 
     @GetMapping({"/dashboard", "", "/"})
-    public String dashboard(Model model, jakarta.servlet.http.HttpSession session) {
+    public String dashboard(Model model, HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
 
         model.addAttribute("page", "dashboard");
-
-        com.uniintern.portal.company.entity.Company company = companyService.findById(companyId);
+        Company company = companyService.findById(companyId);
         if (company == null) return "redirect:/company/login";
         model.addAttribute("company", company);
 
-        // Real Counts
         long activeInternships = internshipService.countByCompanyIdAndStatus(companyId, "APPROVED");
         long pendingApproval = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
         long activePromotions = promotionService.countActivePromotionsForCompany(companyId);
@@ -200,84 +226,72 @@ public String internshipsListing(
         model.addAttribute("shortlisted", 0);
         model.addAttribute("activePromotions", activePromotions);
 
-        // Recent Internships (instead of mock applicants)
-        List<Internship> recentInternships = internshipService.getByCompanyId(companyId);
-        List<Internship> latestActivities = recentInternships.stream()
+        // Recent Internships
+        List<Internship> recent = internshipService.getByCompanyId(companyId).stream()
                 .sorted((a, b) -> b.getId().compareTo(a.getId()))
                 .limit(5)
-                .collect(java.util.stream.Collectors.toList());
-        model.addAttribute("recentActivities", latestActivities);
+                .collect(Collectors.toList());
+        model.addAttribute("recentActivities", recent);
 
-        // Real-world Notifications
-        java.util.List<Map<String, String>> notifications = new java.util.ArrayList<>();
-        if (pendingApproval > 0) {
-            notifications.add(Map.of("date", "Today", "message", pendingApproval + " internship(s) are currently pending admin approval."));
-        }
-        if (activePromotions > 0) {
-            notifications.add(Map.of("date", "Recent", "message", "You have " + activePromotions + " active promotion(s) running."));
-        }
-        if (notifications.isEmpty()) {
-            notifications.add(Map.of("date", "Welcome", "message", "Welcome to UniIntern! Complete your company profile to attract more candidates."));
-        }
-        model.addAttribute("notifications", notifications);
+        // Persistent Notifications for Dashboard (Latest 5)
+        List<Map<String, Object>> activities = internshipService.getActivityNotifications(companyId);
+        model.addAttribute("notifications", activities.stream().limit(5).collect(Collectors.toList()));
 
         return "company/dashboard";
     }
- 
+
     @GetMapping("/profile")
-    public String profile(Model model, jakarta.servlet.http.HttpSession session) {
-        model.addAttribute("page", "profile");
+    public String profile(Model model, HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
-        if (companyId != null) {
-            com.uniintern.portal.company.entity.Company company = companyService.findById(companyId);
-            if (company == null) return "redirect:/company/login";
-            
-            model.addAttribute("company", company);
-        }
+        if (companyId == null) return "redirect:/company/login";
+        model.addAttribute("page", "profile");
+        model.addAttribute("company", companyService.findById(companyId));
         return "company/profile";
     }
 
     @PostMapping("/profile/update")
-    public String updateProfile(
-            @RequestParam("companyName") String companyName,
-            @RequestParam("industry") String industry,
-            @RequestParam("email") String email,
-            @RequestParam("phone") String phone,
-            @RequestParam("website") String website,
-            @RequestParam("address") String address,
-            @RequestParam("description") String description,
-            @RequestParam(value = "logoFile", required = false) org.springframework.web.multipart.MultipartFile logoFile,
-            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes,
-            jakarta.servlet.http.HttpSession session
-    ) {
+    public String updateProfile(@RequestParam("companyName") String companyName,
+                               @RequestParam("industry") String industry,
+                               @RequestParam("email") String email,
+                               @RequestParam("phone") String phone,
+                               @RequestParam("website") String website,
+                               @RequestParam("address") String address,
+                               @RequestParam("description") String description,
+                               @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
-        String logoPath = null;
 
+        String logoPath = null;
         if (logoFile != null && !logoFile.isEmpty()) {
             try {
                 String uploadDir = "uploads/logos/";
-                java.io.File uploadDirFile = new java.io.File(uploadDir);
-                if (!uploadDirFile.exists()) {
-                    uploadDirFile.mkdirs();
-                }
-                String fileName = java.util.UUID.randomUUID().toString() + "_" + logoFile.getOriginalFilename();
-                java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDir, fileName);
-                java.nio.file.Files.copy(logoFile.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                java.io.File dir = new java.io.File(uploadDir);
+                if (!dir.exists()) dir.mkdirs();
+                String fileName = UUID.randomUUID().toString() + "_" + logoFile.getOriginalFilename();
+                java.nio.file.Files.copy(logoFile.getInputStream(), java.nio.file.Paths.get(uploadDir, fileName));
                 logoPath = "/uploads/logos/" + fileName;
-            } catch (java.io.IOException e) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Failed to upload logo: " + e.getMessage());
-                return "redirect:/company/profile";
-            }
+            } catch (Exception e) {}
         }
 
         try {
             companyService.updateProfile(companyId, companyName, industry, email, phone, website, address, description, logoPath);
             redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating profile: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/company/profile";
+    }
+
+    @GetMapping("/internships")
+    public String internships(Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+        model.addAttribute("page", "internships");
+        model.addAttribute("internships", internshipService.getByCompanyId(companyId));
+        model.addAttribute("promotedIds", new HashSet<>(promotionService.getPromotedInternshipIds()));
+        return "company/internships";
     }
 
     @GetMapping("/internships/new")
@@ -286,341 +300,192 @@ public String internshipsListing(
         return "company/new-internship";
     }
 
-    @GetMapping("/internships")
-    public String internships(Model model, jakarta.servlet.http.HttpSession session) {
-        model.addAttribute("page", "internships");
-
-        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
-        if (companyId == null) return "redirect:/company/login";
-        List<Internship> internships = internshipService.getByCompanyId(companyId);
-
-        java.util.Set<Long> promotedIds = new java.util.HashSet<>(promotionService.getPromotedInternshipIds());
-
-        model.addAttribute("internships", internships);
-        model.addAttribute("promotedIds", promotedIds);
-        return "company/internships";
-    }
-
     @PostMapping("/internships/new")
-    public String submitNewInternship(
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("location") String location,
-            @RequestParam("duration") String duration,
-            @RequestParam("deadline") String deadline,
-            @RequestParam(value = "minGpa", required = false) String minGpa,
-            @RequestParam(value = "maxGpa", required = false) String maxGpa,
-            @RequestParam(value = "skills", required = false) String skills,
-            @RequestParam(value = "status", required = false) String status,
-            @RequestParam(value = "wSkills", required = false) Integer wSkills,
-            @RequestParam(value = "wGpa", required = false) Integer wGpa,
-            @RequestParam(value = "wExp", required = false) Integer wExp,
-            @RequestParam(value = "wCert", required = false) Integer wCert,
-            @RequestParam(value = "topN", required = false) Integer topN,
-            jakarta.servlet.http.HttpSession session
-    ) {
+    public String submitNewInternship(@RequestParam Map<String, String> params, HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
-        Internship internship = new Internship();
-
-        internship.setCompanyId(companyId);
-        internship.setTitle(title);
-        internship.setDescription(description);
-        internship.setLocation(location);
-        internship.setDuration(duration);
-        internship.setDeadline(LocalDate.parse(deadline));
-        internship.setRequiredSkills(skills);
-
-        if (minGpa != null && !minGpa.isBlank()) {
-            internship.setMinGpa(Double.parseDouble(minGpa));
-        }
-        
-        if (maxGpa != null && !maxGpa.isBlank()) {
-            internship.setMaxGpa(Double.parseDouble(maxGpa));
-        }
-
-        if ("DRAFT".equalsIgnoreCase(status)) {
-            internship.setStatus("DRAFT");
-        } else {
-            internship.setStatus("PENDING_ADMIN_APPROVAL");
-        }
-
-        internship.setSkillsWeight(wSkills != null ? wSkills : 0);
-        internship.setGpaWeight(wGpa != null ? wGpa : 0);
-        internship.setExperienceWeight(wExp != null ? wExp : 0);
-        internship.setCertificatesWeight(wCert != null ? wCert : 0);
-        internship.setTopNCandidates(topN != null ? topN : 10);
-
-        internship.setCreatedAt(LocalDateTime.now());
-
-        internshipService.save(internship);
-        
-        // Reset notification badge to 'unread' after posting a new internship
+        Internship i = new Internship();
+        i.setCompanyId(companyId);
+        i.setTitle(params.get("title"));
+        i.setDescription(params.get("description"));
+        i.setLocation(params.get("location"));
+        i.setDuration(params.get("duration"));
+        i.setDeadline(LocalDate.parse(params.get("deadline")));
+        i.setRequiredSkills(params.get("skills"));
+        i.setStatus("DRAFT".equalsIgnoreCase(params.get("status")) ? "DRAFT" : "PENDING_ADMIN_APPROVAL");
+        i.setCreatedAt(LocalDateTime.now());
+        internshipService.save(i);
         session.setAttribute("notificationsRead", false);
-
         return "redirect:/company/internships";
     }
 
-    @GetMapping("/applicants")
-    public String applicants(Model model) {
-        model.addAttribute("page", "applicants");
-
-        List<Map<String, Object>> applicants = List.of(
-                Map.of("name", "Ashan Fernando", "university", "University of Colombo", "gpa", 3.25, "skillMatch", "71%", "score", 79, "status", "Shortlisted"),
-                Map.of("name", "Dilini Wickramasinghe", "university", "University of Moratuwa", "gpa", 3.81, "skillMatch", "62%", "score", 73, "status", "Shortlisted"),
-                Map.of("name", "Nuwan Bandara", "university", "University of Peradeniya", "gpa", 3.42, "skillMatch", "68%", "score", 96, "status", "Shortlisted"),
-                Map.of("name", "Sachini Rathnayake", "university", "SLIIT", "gpa", 2.53, "skillMatch", "51%", "score", 46, "status", "Shortlisted"),
-                Map.of("name", "Tharaka Jayasuriya", "university", "NSBM", "gpa", 3.24, "skillMatch", "97%", "score", 42, "status", "Shortlisted")
-        );
-
-        model.addAttribute("applicants", applicants);
-        return "company/applicants";
-    }
-
-    @GetMapping("/promotions")
-    public String promotions(Model model, jakarta.servlet.http.HttpSession session) {
-        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
-        if (companyId == null) return "redirect:/company/login";
-
-        model.addAttribute("page", "promotions");
-        
-        // Fetch only approved internships for this company
-        List<com.uniintern.portal.company.dto.InternshipListingDto> internships = 
-            internshipService.getApprovedInternshipsListings(null, companyId, null);
-            
-        // Filter out internships that already have an active promotion
-        java.util.Set<Long> promotedIds = new java.util.HashSet<>(promotionService.getPromotedInternshipIds());
-        List<com.uniintern.portal.company.dto.InternshipListingDto> eligibleInternships = internships.stream()
-                .filter(i -> !promotedIds.contains(i.getId()))
-                .collect(java.util.stream.Collectors.toList());
-                
-        model.addAttribute("internships", eligibleInternships);
-        
-        return "company/promotions";
-    }
-
-
-    @PostMapping("/promotions/process")
-    public String processPromotion(@RequestParam("internshipId") Long internshipId,
-                                   @RequestParam(value = "type", required = false, defaultValue = "Featured Internship") String type,
-                                   @RequestParam(value = "price", required = false, defaultValue = "5000.0") Double price,
-                                   @RequestParam(value = "days", required = false, defaultValue = "7") Integer days,
-                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
-        
-        System.out.println("Processing promotion for Internship: " + internshipId + ", Plan: " + type + ", Price: " + price);
-        
-        // Redirect to checkout page with parameters
-        redirectAttributes.addAttribute("internshipId", internshipId);
-        redirectAttributes.addAttribute("type", type);
-        redirectAttributes.addAttribute("price", price);
-        redirectAttributes.addAttribute("days", days);
-        
-        System.out.println("Redirecting to /company/payments/checkout");
-        return "redirect:/company/payments/checkout";
-    }
-
-    @PostMapping("/payments/complete")
-    public String completePayment(
-            @RequestParam("internshipId") Long internshipId,
-            @RequestParam("type") String type,
-            @RequestParam("price") Double price,
-            @RequestParam("days") Integer days,
-            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes,
-            jakarta.servlet.http.HttpSession session) {
-        
-        // Finalize transaction and activate promotion
-        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
-        if (companyId == null) return "redirect:/company/login";
-        promotionService.createPromotion(internshipId, companyId, type, price, days);
-        
-        redirectAttributes.addAttribute("internshipId", internshipId);
-        redirectAttributes.addAttribute("type", type);
-        
-        return "redirect:/company/payments/success";
-    }
-
-    @GetMapping("/payments/success")
-    public String paymentSuccess(
-            @RequestParam("internshipId") Long internshipId,
-            @RequestParam("type") String type,
-            Model model) {
-        
-        model.addAttribute("page", "promotions");
-        model.addAttribute("internship", internshipService.getById(internshipId));
-        model.addAttribute("promoType", type);
-        
-        return "company/payment-success";
-    }
-
-    @GetMapping("/payments/checkout")
-    public String checkout(
-            @RequestParam("internshipId") Long internshipId,
-            @RequestParam("type") String type,
-            @RequestParam("price") Double price,
-            @RequestParam("days") Integer days,
-            Model model) {
-        model.addAttribute("page", "promotions");
-        model.addAttribute("internship", internshipService.getById(internshipId));
-        model.addAttribute("promoType", type);
-        model.addAttribute("price", price);
-        model.addAttribute("days", days);
-        model.addAttribute("internshipId", internshipId);
-        return "company/payments-checkout";
-    }
-
-    @GetMapping("/payments/history")
-    public String paymentHistory(Model model, jakarta.servlet.http.HttpSession session) {
-        model.addAttribute("page", "payments");
-
-        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
-        if (companyId == null) return "redirect:/company/login";
-        List<com.uniintern.portal.company.entity.Promotion> promos = promotionService.getAllPromotionsForCompany(companyId);
-        
-        List<Map<String, Object>> payments = promos.stream().map(p -> {
-            Map<String, Object> map = new java.util.HashMap<>();
-            map.put("id", "PAY-" + String.format("%03d", p.getId()));
-            map.put("date", p.getStartDate().toLocalDate().toString());
-            
-            // Fetch internship title
-            String internTitle = "Unknown Internship";
-            try {
-                com.uniintern.portal.company.entity.Internship i = internshipService.getById(p.getInternshipId());
-                if(i != null) internTitle = i.getTitle();
-            } catch(Exception e) {}
-            
-            map.put("plan", p.getType() + " (" + internTitle + ")");
-            map.put("amount", "LKR " + String.format("%,.0f", p.getPrice()));
-            map.put("status", p.getStatus()); // Will be "ACTIVE"
-            return map;
-        }).collect(java.util.stream.Collectors.toList());
-
-        model.addAttribute("payments", payments);
-        return "company/payment-history";
-    }
-
     @GetMapping("/notifications")
-    public String notifications(Model model, jakarta.servlet.http.HttpSession session) {
+    public String notifications(Model model, HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
-
         model.addAttribute("page", "notifications");
 
-        // Fetch Real Stats for Notifications
-        long pendingApproval = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
-        long activePromotions = promotionService.countActivePromotionsForCompany(companyId);
-
-        java.util.List<Map<String, String>> notifications = new java.util.ArrayList<>();
-        if (pendingApproval > 0) {
-            notifications.add(Map.of("date", "Today", "message", "Your internship(s) are currently pending admin approval."));
-        }
-        if (activePromotions > 0) {
-            notifications.add(Map.of("date", "Recent", "message", "You have " + activePromotions + " active promotion(s) running."));
-        }
-        if (notifications.isEmpty()) {
-            notifications.add(Map.of("date", "Welcome", "message", "Welcome to UniIntern! Complete your company profile to attract more candidates."));
-        }
-
-        model.addAttribute("notifications", notifications);
-        model.addAttribute("unreadCount", 0); // Force to 0 for this page
+        // Fetch all persistent activity notifications
+        List<Map<String, Object>> allNotifications = internshipService.getActivityNotifications(companyId);
         
-        // Mark as read in session
+        // Add passive status notifications (always "New" in a sense, but not tracked in DB)
+        long pending = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
+        long activePromos = promotionService.countActivePromotionsForCompany(companyId);
+        
+        List<Map<String, Object>> displayList = new ArrayList<>(allNotifications);
+        
+        if (pending > 0) {
+            displayList.add(Map.of("date", "Today", "message", "You have " + pending + " internship(s) pending approval.", "type", "info", "icon", "bi-clock-history", "isNew", false));
+        }
+        if (activePromos > 0) {
+            displayList.add(Map.of("date", "Recent", "message", "You have " + activePromos + " active promotion(s) running.", "type", "info", "icon", "bi-star", "isNew", false));
+        }
+        if (displayList.isEmpty()) {
+            displayList.add(Map.of("date", "Welcome", "message", "Welcome to UniIntern! Post your first internship to get started.", "type", "info", "icon", "bi-info-circle", "isNew", false));
+        }
+
+        model.addAttribute("notifications", displayList);
+        
+        // Count ONLY the unread activity notifications for the header sub-text
+        long unreadCount = allNotifications.stream().filter(n -> (Boolean)n.get("isNew")).count();
+        model.addAttribute("unreadCount", unreadCount);
+        
+        // Mark everything as seen in session and DB
         session.setAttribute("notificationsRead", true);
+        internshipService.markApprovedAsSeen(companyId);
+        internshipService.markRejectedAsSeen(companyId);
 
         return "company/notifications";
     }
 
     @GetMapping("/settings")
-    public String settings(Model model) {
+    public String settings(Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
         model.addAttribute("page", "settings");
+        model.addAttribute("company", companyService.findById(companyId));
         return "company/settings";
     }
 
+    @PostMapping("/settings/update-password")
+    public String updateSettingsPassword(@RequestParam("currentPassword") String current, @RequestParam("newPassword") String next, HttpSession session, RedirectAttributes ra) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        try {
+            companyService.updatePassword(companyId, current, next);
+            ra.addFlashAttribute("success", "Password updated successfully!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/company/settings?tab=security";
+    }
+
     @GetMapping("/internships/edit/{id}")
-public String editInternship(@PathVariable("id") Long id, Model model) {
-
-    Internship internship = internshipService.getById(id);
-
-    model.addAttribute("internship", internship);
-    model.addAttribute("page", "internships");
-
-    return "company/edit-internships";
-}
-  
-@PostMapping("/internships/update")
-public String updateInternship(
-        @RequestParam("id") Long id,
-        @RequestParam("title") String title,
-        @RequestParam("description") String description,
-        @RequestParam("location") String location,
-        @RequestParam("duration") String duration,
-        @RequestParam(value = "minGpa", required = false) String minGpa,
-        @RequestParam(value = "maxGpa", required = false) String maxGpa,
-        @RequestParam("deadline") String deadline,
-        @RequestParam(value = "requiredSkills", required = false) String requiredSkills,
-        @RequestParam(value = "action", required = false) String action
-) {
-    Internship internship = internshipService.getById(id);
-
-    internship.setTitle(title);
-    internship.setDescription(description);
-    internship.setLocation(location);
-    internship.setDuration(duration);
-    internship.setRequiredSkills(requiredSkills);
-    internship.setDeadline(java.time.LocalDate.parse(deadline));
-
-    if (minGpa != null && !minGpa.isBlank()) {
-        internship.setMinGpa(Double.parseDouble(minGpa));
-    } else {
-        internship.setMinGpa(null);
-    }
-    
-    if (maxGpa != null && !maxGpa.isBlank()) {
-        internship.setMaxGpa(Double.parseDouble(maxGpa));
-    } else {
-        internship.setMaxGpa(null);
+    public String editInternship(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("internship", internshipService.getById(id));
+        model.addAttribute("page", "internships");
+        return "company/edit-internships";
     }
 
-    if ("submit".equals(action)) {
-        internship.setStatus("PENDING_ADMIN_APPROVAL");
+    @PostMapping("/internships/update")
+    public String updateInternship(@RequestParam Map<String, String> params) {
+        Internship i = internshipService.getById(Long.parseLong(params.get("id")));
+        i.setTitle(params.get("title"));
+        i.setDescription(params.get("description"));
+        i.setLocation(params.get("location"));
+        i.setDuration(params.get("duration"));
+        i.setDeadline(LocalDate.parse(params.get("deadline")));
+        i.setRequiredSkills(params.get("requiredSkills"));
+        if ("submit".equals(params.get("action"))) i.setStatus("PENDING_ADMIN_APPROVAL");
+        internshipService.save(i);
+        return "submit".equals(params.get("action")) ? "redirect:/company/internships" : "redirect:/company/internships/view/" + i.getId();
     }
 
-    internshipService.save(internship);
-
-    if ("submit".equals(action)) {
+    @GetMapping("/internships/delete/{id}")
+    public String deleteInternship(@PathVariable("id") Long id) {
+        internshipService.delete(id);
         return "redirect:/company/internships";
     }
+
+    @GetMapping("/internships/view/{id}")
+    public String viewInternship(@PathVariable("id") Long id, @RequestParam(name = "tab", defaultValue = "overview") String tab, Model model) {
+        model.addAttribute("internship", internshipService.getById(id));
+        model.addAttribute("page", "internships");
+        model.addAttribute("activeTab", tab);
+        model.addAttribute("applicants", List.of(
+            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.75, "status", "Shortlisted"),
+            Map.of("name", "Dilini Wickramasinghe", "university", "UoM", "gpa", 3.48, "status", "Shortlisted")
+        ));
+        return "company/view-internship";
+    }
     
-    return "redirect:/company/internships/view/" + internship.getId();
+    @GetMapping("/payments/checkout")
+    public String checkout(@RequestParam("internshipId") Long id, @RequestParam("type") String type, @RequestParam("price") Double price, @RequestParam("days") Integer days, Model model) {
+        model.addAttribute("page", "promotions");
+        model.addAttribute("internship", internshipService.getById(id));
+        model.addAttribute("promoType", type);
+        model.addAttribute("price", price);
+        model.addAttribute("days", days);
+        model.addAttribute("internshipId", id);
+        return "company/payments-checkout";
+    }
+
+    @PostMapping("/payments/complete")
+    public String completePayment(@RequestParam("internshipId") Long id, @RequestParam("type") String type, @RequestParam("price") Double price, @RequestParam("days") Integer days, RedirectAttributes ra, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        promotionService.createPromotion(id, companyId, type, price, days);
+        ra.addAttribute("internshipId", id);
+        ra.addAttribute("type", type);
+        return "redirect:/company/payments/success";
+    }
+
+    @GetMapping("/payments/success")
+    public String paymentSuccess(@RequestParam("internshipId") Long id, @RequestParam("type") String type, Model model) {
+        model.addAttribute("page", "promotions");
+        model.addAttribute("internship", internshipService.getById(id));
+        model.addAttribute("promoType", type);
+        return "company/payment-success";
+    }
+
+    @GetMapping("/payments/history")
+    public String paymentHistory(Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        model.addAttribute("page", "payments");
+        model.addAttribute("payments", promotionService.getAllPromotionsForCompany(companyId).stream().map(p -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", "PAY-" + p.getId());
+            map.put("date", p.getStartDate().toLocalDate().toString());
+            map.put("plan", p.getType());
+            map.put("amount", "LKR " + p.getPrice());
+            map.put("status", p.getStatus());
+            return map;
+        }).collect(Collectors.toList()));
+        return "company/payment-history";
+    }
+
+    @GetMapping("/promotions")
+    public String promotions(Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        model.addAttribute("page", "promotions");
+        List<InternshipListingDto> internships = internshipService.getApprovedInternshipsListings(null, companyId, null);
+        Set<Long> promotedIds = new HashSet<>(promotionService.getPromotedInternshipIds());
+        model.addAttribute("internships", internships.stream().filter(i -> !promotedIds.contains(i.getId())).collect(Collectors.toList()));
+        return "company/promotions";
+    }
+
+    @PostMapping("/promotions/process")
+    public String processPromotion(@RequestParam("internshipId") Long id, @RequestParam("type") String type, @RequestParam("price") Double price, @RequestParam("days") Integer days, RedirectAttributes ra) {
+        ra.addAttribute("internshipId", id);
+        ra.addAttribute("type", type);
+        ra.addAttribute("price", price);
+        ra.addAttribute("days", days);
+        return "redirect:/company/payments/checkout";
+    }
+    
+    @GetMapping("/applicants")
+    public String applicants(Model model) {
+        model.addAttribute("page", "applicants");
+        model.addAttribute("applicants", List.of(
+            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.25, "score", 79, "status", "Shortlisted")
+        ));
+        return "company/applicants";
+    }
 }
-
-
-@GetMapping("/internships/delete/{id}")
-public String deleteInternship(@PathVariable("id") Long id) {
-    internshipService.delete(id);
-    return "redirect:/company/internships";
-}
-
-@GetMapping("/internships/view/{id}")
-public String viewInternship(@PathVariable("id") Long id,
-                             @RequestParam(name = "tab", defaultValue = "overview") String tab,
-                             Model model) {
-
-    Internship internship = internshipService.getById(id);
-
-    model.addAttribute("internship", internship);
-    model.addAttribute("page", "internships");
-    model.addAttribute("activeTab", tab);
-
-    List<Map<String, Object>> applicants = List.of(
-            Map.of("name", "Ashan Fernando", "university", "University of Colombo", "gpa", 3.75, "score", 54, "status", "Shortlisted"),
-            Map.of("name", "Dilini Wickramasinghe", "university", "University of Moratuwa", "gpa", 3.48, "score", 40, "status", "Shortlisted"),
-            Map.of("name", "Nuwan Bandara", "university", "University of Peradeniya", "gpa", 3.33, "score", 96, "status", "Shortlisted"),
-            Map.of("name", "Sachini Rathnayake", "university", "SLIIT", "gpa", 2.90, "score", 88, "status", "Scored")
-    );
-
-    model.addAttribute("applicants", applicants);
-
-    return "company/view-internship";
-}
-
-}
-
