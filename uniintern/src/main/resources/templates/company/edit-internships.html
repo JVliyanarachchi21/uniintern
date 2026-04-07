@@ -61,9 +61,43 @@
                 <input type="text" id="requiredSkills" name="requiredSkills" th:value="${internship.requiredSkills}">
             </div>
 
+            <div class="hr" style="margin: 24px 0; border-top: 1px solid #e2e8f0;"></div>
+
+            <div class="form-section">
+                <div style="font-weight: 700; color: #0f172a; margin-bottom: 8px;">Ranking Settings</div>
+                <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Adjust the evaluation weights. Total should equal 100%.</p>
+
+                <div class="grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                    <div class="field">
+                        <label for="wSkills">Skills (%)</label>
+                        <input type="number" id="wSkills" name="wSkills" th:value="${internship.skillsWeight ?: 40}" min="0" max="100" required>
+                    </div>
+                    <div class="field">
+                        <label for="wGpa">GPA (%)</label>
+                        <input type="number" id="wGpa" name="wGpa" th:value="${internship.gpaWeight ?: 30}" min="0" max="100" required>
+                    </div>
+                    <div class="field">
+                        <label for="wExp">Experience (%)</label>
+                        <input type="number" id="wExp" name="wExp" th:value="${internship.experienceWeight ?: 20}" min="0" max="100" required>
+                    </div>
+                    <div class="field">
+                        <label for="wCert">Certificates (%)</label>
+                        <input type="number" id="wCert" name="wCert" th:value="${internship.certificatesWeight ?: 10}" min="0" max="100" required>
+                    </div>
+                </div>
+            </div>
+
             <div class="form-actions">
                 <a th:href="@{'/company/internships/view/' + ${internship.id}}" class="btn">Cancel</a>
-                <button type="submit" class="btn primary">Update Internship</button>
+                
+                <th:block th:if="${internship.status == 'DRAFT'}">
+                    <button type="submit" name="action" value="save_draft" class="btn">Update Draft</button>
+                    <button type="submit" name="action" value="submit" class="btn primary" style="background:#16a34a; border-color:#16a34a;">Submit for Approval</button>
+                </th:block>
+                
+                <th:block th:unless="${internship.status == 'DRAFT'}">
+                    <button type="submit" name="action" value="update" class="btn primary">Update Internship</button>
+                </th:block>
             </div>
 
         </form>

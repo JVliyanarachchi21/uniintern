@@ -13,6 +13,9 @@ public class StudentGlobalAdvice {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private com.uniintern.portal.student.service.NotificationService notificationService;
+
     @ModelAttribute("loggedInStudent")
     public Student addLoggedInStudent(HttpSession session) {
         Long studentId = (Long) session.getAttribute("loggedInStudentId");
@@ -26,5 +29,14 @@ public class StudentGlobalAdvice {
     public String addFullName(HttpSession session) {
         Student student = addLoggedInStudent(session);
         return student != null ? student.getFullName() : "Guest User";
+    }
+
+    @ModelAttribute("unreadNotifCount")
+    public long addUnreadNotifCount(HttpSession session) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId != null) {
+            return notificationService.getUnreadCount(studentId);
+        }
+        return 0;
     }
 }
