@@ -4,8 +4,10 @@ import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.service.CompanyService;
 import com.uniintern.portal.company.service.InternshipService;
+import com.uniintern.portal.student.model.ApplicationScore;
 import com.uniintern.portal.student.model.Student;
 import com.uniintern.portal.student.model.StudentApplication;
+import com.uniintern.portal.student.repository.ApplicationScoreRepository;
 import com.uniintern.portal.student.repository.StudentApplicationRepository;
 import com.uniintern.portal.student.repository.StudentRepository;
 import jakarta.servlet.http.HttpSession;
@@ -36,6 +38,9 @@ public class StudentApplicationDetailController {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private ApplicationScoreRepository applicationScoreRepository;
 
     @GetMapping("/student/applications/{id}")
     public String detail(@PathVariable Long id, HttpSession session, Model model) {
@@ -82,22 +87,31 @@ public class StudentApplicationDetailController {
             System.out.println(">>> Weights: Skills[" + internship.getSkillsWeight() + "], GPA[" + internship.getGpaWeight() + "]");
         }
         
-        // Calculate Matching Analysis
-        int skillsMatch = calculateSkillsMatch(student, internship);
-        int gpaMatch = calculateGpaMatch(student, internship);
-        int expMatch = calculateExpMatch(student, internship);
-        int certMatch = calculateCertMatch(student, internship);
+        // Matching Analysis
+        List<ApplicationScore> scores = applicationScoreRepository.findByApplicationId(id);
+        
+        if (scores.isEmpty()) {
+            // Fallback: Calculate on the fly for legacy applications missing breakdown in DB
+            int s = calculateSkillsMatch(student, internship);
+            int g = calculateGpaMatch(student, internship);
+            int e = calculateExpMatch(student, internship);
+            int c = calculateCertMatch(student, internship);
+            
+            scores = Arrays.asList(
+                new ApplicationScore(id, "Skills", internship.getSkillsWeight()!=null?internship.getSkillsWeight():40, internship.getRequiredSkills(), student.getSkills(), s),
+                new ApplicationScore(id, "GPA", internship.getGpaWeight()!=null?internship.getGpaWeight():30, "Min "+internship.getMinGpa(), student.getGpa()!=null?student.getGpa().toString():"0.0", g),
+                new ApplicationScore(id, "Experience", internship.getExperienceWeight()!=null?internship.getExperienceWeight():20, "Relevant Projects", (student.getExperience()!=null && !student.getExperience().isEmpty())?"Provided":"Not Provided", e),
+                new ApplicationScore(id, "Certificates", internship.getCertificatesWeight()!=null?internship.getCertificatesWeight():10, "Recognized Certs", (student.getCertifications()!=null && !student.getCertifications().isEmpty())?"Provided":"Not Provided", c)
+            );
+        }
         
         model.addAttribute("app", app);
         model.addAttribute("internship", internship);
         model.addAttribute("student", student);
+        model.addAttribute("scores", scores);
         
-        // Matching Scores
-        model.addAttribute("skillsMatch", skillsMatch);
-        model.addAttribute("gpaMatch", gpaMatch);
-        model.addAttribute("expMatch", expMatch);
-        model.addAttribute("certMatch", certMatch);
-        model.addAttribute("totalMatch", skillsMatch + gpaMatch + expMatch + certMatch);
+        int totalMatch = scores.stream().mapToInt(ApplicationScore::getScoreValue).sum();
+        model.addAttribute("totalMatch", totalMatch);
 
         if (internship.getCompanyId() != null) {
             Company company = companyService.findById(internship.getCompanyId());

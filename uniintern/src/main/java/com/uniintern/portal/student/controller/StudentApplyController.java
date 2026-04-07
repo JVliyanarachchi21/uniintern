@@ -4,9 +4,11 @@ import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.service.CompanyService;
 import com.uniintern.portal.company.service.InternshipService;
+import com.uniintern.portal.student.model.ApplicationScore;
 import com.uniintern.portal.student.model.ApplicationStatus;
 import com.uniintern.portal.student.model.Student;
 import com.uniintern.portal.student.model.StudentApplication;
+import com.uniintern.portal.student.repository.ApplicationScoreRepository;
 import com.uniintern.portal.student.repository.StudentApplicationRepository;
 import com.uniintern.portal.student.repository.StudentRepository;
 import jakarta.servlet.http.HttpSession;
@@ -37,6 +39,9 @@ public class StudentApplyController {
 
     @Autowired
     private com.uniintern.portal.student.service.NotificationService notificationService;
+
+    @Autowired
+    private ApplicationScoreRepository applicationScoreRepository;
 
     @GetMapping("/student/apply/{id}")
     public String apply(@PathVariable Long id, HttpSession session, Model model) {
@@ -99,6 +104,9 @@ public class StudentApplyController {
             
             studentApplicationRepository.save(application);
             
+            // Save Score Breakdown for Transparency
+            saveScoreBreakdown(application.getId(), student, internship);
+            
             // Create notification for application submission
             notificationService.createNotification(studentId, "Application Submitted", "Your application for " + internship.getTitle() + " has been successfully submitted.", "Application");
             
@@ -148,5 +156,35 @@ public class StudentApplyController {
         int weight = (weightObj != null) ? weightObj : 10;
         if (student.getCertifications() == null || student.getCertifications().isEmpty()) return 0;
         return student.getCertifications().length() > 20 ? weight : (int)((student.getCertifications().length()/20.0)*weight);
+    }
+
+    private void saveScoreBreakdown(Long appId, Student student, Internship internship) {
+        // Skills
+        int skillsWeight = internship.getSkillsWeight() != null ? internship.getSkillsWeight() : 40;
+        String skillsCriteria = internship.getRequiredSkills() != null ? internship.getRequiredSkills() : "Not Specified";
+        String skillsData = student.getSkills() != null ? student.getSkills() : "None";
+        int skillsScore = calcSkills(student, internship);
+        applicationScoreRepository.save(new ApplicationScore(appId, "Skills", skillsWeight, skillsCriteria, skillsData, skillsScore));
+
+        // GPA
+        int gpaWeight = internship.getGpaWeight() != null ? internship.getGpaWeight() : 30;
+        String gpaCriteria = "Min " + (internship.getMinGpa() != null ? internship.getMinGpa() : "0.0");
+        String gpaData = student.getGpa() != null ? student.getGpa().toString() : "0.0";
+        int gpaScore = calcGpa(student, internship);
+        applicationScoreRepository.save(new ApplicationScore(appId, "GPA", gpaWeight, gpaCriteria, gpaData, gpaScore));
+
+        // Experience
+        int expWeight = internship.getExperienceWeight() != null ? internship.getExperienceWeight() : 20;
+        String expCriteria = "Relevant Projects";
+        String expData = (student.getExperience() != null && !student.getExperience().isEmpty()) ? "Provided" : "Not Provided";
+        int expScore = calcExp(student, internship);
+        applicationScoreRepository.save(new ApplicationScore(appId, "Experience", expWeight, expCriteria, expData, expScore));
+
+        // Certificates
+        int certWeight = internship.getCertificatesWeight() != null ? internship.getCertificatesWeight() : 10;
+        String certCriteria = "Recognized Certs";
+        String certData = (student.getCertifications() != null && !student.getCertifications().isEmpty()) ? "Provided" : "Not Provided";
+        int certScore = calcCert(student, internship);
+        applicationScoreRepository.save(new ApplicationScore(appId, "Certificates", certWeight, certCriteria, certData, certScore));
     }
 }
