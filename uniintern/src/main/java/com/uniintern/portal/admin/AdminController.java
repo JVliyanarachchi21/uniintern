@@ -2,6 +2,7 @@ package com.uniintern.portal.admin;
 
 import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.repository.CompanyRepository;
+import com.uniintern.portal.company.service.EmailService;
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.repository.InternshipRepository;
 import com.uniintern.portal.company.entity.Interview;
@@ -26,22 +27,25 @@ public class AdminController {
     private final InternshipRepository internshipRepository;
     private final InterviewRepository interviewRepository;
     private final AuditLogRepository auditLogRepository;
+    private final EmailService emailService;
 
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
             InterviewRepository interviewRepository,
-            AuditLogRepository auditLogRepository) {
+            AuditLogRepository auditLogRepository,
+            @org.springframework.beans.factory.annotation.Qualifier("companyEmailService") EmailService emailService) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
         this.auditLogRepository = auditLogRepository;
+        this.emailService = emailService;
     }
 
     @GetMapping({ "/dashboard", "" })
     public String dashboard(Model model) {
 
         long pendingCompanies = companyRepository
-                .findByStatus("PENDING_VERIFICATION")
+                .findByStatus("PENDING_APPROVAL")
                 .size();
 
         long pendingInternships = internshipRepository
@@ -67,7 +71,7 @@ public class AdminController {
 
     @GetMapping("/companies")
     public String companyApprovals(Model model) {
-        List<Company> pending = companyRepository.findByStatus("PENDING_VERIFICATION");
+        List<Company> pending = companyRepository.findByStatus("PENDING_APPROVAL");
         model.addAttribute("companies", pending);
         return "admin/company-approvals";
     }
@@ -86,8 +90,12 @@ public class AdminController {
     @GetMapping("/companies/{id}/approve")
     public String approveCompany(@PathVariable Long id) {
         Company c = companyRepository.findById(id).orElseThrow();
-        c.setStatus("VERIFIED");
+        c.setStatus("APPROVED");
         companyRepository.save(c);
+        
+        // Send email notification to company
+        emailService.sendApprovalNotification(c.getEmail(), c.getCompanyName());
+        
         return "redirect:/admin/companies";
     }
 

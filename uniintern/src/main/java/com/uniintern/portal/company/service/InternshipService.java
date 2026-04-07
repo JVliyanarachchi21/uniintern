@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +21,9 @@ public class InternshipService {
     
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private PromotionService promotionService;
 
     // Save internship
     public Internship save(Internship internship) {
@@ -37,8 +41,31 @@ public class InternshipService {
     }
 
     // Get approved internships
-    public List<InternshipListingDto> getApprovedInternshipsListings() {
+    public List<InternshipListingDto> getApprovedInternshipsListings(String keyword, Long companyId, String type) {
         List<Internship> approvedList = internshipRepository.findByStatus("APPROVED");
+        
+        if (companyId != null) {
+            approvedList = approvedList.stream().filter(i -> companyId.equals(i.getCompanyId())).collect(Collectors.toList());
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.toLowerCase();
+            approvedList = approvedList.stream().filter(i -> {
+                boolean matchMain = (i.getTitle() != null && i.getTitle().toLowerCase().contains(kw)) ||
+                                    (i.getDescription() != null && i.getDescription().toLowerCase().contains(kw));
+                if (matchMain) return true;
+                if (i.getCompanyId() != null) {
+                    Company company = companyService.findById(i.getCompanyId());
+                    return company != null && company.getCompanyName() != null && company.getCompanyName().toLowerCase().contains(kw);
+                }
+                return false;
+            }).collect(Collectors.toList());
+        }
+        if (type != null && !type.trim().isEmpty() && !type.equals("All Types")) {
+            String typ = type.toLowerCase();
+            approvedList = approvedList.stream().filter(i -> 
+                i.getTitle() != null && i.getTitle().toLowerCase().contains(typ)
+            ).collect(Collectors.toList());
+        }
         
         return approvedList.stream().map(internship -> {
             InternshipListingDto dto = new InternshipListingDto();
@@ -82,7 +109,16 @@ public class InternshipService {
                 dto.setCompanyName("Unknown Company");
             }
             
+            // Set promotion status
+            dto.setPromoted(promotionService.isInternshipPromoted(internship.getId()));
+            
             return dto;
+        }).sorted((a, b) -> {
+            // Promoted first
+            if (a.isPromoted() && !b.isPromoted()) return -1;
+            if (!a.isPromoted() && b.isPromoted()) return 1;
+            // Then newest first (using ID as a proxy for chronology)
+            return b.getId().compareTo(a.getId());
         }).collect(Collectors.toList());
     }
 
@@ -94,5 +130,78 @@ public class InternshipService {
     // Delete internship
     public void delete(Long id) {
         internshipRepository.deleteById(id);
+    }
+
+    public long countByCompanyIdAndStatus(Long companyId, String status) {
+        return internshipRepository.countByCompanyIdAndStatus(companyId, status);
+    }
+
+    public long countNewlyApproved(Long companyId) {
+        return internshipRepository.countByCompanyIdAndStatusAndApprovedNotificationSeenFalse(companyId, "APPROVED");
+    }
+
+    public List<Internship> getNewlyApproved(Long companyId) {
+        return internshipRepository.findByCompanyIdAndStatusAndApprovedNotificationSeenFalse(companyId, "APPROVED");
+    }
+
+    public void markApprovedAsSeen(Long companyId) {
+        List<Internship> newlyApproved = internshipRepository.findByCompanyIdAndStatusAndApprovedNotificationSeenFalse(companyId, "APPROVED");
+        for (Internship i : newlyApproved) {
+            i.setApprovedNotificationSeen(true);
+            internshipRepository.save(i);
+        }
+    }
+
+    public long countNewlyRejected(Long companyId) {
+        return internshipRepository.countByCompanyIdAndStatusAndRejectedNotificationSeenFalse(companyId, "REJECTED");
+    }
+
+    public List<Internship> getNewlyRejected(Long companyId) {
+        return internshipRepository.findByCompanyIdAndStatusAndRejectedNotificationSeenFalse(companyId, "REJECTED");
+    }
+
+    public void markRejectedAsSeen(Long companyId) {
+        List<Internship> newlyRejected = internshipRepository.findByCompanyIdAndStatusAndRejectedNotificationSeenFalse(companyId, "REJECTED");
+        for (Internship i : newlyRejected) {
+            i.setRejectedNotificationSeen(true);
+            internshipRepository.save(i);
+        }
+    }
+
+    public List<Map<String, Object>> getActivityNotifications(Long companyId) {
+        List<Internship> items = internshipRepository.findByCompanyIdAndStatusInOrderByIdDesc(companyId, List.of("APPROVED", "REJECTED"));
+        List<Map<String, Object>> notifications = new java.util.ArrayList<>();
+        
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
+
+        for (Internship i : items) {
+            Map<String, Object> n = new java.util.HashMap<>();
+            boolean isNew = false;
+            String type = "info";
+            String icon = "bi-info-circle";
+            String message = "";
+            
+            if ("APPROVED".equals(i.getStatus())) {
+                message = "Success! Your internship '" + i.getTitle() + "' has been approved by the admin.";
+                type = "success";
+                icon = "bi-check-circle";
+                isNew = !i.isApprovedNotificationSeen();
+            } else if ("REJECTED".equals(i.getStatus())) {
+                message = "Alert! Your internship '" + i.getTitle() + "' has been rejected by the admin.";
+                type = "error";
+                icon = "bi-exclamation-triangle";
+                isNew = !i.isRejectedNotificationSeen();
+            }
+            
+            n.put("message", message);
+            n.put("date", i.getCreatedAt() != null ? i.getCreatedAt().format(formatter) : "Recently");
+            n.put("type", type);
+            n.put("icon", icon);
+            n.put("isNew", isNew);
+            n.put("id", i.getId());
+            
+            notifications.add(n);
+        }
+        return notifications;
     }
 }
