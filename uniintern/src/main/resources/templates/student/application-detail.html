@@ -224,33 +224,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>Skills</strong></td>
-                            <td th:text="${internship.skillsWeight ?: 40} + '%'">40%</td>
-                            <td th:text="${internship.requiredSkills ?: 'Any'}">Java, SQL</td>
-                            <td th:text="${student.skills ?: 'Not Update'}">Java, Python</td>
-                            <td class="match-positive" th:text="${skillsMatch} + '/' + ${internship.skillsWeight ?: 40}">30</td>
-                        </tr>
-                        <tr>
-                            <td><strong>GPA</strong></td>
-                            <td th:text="${internship.gpaWeight ?: 30} + '%'">30%</td>
-                            <td th:text="'Min ' + ${internship.minGpa ?: '0.0'}">3.2</td>
-                            <td th:text="${student.gpa ?: '0.0'}">3.5</td>
-                            <td class="match-positive" th:text="${gpaMatch} + '/' + ${internship.gpaWeight ?: 30}">30</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Experience</strong></td>
-                            <td th:text="${internship.experienceWeight ?: 20} + '%'">20%</td>
-                            <td>Relevant Projects</td>
-                            <td th:text="${(student.experience != null && !student.experience.isEmpty()) ? 'Provided' : 'Not Provided'}">Details</td>
-                            <td class="match-positive" th:text="${expMatch} + '/' + ${internship.experienceWeight ?: 20}">20</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Certificates</strong></td>
-                            <td th:text="${internship.certificatesWeight ?: 10} + '%'">10%</td>
-                            <td>Recognized Certs</td>
-                            <td th:text="${(student.certifications != null && !student.certifications.isEmpty()) ? 'Provided' : 'Not Provided'}">Details</td>
-                            <td class="match-positive" th:text="${certMatch} + '/' + ${internship.certificatesWeight ?: 10}">10</td>
+                        <tr th:each="score : ${scores}">
+                            <td><strong th:text="${score.category}">Skills</strong></td>
+                            <td th:text="${score.weight != null ? score.weight : 0} + '%'">40%</td>
+                            <td th:text="${score.criteria != null && !score.criteria.isEmpty() ? score.criteria : 'Any'}">Java, SQL</td>
+                            <td th:text="${score.studentData != null && !score.studentData.isEmpty() ? score.studentData : 'Not Provided'}">Java, Python</td>
+                            <td class="match-positive" th:text="${score.scoreValue} + '/' + ${score.weight}">30/40</td>
                         </tr>
                     </tbody>
                 </table>
