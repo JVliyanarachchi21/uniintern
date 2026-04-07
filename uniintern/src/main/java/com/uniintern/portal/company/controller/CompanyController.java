@@ -2,38 +2,25 @@ package com.uniintern.portal.company.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.uniintern.portal.company.entity.Internship;
-import com.uniintern.portal.company.service.InternshipService;
-import com.uniintern.portal.company.entity.Internship;
-import com.uniintern.portal.company.service.InternshipService;
-import com.uniintern.portal.company.service.CompanyService;
-import com.uniintern.portal.company.service.PromotionService;
-import com.uniintern.portal.company.entity.Company;
-import com.uniintern.portal.company.dto.CompanyRegistrationDto;
-import com.uniintern.portal.company.dto.InternshipListingDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.uniintern.portal.company.entity.Internship;
+import com.uniintern.portal.company.entity.Company;
+import com.uniintern.portal.company.service.InternshipService;
+import com.uniintern.portal.company.service.CompanyService;
+import com.uniintern.portal.company.service.PromotionService;
+import com.uniintern.portal.student.service.NotificationService;
+import com.uniintern.portal.company.dto.CompanyRegistrationDto;
+import com.uniintern.portal.company.dto.InternshipListingDto;
+
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/company")
@@ -42,18 +29,15 @@ public class CompanyController {
     private final InternshipService internshipService;
     private final CompanyService companyService;
     private final PromotionService promotionService;
+    private final NotificationService notificationService;
 
-    public CompanyController(InternshipService internshipService, com.uniintern.portal.company.service.CompanyService companyService, com.uniintern.portal.student.service.NotificationService notificationService) {
-        this.internshipService = internshipService;
-        this.companyService = companyService;
-        this.notificationService = notificationService;
-    public CompanyController(InternshipService internshipService, CompanyService companyService, PromotionService promotionService) {
+    public CompanyController(InternshipService internshipService, CompanyService companyService, 
+                           PromotionService promotionService, NotificationService notificationService) {
         this.internshipService = internshipService;
         this.companyService = companyService;
         this.promotionService = promotionService;
+        this.notificationService = notificationService;
     }
-
-    private final com.uniintern.portal.student.service.NotificationService notificationService;
 
     @ModelAttribute
     public void addCommonAttributes(Model model, HttpSession session) {
@@ -164,17 +148,31 @@ public class CompanyController {
         }
     }
 
+    @GetMapping("/internships/listing")
+    public String internshipsListing(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "location", required = false) String location,
+            @RequestParam(value = "type", required = false) String type,
+            Model model
+    ) {
+        model.addAttribute("internships", internshipService.getApprovedInternshipsListings(keyword, null, type));
+        model.addAttribute("selectedLocation", location != null ? location : "All");
+        model.addAttribute("selectedType", type != null ? type : "All");
+        model.addAttribute("keyword", keyword);
+        return "company/internships-listing";
+    }
+
     @GetMapping("/internships/preview")
-    public String internshipPreview(@RequestParam("id") Long id, Model model, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
-        com.uniintern.portal.company.entity.Internship internship = internshipService.getById(id);
+    public String internshipPreview(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        Internship internship = internshipService.getById(id);
         if (internship == null) {
             redirectAttributes.addFlashAttribute("error", "The requested internship could not be found.");
-            return "redirect:/company/internships/listing";
+            return "redirect:/company/internships";
         }
         
         model.addAttribute("internship", internship);
         if (internship.getCompanyId() != null) {
-            com.uniintern.portal.company.entity.Company company = companyService.findById(internship.getCompanyId());
+            Company company = companyService.findById(internship.getCompanyId());
             model.addAttribute("company", company);
         }
         
@@ -183,16 +181,18 @@ public class CompanyController {
     }
 
     @GetMapping("/internships/application-template")
-    public String applicationTemplate(@RequestParam("id") Long id, Model model, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
-        com.uniintern.portal.company.entity.Internship internship = internshipService.getById(id);
+    public String applicationTemplate(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        Internship internship = internshipService.getById(id);
         if (internship == null) {
             redirectAttributes.addFlashAttribute("error", "The requested internship could not be found.");
-            return "redirect:/company/internships/listing";
+            return "redirect:/company/internships";
         }
         
         model.addAttribute("internship", internship);
         model.addAttribute("page", "internships");
         return "company/application-template";
+    }
+
     @GetMapping("/forgot-password")
     public String forgotPasswordPage() {
         return "company/forgot-password";
@@ -352,24 +352,6 @@ public class CompanyController {
     }
 
     @PostMapping("/internships/new")
-    public String submitNewInternship(@RequestParam Map<String, String> params, HttpSession session) {
-        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
-        Internship i = new Internship();
-        i.setCompanyId(companyId);
-        i.setTitle(params.get("title"));
-        i.setDescription(params.get("description"));
-        i.setLocation(params.get("location"));
-        i.setDuration(params.get("duration"));
-        i.setDeadline(LocalDate.parse(params.get("deadline")));
-        i.setRequiredSkills(params.get("skills"));
-        i.setStatus("DRAFT".equalsIgnoreCase(params.get("status")) ? "DRAFT" : "PENDING_ADMIN_APPROVAL");
-        i.setCreatedAt(LocalDateTime.now());
-        internshipService.save(i);
-        session.setAttribute("notificationsRead", false);
-        return "redirect:/company/internships";
-    }
-
-    @PostMapping("/internships/new")
     public String submitNewInternship(
             @RequestParam("title") String title,
             @RequestParam("description") String description,
@@ -377,27 +359,48 @@ public class CompanyController {
             @RequestParam("duration") String duration,
             @RequestParam("deadline") String deadline,
             @RequestParam(value = "minGpa", required = false) String minGpa,
-            @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam(value = "skills", required = false) String skills,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
             @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
             @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
-            @RequestParam(value = "wCert", defaultValue = "10") Integer wCert
+            @RequestParam(value = "wCert", defaultValue = "10") Integer wCert,
+            HttpSession session
     ) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         Internship internship = new Internship();
 
-        internship.setCompanyId(1L); // later replace with logged-in company id
+        internship.setCompanyId(companyId);
         internship.setTitle(title);
         internship.setDescription(description);
         internship.setLocation(location);
         internship.setDuration(duration);
         internship.setDeadline(LocalDate.parse(deadline));
         internship.setRequiredSkills(skills);
+        internship.setStatus("DRAFT".equalsIgnoreCase(status) ? "DRAFT" : "PENDING_ADMIN_APPROVAL");
 
         if (minGpa != null && !minGpa.isBlank()) {
             internship.setMinGpa(Double.parseDouble(minGpa));
         }
+
+        internship.setSkillsWeight(wSkills);
+        internship.setGpaWeight(wGpa);
+        internship.setExperienceWeight(wExp);
+        internship.setCertificatesWeight(wCert);
+        internship.setCreatedAt(LocalDateTime.now());
+
+        internshipService.save(internship);
+        session.setAttribute("notificationsRead", false);
+
+        // Broadcast notification if not a draft
+        if (!"DRAFT".equalsIgnoreCase(status)) {
+            notificationService.broadcastNotification("New Internship Posted", 
+                "A new internship opportunity '" + title + "' is now available!", "Internship");
+        }
+
+        return "redirect:/company/internships";
+    }
+
     @GetMapping("/notifications")
     public String notifications(Model model, HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
@@ -407,7 +410,7 @@ public class CompanyController {
         // Fetch all persistent activity notifications
         List<Map<String, Object>> allNotifications = internshipService.getActivityNotifications(companyId);
         
-        // Add passive status notifications (always "New" in a sense, but not tracked in DB)
+        // Add passive status notifications
         long pending = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
         long activePromos = promotionService.countActivePromotionsForCompany(companyId);
         
@@ -423,19 +426,13 @@ public class CompanyController {
             displayList.add(Map.of("date", "Welcome", "message", "Welcome to UniIntern! Post your first internship to get started.", "type", "info", "icon", "bi-info-circle", "isNew", false));
         }
 
-        internship.setSkillsWeight(wSkills);
-        internship.setGpaWeight(wGpa);
-        internship.setExperienceWeight(wExp);
-        internship.setCertificatesWeight(wCert);
-
-        internship.setCreatedAt(LocalDateTime.now());
         model.addAttribute("notifications", displayList);
         
-        // Count ONLY the unread activity notifications for the header sub-text
+        // Count ONLY the unread activity notifications
         long unreadCount = allNotifications.stream().filter(n -> (Boolean)n.get("isNew")).count();
         model.addAttribute("unreadCount", unreadCount);
         
-        // Mark everything as seen in session and DB
+        // Mark everything as seen
         session.setAttribute("notificationsRead", true);
         internshipService.markApprovedAsSeen(companyId);
         internshipService.markRejectedAsSeen(companyId);
@@ -443,13 +440,6 @@ public class CompanyController {
         return "company/notifications";
     }
 
-        // Broadcast notification if not a draft
-        if (!"DRAFT".equalsIgnoreCase(status)) {
-            notificationService.broadcastNotification("New Internship Posted", 
-                "A new internship opportunity '" + title + "' is now available!", "Internship");
-        }
-
-        return "redirect:/company/internships";
     @GetMapping("/settings")
     public String settings(Model model, HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
@@ -479,17 +469,47 @@ public class CompanyController {
     }
 
     @PostMapping("/internships/update")
-    public String updateInternship(@RequestParam Map<String, String> params) {
-        Internship i = internshipService.getById(Long.parseLong(params.get("id")));
-        i.setTitle(params.get("title"));
-        i.setDescription(params.get("description"));
-        i.setLocation(params.get("location"));
-        i.setDuration(params.get("duration"));
-        i.setDeadline(LocalDate.parse(params.get("deadline")));
-        i.setRequiredSkills(params.get("requiredSkills"));
-        if ("submit".equals(params.get("action"))) i.setStatus("PENDING_ADMIN_APPROVAL");
-        internshipService.save(i);
-        return "submit".equals(params.get("action")) ? "redirect:/company/internships" : "redirect:/company/internships/view/" + i.getId();
+    public String updateInternship(
+            @RequestParam("id") Long id,
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("location") String location,
+            @RequestParam("duration") String duration,
+            @RequestParam(value = "minGpa", required = false) String minGpa,
+            @RequestParam("deadline") String deadline,
+            @RequestParam(value = "requiredSkills", required = false) String requiredSkills,
+            @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
+            @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
+            @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
+            @RequestParam(value = "wCert", defaultValue = "10") Integer wCert,
+            @RequestParam(value = "status", required = false) String status
+    ) {
+        Internship internship = internshipService.getById(id);
+
+        internship.setTitle(title);
+        internship.setDescription(description);
+        internship.setLocation(location);
+        internship.setDuration(duration);
+        internship.setRequiredSkills(requiredSkills);
+        internship.setDeadline(LocalDate.parse(deadline));
+
+        if (minGpa != null && !minGpa.isBlank()) {
+            internship.setMinGpa(Double.parseDouble(minGpa));
+        } else {
+            internship.setMinGpa(null);
+        }
+
+        internship.setSkillsWeight(wSkills);
+        internship.setGpaWeight(wGpa);
+        internship.setExperienceWeight(wExp);
+        internship.setCertificatesWeight(wCert);
+        
+        if ("submit".equalsIgnoreCase(status)) {
+            internship.setStatus("PENDING_ADMIN_APPROVAL");
+        }
+
+        internshipService.save(internship);
+        return "redirect:/company/internships/view/" + internship.getId();
     }
 
     @GetMapping("/internships/delete/{id}")
@@ -564,38 +584,6 @@ public class CompanyController {
         return "company/promotions";
     }
 
-    return "company/edit-internships";
-}
-  
-@PostMapping("/internships/update")
-public String updateInternship(
-        @RequestParam("id") Long id,
-        @RequestParam("title") String title,
-        @RequestParam("description") String description,
-        @RequestParam("location") String location,
-        @RequestParam("duration") String duration,
-        @RequestParam(value = "minGpa", required = false) String minGpa,
-        @RequestParam(value = "maxGpa", required = false) String maxGpa,
-        @RequestParam("deadline") String deadline,
-        @RequestParam(value = "requiredSkills", required = false) String requiredSkills,
-        @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
-        @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
-        @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
-        @RequestParam(value = "wCert", defaultValue = "10") Integer wCert
-) {
-    Internship internship = internshipService.getById(id);
-
-    internship.setTitle(title);
-    internship.setDescription(description);
-    internship.setLocation(location);
-    internship.setDuration(duration);
-    internship.setRequiredSkills(requiredSkills);
-    internship.setDeadline(java.time.LocalDate.parse(deadline));
-
-    if (minGpa != null && !minGpa.isBlank()) {
-        internship.setMinGpa(Double.parseDouble(minGpa));
-    } else {
-        internship.setMinGpa(null);
     @PostMapping("/promotions/process")
     public String processPromotion(@RequestParam("internshipId") Long id, @RequestParam("type") String type, @RequestParam("price") Double price, @RequestParam("days") Integer days, RedirectAttributes ra) {
         ra.addAttribute("internshipId", id);
@@ -613,13 +601,4 @@ public String updateInternship(
         ));
         return "company/applicants";
     }
-
-    internship.setSkillsWeight(wSkills);
-    internship.setGpaWeight(wGpa);
-    internship.setExperienceWeight(wExp);
-    internship.setCertificatesWeight(wCert);
-
-    internshipService.save(internship);
-
-    return "redirect:/company/internships/view/" + internship.getId();
 }

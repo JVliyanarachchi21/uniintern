@@ -65,7 +65,7 @@ public class StudentDashboardController {
         model.addAttribute("latestNotifications", displayNotifs);
 
         // 4. Latest Internships (Top 4)
-        List<com.uniintern.portal.company.dto.InternshipListingDto> allInternships = internshipService.getApprovedInternshipsListings();
+        List<com.uniintern.portal.company.dto.InternshipListingDto> allInternships = internshipService.getApprovedInternshipsListings(null, null, null);
         List<Map<String, Object>> recentInternships = allInternships.stream()
             .limit(4)
             .map(i -> {
