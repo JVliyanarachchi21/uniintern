@@ -14,6 +14,18 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final EmailService emailService;
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.company.repository.InternshipRepository internshipRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.company.repository.PromotionRepository promotionRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.student.repository.StudentApplicationRepository studentApplicationRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.student.repository.ApplicationScoreRepository applicationScoreRepository;
+
     public CompanyService(CompanyRepository companyRepository, @org.springframework.beans.factory.annotation.Qualifier("companyEmailService") EmailService emailService) {
         this.companyRepository = companyRepository;
         this.emailService = emailService;
@@ -178,5 +190,31 @@ public class CompanyService {
         
         company.setPassword(newPassword);
         companyRepository.save(company);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteCompany(Long companyId) {
+        // 1. Find all internships for the company
+        java.util.List<com.uniintern.portal.company.entity.Internship> internships = internshipRepository.findByCompanyId(companyId);
+        
+        for (com.uniintern.portal.company.entity.Internship internship : internships) {
+            Long internshipId = internship.getId();
+            
+            // a. Delete Promotions
+            promotionRepository.deleteByInternshipId(internshipId);
+            
+            // b. Cleanup Student Applications and their Scores
+            java.util.List<com.uniintern.portal.student.model.StudentApplication> applications = studentApplicationRepository.findByInternshipId(internshipId);
+            for (com.uniintern.portal.student.model.StudentApplication app : applications) {
+                applicationScoreRepository.deleteByApplicationId(app.getId());
+            }
+            studentApplicationRepository.deleteByInternshipId(internshipId);
+            
+            // c. Delete Internship
+            internshipRepository.deleteById(internshipId);
+        }
+        
+        // 2. Finally delete the company
+        companyRepository.deleteById(companyId);
     }
 }

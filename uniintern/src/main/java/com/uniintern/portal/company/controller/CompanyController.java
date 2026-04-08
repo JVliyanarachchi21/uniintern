@@ -540,6 +540,22 @@ public class CompanyController {
         return "redirect:/company/internships";
     }
 
+    @PostMapping("/settings/delete-account")
+    public String deleteAccount(HttpSession session, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+
+        try {
+            companyService.deleteCompany(companyId);
+            session.invalidate();
+            ra.addFlashAttribute("success", "Your account has been permanently deleted.");
+            return "redirect:/company/login";
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to delete account: " + e.getMessage());
+            return "redirect:/company/settings";
+        }
+    }
+
     @GetMapping("/internships/view/{id}")
     public String viewInternship(@PathVariable("id") Long id, @RequestParam(name = "tab", defaultValue = "overview") String tab, Model model) {
         model.addAttribute("internship", internshipService.getById(id));

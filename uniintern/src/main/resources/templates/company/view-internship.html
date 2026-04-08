@@ -157,23 +157,23 @@
 
                 <div class="view-info-grid">
                     <div class="view-info-item">
-                        <div class="view-label"><i class="bi bi-book" style="color:#3b82f6; margin-right:6px;"></i>GPA Weight</div>
-                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #3b82f6;" th:text="${internship.gpaWeight != null ? internship.gpaWeight + '%' : '0%'}">30%</div>
+                        <div class="view-label"><i class="bi bi-tools" style="color:#8b5cf6; margin-right:6px;"></i>Skills Weight</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #8b5cf6;" th:text="${internship.skillsWeight != null ? internship.skillsWeight + '%' : 'Not Set'}"></div>
                     </div>
 
                     <div class="view-info-item">
-                        <div class="view-label"><i class="bi bi-tools" style="color:#8b5cf6; margin-right:6px;"></i>Skills Weight</div>
-                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #8b5cf6;" th:text="${internship.skillsWeight != null ? internship.skillsWeight + '%' : '0%'}">40%</div>
+                        <div class="view-label"><i class="bi bi-book" style="color:#3b82f6; margin-right:6px;"></i>GPA Weight</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #3b82f6;" th:text="${internship.gpaWeight != null ? internship.gpaWeight + '%' : 'Not Set'}"></div>
                     </div>
 
                     <div class="view-info-item">
                         <div class="view-label"><i class="bi bi-briefcase" style="color:#f59e0b; margin-right:6px;"></i>Experience Weight</div>
-                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #f59e0b;" th:text="${internship.experienceWeight != null ? internship.experienceWeight + '%' : '0%'}">20%</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #f59e0b;" th:text="${internship.experienceWeight != null ? internship.experienceWeight + '%' : 'Not Set'}"></div>
                     </div>
 
                     <div class="view-info-item">
                         <div class="view-label"><i class="bi bi-award" style="color:#10b981; margin-right:6px;"></i>Certificates Weight</div>
-                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #10b981;" th:text="${internship.certificatesWeight != null ? internship.certificatesWeight + '%' : '0%'}">10%</div>
+                        <div class="view-value" style="font-size: 17px; font-weight: 700; color: #10b981;" th:text="${internship.certificatesWeight != null ? internship.certificatesWeight + '%' : 'Not Set'}"></div>
                     </div>
                 </div>
             </div>
