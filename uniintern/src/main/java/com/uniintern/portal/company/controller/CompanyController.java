@@ -546,8 +546,8 @@ public class CompanyController {
         model.addAttribute("page", "internships");
         model.addAttribute("activeTab", tab);
         model.addAttribute("applicants", List.of(
-            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.75, "status", "Shortlisted"),
-            Map.of("name", "Dilini Wickramasinghe", "university", "UoM", "gpa", 3.48, "status", "Shortlisted")
+            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.75, "score", 82, "status", "Shortlisted"),
+            Map.of("name", "Dilini Wickramasinghe", "university", "UoM", "gpa", 3.48, "score", 75, "status", "Shortlisted")
         ));
         return "company/view-internship";
     }
@@ -619,7 +619,8 @@ public class CompanyController {
     public String applicants(Model model) {
         model.addAttribute("page", "applicants");
         model.addAttribute("applicants", List.of(
-            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.25, "score", 79, "status", "Shortlisted")
+            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.25, "skillMatch", "85%", "score", 79, "status", "Shortlisted"),
+            Map.of("name", "Dilini Wickramasinghe", "university", "UoM", "gpa", 3.45, "skillMatch", "72%", "score", 68, "status", "Scored")
         ));
         return "company/applicants";
     }

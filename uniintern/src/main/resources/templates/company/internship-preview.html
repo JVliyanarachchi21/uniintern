@@ -7,8 +7,68 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/home.css(v=6)}" href="/css/home.css?v=6">
-    <link rel="stylesheet" th:href="@{/css/company.css(v=6)}" href="/css/company.css?v=6">
+    <link rel="stylesheet" th:href="@{/css/home.css(v=7)}" href="/css/home.css?v=7">
+    <link rel="stylesheet" th:href="@{/css/company.css(v=7)}" href="/css/company.css?v=7">
+    <style>
+        .preview-showcase {
+            padding-top: 110px !important;
+        }
+        .preview-content::before {
+            height: 4px !important;
+            z-index: 9999 !important;
+            background: linear-gradient(90deg, var(--color-primary), var(--uni-secondary)) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        .preview-logo img {
+            width: 80px !important;
+            height: 80px !important;
+            object-fit: contain !important;
+            padding: 10px !important;
+        }
+        .preview-action {
+            display: flex !important;
+            justify-content: flex-end !important;
+            gap: 16px !important;
+            margin-top: 30px !important;
+        }
+        .back-link-btn {
+            padding: 12px 24px !important;
+            border-radius: 12px !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+        }
+        .back-link-btn:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-2px) !important;
+        }
+        .skill-tag {
+            background: rgba(84, 131, 179, 0.15) !important;
+            color: #000000 !important;
+            border: 1px solid rgba(84, 131, 179, 0.3) !important;
+            padding: 6px 16px !important;
+            border-radius: 99px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+        }
+        .btn-preview-apply {
+            background: #F07A12 !important;
+            color: white !important;
+            padding: 12px 32px !important;
+            border-radius: 12px !important;
+            font-weight: 700 !important;
+            transition: all 0.3s !important;
+            box-shadow: 0 8px 20px rgba(240, 122, 18, 0.2) !important;
+        }
+        .btn-preview-apply:hover {
+            background: #d96d0f !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 12px 25px rgba(240, 122, 18, 0.3) !important;
+        }
+    </style>
 </head>
 <body class="public-portal-page">
 <div>
@@ -55,19 +115,15 @@
             <div class="preview-top">
                 <div class="preview-top-left">
                     <div class="preview-logo">
-                        <img th:if="${company != null and (company.logoPath == null or company.logoPath.isEmpty())}" th:src="'https://ui-avatars.com/api/?name=' + ${company.companyName} + '&background=0D8ABC&color=fff&size=256'" th:alt="${company.companyName} + ' Logo'">
-                        <img th:if="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" th:src="${company.logoPath}" th:alt="${company.companyName} + ' Logo'">
-                        <img th:if="${company == null}" src="https://ui-avatars.com/api/?name=UniIntern&background=0D8ABC&color=fff&size=256" alt="UniIntern Logo">
+                        <img th:if="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" 
+                             th:src="${company.logoPath}" th:alt="${company.companyName} + ' Logo'">
+                        <img th:unless="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" 
+                             th:src="'https://ui-avatars.com/api/?name=' + (${company != null ? company.companyName : 'C'}) + '&background=0D8ABC&color=fff&size=256'" 
+                             th:alt="${company != null ? company.companyName : 'Company'} + ' Logo'">
                     </div>
                     <div>
                         <h2 class="preview-title" th:text="${internship.title}">Software Engineering Intern</h2>
-                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'UniIntern Platform'}">UniIntern Platform</div>
-                        <img th:if="${company != null and company.logoPath != null}" th:src="${company.logoPath}" alt="Company Logo">
-                        <img th:unless="${company != null and company.logoPath != null}" th:src="'https://ui-avatars.com/api/?name=' + (${company != null ? company.companyName : 'Company'}) + '&background=0D8ABC&color=fff&size=256'" alt="Company Logo">
-                    </div>
-                    <div>
-                        <h2 class="preview-title" th:text="${internship.title}">Software Engineering Intern</h2>
-                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'Unknown Company'}">TechCorp Lanka</div>
+                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'UniIntern Partner'}">TechCorp Lanka</div>
                     </div>
                 </div>
                 <div class="preview-badges">
@@ -85,7 +141,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Location</span>
-                        <strong th:text="${internship.location}">Colombo / Hybrid</strong>
                         <strong th:text="${internship.location != null ? internship.location : 'Flexible'}">Colombo / Hybrid</strong>
                     </div>
                 </div>
@@ -96,7 +151,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Duration</span>
-                        <strong th:text="${internship.duration}">6 Months</strong>
                         <strong th:text="${internship.duration != null ? internship.duration : 'N/A'}">6 Months</strong>
                     </div>
                 </div>
@@ -107,7 +161,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Deadline</span>
-                        <strong th:text="${internship.deadline}">2026-05-30</strong>
                         <strong th:text="${internship.deadline != null ? internship.deadline : 'Open'}">2026-05-30</strong>
                     </div>
                 </div>
@@ -118,7 +171,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Minimum GPA</span>
-                        <strong th:text="${internship.minGpa != null ? internship.minGpa : 'N/A'}">3.00</strong>
                         <strong th:text="${internship.minGpa != null ? internship.minGpa : 'No minimum'}">3.00</strong>
                     </div>
                 </div>
@@ -126,28 +178,18 @@
 
             <div class="preview-body">
                 <h3>About this Internship</h3>
-                <p th:text="${internship.description}">We are looking for a motivated Software Engineering Intern to join our team... </p>
-                
-                <h3>Responsibilities</h3>
-                <ul>
-                    <li>Develop and maintain web application features</li>
-                    <li>Fix bugs and improve system performance</li>
-                    <li>Collaborate with developers and participate in code reviews</li>
-                    <li>Support testing and documentation activities</li>
-                </ul>
-
-                <h3>Required Skills</h3>
-                <div class="skill-tags">
-                    <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${skill.trim()}">Java</span>
                 <p th:text="${internship.description != null ? internship.description : 'No description provided.'}">We are looking for a motivated Software Engineering Intern to join our team.</p>
-
-                <h3 th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}">Required Skills</h3>
-                <div class="skill-tags" th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}">
-                    <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${#strings.trim(skill)}">Java</span>
+                
+                <div th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}">
+                    <h3>Required Skills</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${#strings.trim(skill)}">Java</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="preview-action">
+            <div class="preview-action reveal">
+                <a th:href="@{/company/internships/listing}" class="back-link-btn">← Back to Listings</a>
                 <a th:href="@{/company/internships/application-template(id=${internship.id})}" class="btn btn-primary btn-large">Apply Now</a>
             </div>
         </div>
