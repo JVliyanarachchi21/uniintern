@@ -128,25 +128,42 @@ public class AdminSeedData implements CommandLineRunner {
                 studentRepository.save(s);
             }
 
-            // aggressive seeding for SHORTLISTED applications
-            if (applicationRepository.findByStatus(ApplicationStatus.SHORTLISTED).isEmpty()) {
+            // aggressive seeding for the multi-stage recruitment pipeline
+            if (applicationRepository.count() < 5) {
                 List<Student> students = studentRepository.findAll();
                 List<Internship> internships = internshipRepository.findAll();
                 
                 if (!students.isEmpty() && !internships.isEmpty()) {
-                    for (int j = 0; j < Math.min(3, students.size()); j++) {
-                        StudentApplication app = new StudentApplication();
-                        app.setStudentId(students.get(j).getId());
-                        app.setInternshipId(internships.get(0).getId());
-                        app.setStatus(ApplicationStatus.SHORTLISTED);
-                        app.setScore(80.0 + (j * 5));
-                        app.setRemarks("Pre-approved for high-security production access.");
-                        applicationRepository.save(app);
-                    }
+                    // 1. Technical Round Candidate
+                    StudentApplication app1 = new StudentApplication();
+                    app1.setStudentId(students.get(0).getId());
+                    app1.setInternshipId(internships.get(0).getId());
+                    app1.setStatus(com.uniintern.portal.student.model.ApplicationStatus.TECHNICAL_ROUND);
+                    app1.setScore(85.0);
+                    app1.setRemarks("Excellent logic skills. Advancing to technical round.");
+                    applicationRepository.save(app1);
+
+                    // 2. HR Round Candidate
+                    StudentApplication app2 = new StudentApplication();
+                    app2.setStudentId(students.get(0).getId());
+                    app2.setInternshipId(internships.size() > 1 ? internships.get(1).getId() : internships.get(0).getId());
+                    app2.setStatus(com.uniintern.portal.student.model.ApplicationStatus.HR_ROUND);
+                    app2.setScore(92.0);
+                    app2.setRemarks("Culture fit confirmed. Proceeding to final HR interview.");
+                    applicationRepository.save(app2);
+
+                    // 3. Offer Extended Candidate
+                    StudentApplication app3 = new StudentApplication();
+                    app3.setStudentId(students.get(0).getId());
+                    app3.setInternshipId(internships.get(0).getId());
+                    app3.setStatus(com.uniintern.portal.student.model.ApplicationStatus.OFFER_EXTENDED);
+                    app3.setScore(98.0);
+                    app3.setRemarks("Top-tier talent. Official offer letter dispatched.");
+                    applicationRepository.save(app3);
                 }
             }
 
-            log.info("Super Real seed data check completed.");
+            log.info("Production Recruitment Engine initialized with pipeline stages.");
         } catch (Exception e) {
             log.warn("Skipping seed data. Reason: {}", e.getMessage());
         }

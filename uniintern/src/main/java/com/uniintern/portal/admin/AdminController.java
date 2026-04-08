@@ -281,6 +281,16 @@ public class AdminController {
             return "admin/schedule-form";
         }
 
+        // --- INTELLIGENT CONFLICT DETECTION ---
+        if (applicationId != null && interviewDateTime != null) {
+            com.uniintern.portal.student.model.StudentApplication app = adminSchedulingService.getApplicationById(applicationId);
+            if (app != null && adminSchedulingService.hasTimeConflict(app.getStudentId(), interviewDateTime)) {
+                model.addAttribute("showPopup", true);
+                model.addAttribute("formError", "CRITICAL CONFLICT: This student already has an interview scheduled within 30 minutes of this time slot.");
+                return "admin/schedule-form";
+            }
+        }
+
         Interview interview = new Interview();
         interview.setCandidateName(cleanCandidateName);
         interview.setInternshipTitle(selectedInternship.getTitle());
@@ -299,7 +309,9 @@ public class AdminController {
             }
         }
 
-        return "redirect:/admin/scheduling";
+        model.addAttribute("showPopup", true);
+        model.addAttribute("successMessage", "SUCCESS: Interview correctly slotted. Recruitment pipeline advanced to 'SCHEDULED'. Conflict check validated.");
+        return "admin/schedule-form";
     }
 
     @GetMapping("/reports")

@@ -21,13 +21,15 @@
           <tr>
             <th>Candidate Name</th>
             <th>University</th>
+            <th>Recruitment Round</th>
             <th>Approved Role</th>
+            <th>Smart Match Score</th>
             <th style="width:140px; text-align:right;">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr th:if="${pendingInterviews.empty}">
-            <td colspan="4" style="text-align:center; padding:40px; color:#6b7280;">No approved applications pending interview scheduling.</td>
+            <td colspan="6" style="text-align:center; padding:40px; color:#6b7280;">No approved applications pending interview scheduling.</td>
           </tr>
           <tr th:each="dto : ${pendingInterviews}">
             <td>
@@ -37,10 +39,21 @@
               <div th:text="${dto.university}" style="color:#4b5563; font-size:13px;">SLIIT</div>
             </td>
             <td>
+              <span class="pill" style="background:#E0E7FF; color:#3730A3; font-weight:800; font-size:11px;" th:text="${dto.status}">SHORTLISTED</span>
+            </td>
+            <td>
               <span class="pill" th:text="${dto.internshipTitle}">Software Eng Intern</span>
             </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="flex:1; height:8px; background:#E2E8F0; border-radius:4px; overflow:hidden;">
+                  <div th:style="'width:' + ${dto.matchScore} + '%; background:' + (${dto.matchScore} > 80 ? '#10B981' : (${dto.matchScore} > 60 ? '#F59E0B' : '#6366F1')) + '; height:100%;'"></div>
+                </div>
+                <span style="font-size:12px; font-weight:800; color:#0f172a;" th:text="${#numbers.formatDecimal(dto.matchScore, 1, 0)} + '%'">92%</span>
+              </div>
+            </td>
             <td style="text-align:right;">
-              <a th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" class="btn primary" style="padding:8px 14px; font-size:12px;">Quick Schedule</a>
+              <a th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" class="btn primary" style="padding:8px 14px; font-size:12px; background:#052659;">Schedule Action</a>
             </td>
           </tr>
         </tbody>
