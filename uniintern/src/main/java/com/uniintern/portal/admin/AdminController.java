@@ -33,6 +33,8 @@ public class AdminController {
     private final AdminSchedulingService adminSchedulingService;
     private final SystemMessageRepository systemMessageRepository;
     private final AdminReportService adminReportService;
+    private final AdminAccountRepository adminAccountRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
@@ -41,7 +43,9 @@ public class AdminController {
             EmailService emailService,
             AdminSchedulingService adminSchedulingService,
             SystemMessageRepository systemMessageRepository,
-            AdminReportService adminReportService) {
+            AdminReportService adminReportService,
+            AdminAccountRepository adminAccountRepository,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
@@ -50,6 +54,8 @@ public class AdminController {
         this.adminSchedulingService = adminSchedulingService;
         this.systemMessageRepository = systemMessageRepository;
         this.adminReportService = adminReportService;
+        this.adminAccountRepository = adminAccountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping({ "/dashboard", "" })
@@ -422,6 +428,37 @@ public class AdminController {
         msg.setRecipientEmail(email);
         systemMessageRepository.save(msg);
         model.addAttribute("message", "Invitation link sent to " + email);
+        return "admin/settings";
+    }
+
+    @PostMapping("/settings/password")
+    public String changePassword(@RequestParam String currentPassword,
+                                @RequestParam String newPassword,
+                                @RequestParam String confirmPassword,
+                                org.springframework.security.core.Authentication auth,
+                                Model model) {
+        
+        AdminAccount admin = adminAccountRepository.findByEmail(auth.getName()).orElseThrow();
+
+        if (!passwordEncoder.matches(currentPassword, admin.getPassword())) {
+            model.addAttribute("error", "Current password is incorrect.");
+            return "admin/settings";
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New passwords do not match.");
+            return "admin/settings";
+        }
+
+        if (!SecurityUtils.isPasswordSecure(newPassword)) {
+            model.addAttribute("error", SecurityUtils.getPasswordRequirementsMessage());
+            return "admin/settings";
+        }
+
+        admin.setPassword(passwordEncoder.encode(newPassword));
+        adminAccountRepository.save(admin);
+
+        model.addAttribute("message", "Password updated successfully with enterprise-grade encryption.");
         return "admin/settings";
     }
 }

@@ -153,15 +153,7 @@
       color:#111827;
     }
 
-    .demo-box{
-      margin-top:20px;
-      background:var(--brand-lightest);
-      border:1px solid var(--brand-light);
-      color:var(--navy);
-      border-radius:16px;
-      padding:14px;
-      font-size:14px;
-    }
+
   </style>
 </head>
 
@@ -174,46 +166,26 @@
     <p class="subtitle">Enter your credentials to access admin dashboard</p>
 
     <div th:if="${formError}" class="alert" th:text="${formError}"></div>
+    <div th:if="${logoutMessage}" class="alert alert-success" style="background:#DCFCE7; color:#166534; padding:16px; border-radius:12px; margin-bottom:20px; border:1px solid #BBF7D0;" th:text="${logoutMessage}"></div>
 
-    <form th:action="@{/admin/login}" method="post" novalidate>
+    <form th:action="@{/admin/login}" method="post">
 
       <div class="field">
         <label class="label">Email</label>
-        <input
-          class="input"
-          th:classappend="${emailError} ? ' error' : ''"
-          type="text"
-          name="email"
-          th:value="${email}"
-          placeholder="Enter email">
-        <div class="help">Must be valid email</div>
-        <div class="field-error" th:if="${emailError}" th:text="${emailError}"></div>
+        <input class="input" type="text" name="email" placeholder="Enter administrative email" required>
       </div>
 
       <div class="field">
         <label class="label">Password</label>
-        <input
-          class="input"
-          th:classappend="${passwordError} ? ' error' : ''"
-          type="password"
-          name="password"
-          placeholder="Enter password">
-        <div class="help">Minimum 8 characters</div>
-        <div class="field-error" th:if="${passwordError}" th:text="${passwordError}"></div>
+        <input class="input" type="password" name="password" placeholder="Enter administrative password" required>
       </div>
 
       <div class="actions">
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary">Login to Dashboard</button>
         <a href="/" class="btn btn-secondary">Home</a>
       </div>
 
     </form>
-
-    <div class="demo-box">
-      <strong>Demo</strong><br>
-      admin@uniintern.com<br>
-      Admin@123
-    </div>
   </div>
 
 </body>
