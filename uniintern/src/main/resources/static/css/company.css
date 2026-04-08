@@ -4401,3 +4401,124 @@ input:checked + .slider:before {
 .toggle-password:hover {
     color: #3b82f6;
 }
+
+/* ===== Public Internship Preview Premium Layout ===== */
+.preview-showcase {
+    padding: 10rem 0 8rem;
+    position: relative;
+    z-index: 10;
+}
+
+.preview-content {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 3.5rem;
+    border: 1px solid rgba(84, 131, 179, 0.12);
+    box-shadow: 0 30px 80px rgba(2, 16, 36, 0.08);
+}
+
+.preview-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(84, 131, 179, 0.1);
+}
+
+.preview-top-left {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+}
+
+.preview-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid rgba(84, 131, 179, 0.12);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(2, 16, 36, 0.06);
+    flex-shrink: 0;
+}
+
+.preview-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.preview-titles .preview-title {
+    margin: 0 0 0.5rem !important;
+    font-size: 2.2rem !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: #021024 !important;
+    line-height: 1.2 !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+}
+
+.preview-company-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #5483B3;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-details-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+}
+
+.detail-box {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 18px;
+    border: 1px solid rgba(84, 131, 179, 0.08);
+}
+
+.detail-icon {
+    width: 2.8rem;
+    height: 2.8rem;
+    color: #5483B3;
+    padding: 0.7rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+.detail-content span {
+    display: block;
+    font-size: 0.85rem;
+    color: #667085;
+    margin-bottom: 2px;
+}
+
+.detail-content strong {
+    font-size: 1.05rem;
+    color: #021024;
+}
+
+.preview-body h3 {
+    font-size: 1.4rem;
+    margin: 2.5rem 0 1rem;
+    color: #021024;
+}
+
+.preview-body p, .preview-body li {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #475467;
+}

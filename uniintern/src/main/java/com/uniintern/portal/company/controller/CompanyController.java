@@ -181,11 +181,17 @@ public class CompanyController {
     }
 
     @GetMapping("/internships/application-template")
-    public String applicationTemplate(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String applicationTemplate(@RequestParam("id") Long id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) {
+            redirectAttributes.addFlashAttribute("error", "Please sign in as a student to view the application template.");
+            return "redirect:/student/login";
+        }
+
         Internship internship = internshipService.getById(id);
         if (internship == null) {
             redirectAttributes.addFlashAttribute("error", "The requested internship could not be found.");
-            return "redirect:/company/internships";
+            return "redirect:/company/internships/listing";
         }
         
         model.addAttribute("internship", internship);

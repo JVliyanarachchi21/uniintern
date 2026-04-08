@@ -29,6 +29,8 @@ public class StudentApplication {
     @Column(columnDefinition = "TEXT")
     private String remarks;
 
+    private String cvFilePath;
+
     public StudentApplication() {
     }
 
@@ -86,5 +88,13 @@ public class StudentApplication {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getCvFilePath() {
+        return cvFilePath;
+    }
+
+    public void setCvFilePath(String cvFilePath) {
+        this.cvFilePath = cvFilePath;
     }
 }

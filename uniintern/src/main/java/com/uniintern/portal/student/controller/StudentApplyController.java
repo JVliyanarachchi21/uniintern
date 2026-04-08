@@ -58,10 +58,26 @@ public class StudentApplyController {
         Company company = (internship.getCompanyId() != null) ? companyService.findById(internship.getCompanyId()) : null;
         
         Optional<Student> studentOpt = studentRepository.findById(studentId);
-        studentOpt.ifPresent(student -> model.addAttribute("student", student));
-
+        if (studentOpt.isEmpty()) return "redirect:/student/login";
+        
+        Student student = studentOpt.get();
+        model.addAttribute("student", student);
+        model.addAttribute("fullName", student.getFullName());
         model.addAttribute("internship", internship);
         model.addAttribute("company", company);
+        
+        // Calculate match score for the header card
+        int skills = calcSkills(student, internship);
+        int gpa = calcGpa(student, internship);
+        int exp = calcExp(student, internship);
+        int cert = calcCert(student, internship);
+        model.addAttribute("match", skills + gpa + exp + cert);
+        
+        // Format skills for display
+        if (internship.getRequiredSkills() != null) {
+            model.addAttribute("skills", Arrays.asList(internship.getRequiredSkills().split("[,\\s]+")));
+        }
+        
         return "student/apply";
     }
 
@@ -72,20 +88,15 @@ public class StudentApplyController {
             @RequestParam String skills,
             @RequestParam String experience,
             @RequestParam String coverLetter,
+            @RequestParam("cvFile") org.springframework.web.multipart.MultipartFile cvFile,
             HttpSession session
     ) {
         Long studentId = (Long) session.getAttribute("loggedInStudentId");
 
-        // IF NOT LOGGED IN -> Redirect to registration with data
         if (studentId == null) {
-            return String.format("redirect:/student/register?internshipId=%d&gpa=%.2f&skills=%s&experience=%s&coverLetter=%s",
-                    id, gpa, 
-                    java.net.URLEncoder.encode(skills, java.nio.charset.StandardCharsets.UTF_8),
-                    java.net.URLEncoder.encode(experience, java.nio.charset.StandardCharsets.UTF_8),
-                    java.net.URLEncoder.encode(coverLetter, java.nio.charset.StandardCharsets.UTF_8));
+            return "redirect:/student/login"; // Simplified for logged-in students
         }
 
-        // IF LOGGED IN -> Save Application
         Internship internship = internshipService.getById(id);
         Optional<Student> studentOpt = studentRepository.findById(studentId);
 
@@ -98,16 +109,30 @@ public class StudentApplyController {
             application.setStatus(ApplicationStatus.APPLIED);
             application.setRemarks(coverLetter);
             
-            // Calculate and set match score for persistence
+            // Handle CV File Upload
+            if (cvFile != null && !cvFile.isEmpty()) {
+                try {
+                    String uploadDir = "uploads/applications/cvs/";
+                    java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
+                    if (!java.nio.file.Files.exists(uploadPath)) {
+                        java.nio.file.Files.createDirectories(uploadPath);
+                    }
+                    
+                    String fileName = java.util.UUID.randomUUID().toString() + "_" + cvFile.getOriginalFilename();
+                    java.nio.file.Path filePath = uploadPath.resolve(fileName);
+                    java.nio.file.Files.copy(cvFile.getInputStream(), filePath);
+                    
+                    application.setCvFilePath("/" + uploadDir + fileName);
+                } catch (java.io.IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            
             double score = calculateMatchScore(student, internship);
             application.setScore(score);
             
             studentApplicationRepository.save(application);
-            
-            // Save Score Breakdown for Transparency
             saveScoreBreakdown(application.getId(), student, internship);
-            
-            // Create notification for application submission
             notificationService.createNotification(studentId, "Application Submitted", "Your application for " + internship.getTitle() + " has been successfully submitted.", "Application");
             
             return "redirect:/student/applications";

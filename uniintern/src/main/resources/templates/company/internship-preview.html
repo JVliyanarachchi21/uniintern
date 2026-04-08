@@ -55,19 +55,16 @@
             <div class="preview-top">
                 <div class="preview-top-left">
                     <div class="preview-logo">
-                        <img th:if="${company != null and (company.logoPath == null or company.logoPath.isEmpty())}" th:src="'https://ui-avatars.com/api/?name=' + ${company.companyName} + '&background=0D8ABC&color=fff&size=256'" th:alt="${company.companyName} + ' Logo'">
-                        <img th:if="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" th:src="${company.logoPath}" th:alt="${company.companyName} + ' Logo'">
-                        <img th:if="${company == null}" src="https://ui-avatars.com/api/?name=UniIntern&background=0D8ABC&color=fff&size=256" alt="UniIntern Logo">
+                        <img th:if="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" 
+                             th:src="${company.logoPath}" th:alt="${company.companyName}">
+                        <img th:unless="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" 
+                             th:src="'https://ui-avatars.com/api/?name=' + (${company != null ? company.companyName : 'UniIntern'}) + '&background=0D8ABC&color=fff&size=128'" alt="Logo">
                     </div>
-                    <div>
+                    <div class="preview-titles">
                         <h2 class="preview-title" th:text="${internship.title}">Software Engineering Intern</h2>
-                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'UniIntern Platform'}">UniIntern Platform</div>
-                        <img th:if="${company != null and company.logoPath != null}" th:src="${company.logoPath}" alt="Company Logo">
-                        <img th:unless="${company != null and company.logoPath != null}" th:src="'https://ui-avatars.com/api/?name=' + (${company != null ? company.companyName : 'Company'}) + '&background=0D8ABC&color=fff&size=256'" alt="Company Logo">
-                    </div>
-                    <div>
-                        <h2 class="preview-title" th:text="${internship.title}">Software Engineering Intern</h2>
-                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'Unknown Company'}">TechCorp Lanka</div>
+                        <div class="preview-company-name">
+                            <span th:text="${company != null ? company.companyName : 'UniIntern Platform'}">Company Name</span>
+                        </div>
                     </div>
                 </div>
                 <div class="preview-badges">
@@ -85,7 +82,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Location</span>
-                        <strong th:text="${internship.location}">Colombo / Hybrid</strong>
                         <strong th:text="${internship.location != null ? internship.location : 'Flexible'}">Colombo / Hybrid</strong>
                     </div>
                 </div>
@@ -96,7 +92,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Duration</span>
-                        <strong th:text="${internship.duration}">6 Months</strong>
                         <strong th:text="${internship.duration != null ? internship.duration : 'N/A'}">6 Months</strong>
                     </div>
                 </div>
@@ -107,7 +102,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Deadline</span>
-                        <strong th:text="${internship.deadline}">2026-05-30</strong>
                         <strong th:text="${internship.deadline != null ? internship.deadline : 'Open'}">2026-05-30</strong>
                     </div>
                 </div>
@@ -118,7 +112,6 @@
                     </div>
                     <div class="detail-content">
                         <span>Minimum GPA</span>
-                        <strong th:text="${internship.minGpa != null ? internship.minGpa : 'N/A'}">3.00</strong>
                         <strong th:text="${internship.minGpa != null ? internship.minGpa : 'No minimum'}">3.00</strong>
                     </div>
                 </div>
@@ -126,29 +119,30 @@
 
             <div class="preview-body">
                 <h3>About this Internship</h3>
-                <p th:text="${internship.description}">We are looking for a motivated Software Engineering Intern to join our team... </p>
-                
-                <h3>Responsibilities</h3>
-                <ul>
-                    <li>Develop and maintain web application features</li>
-                    <li>Fix bugs and improve system performance</li>
-                    <li>Collaborate with developers and participate in code reviews</li>
-                    <li>Support testing and documentation activities</li>
-                </ul>
+                <p th:text="${internship.description != null ? internship.description : 'No description provided.'}">Description goes here.</p>
 
-                <h3>Required Skills</h3>
-                <div class="skill-tags">
-                    <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${skill.trim()}">Java</span>
-                <p th:text="${internship.description != null ? internship.description : 'No description provided.'}">We are looking for a motivated Software Engineering Intern to join our team.</p>
-
-                <h3 th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}">Required Skills</h3>
-                <div class="skill-tags" th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}">
-                    <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${#strings.trim(skill)}">Java</span>
+                <div th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}" style="margin-top: 2rem;">
+                    <h3>Required Skills & Qualifications</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${#strings.trim(skill)}">Skill</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="preview-action">
-                <a th:href="@{/company/internships/application-template(id=${internship.id})}" class="btn btn-primary btn-large">Apply Now</a>
+            <div class="preview-action" style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--uni-border);">
+                <!-- If student is logged in, show Apply Now -->
+                <div th:if="${session.loggedInStudentId != null}">
+                    <a th:href="@{/company/internships/application-template(id=${internship.id})}" class="btn btn-primary btn-large" style="min-width: 250px;">Apply Now</a>
+                </div>
+                
+                <!-- If student is NOT logged in, show Sign in to Apply -->
+                <div th:if="${session.loggedInStudentId == null}">
+                    <a th:href="@{/company/internships/application-template(id=${internship.id})}" class="btn btn-primary btn-large" style="min-width: 250px;">Sign in to Apply</a>
+                    <p style="margin-top: 1.5rem; color: var(--uni-mid); font-style: italic; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <svg style="width: 1.4rem; height: 1.4rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Registration is required to apply for this position.
+                    </p>
+                </div>
             </div>
         </div>
     </main>

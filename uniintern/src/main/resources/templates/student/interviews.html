@@ -1,75 +1,290 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Interviews | UniIntern</title>
-  <link rel="stylesheet" th:href="@{/css/app.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviews | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --uni-primary: #052659;
+            --uni-secondary: #0D8ABC;
+            --uni-accent: #C1E8FF;
+            --uni-soft: #F0F4F8;
+            --uni-white: #FFFFFF;
+            --uni-text: #1E293B;
+            --uni-mid: #64748B;
+            --border-soft: #E2E8F0;
+        }
+
+        .interview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .interview-card {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .interview-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+            border-color: var(--uni-secondary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .company-info {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .company-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-soft);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .company-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .company-logo span {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--uni-secondary);
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-confirmed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .role-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .company-name {
+            font-size: 15px;
+            color: var(--uni-mid);
+            margin: 4px 0 0;
+            font-weight: 600;
+        }
+
+        .schedule-info {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .schedule-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .schedule-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .schedule-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .location-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .location-box svg {
+            flex-shrink: 0;
+            color: var(--uni-secondary);
+            margin-top: 3px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            padding-top: 8px;
+        }
+
+        .btn-card {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--uni-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 38, 89, 0.15);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #475569;
+            border: 1.5px solid var(--border-soft);
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+    </style>
 </head>
 
 <body class="app">
 
 <div th:replace="fragments/student-sidebar :: studentSidebar('interviews')"></div>
 
-<main class="main">
+<main class="main dashboard-main-content">
+    <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
 
-  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+    <section class="dashboard-page-container">
+        
+        <div class="dashboard-heading-row">
+            <div>
+                <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.02em;">Interviews</h1>
+                <p style="color: #64748b; margin-top: 8px; font-size: 16px; font-weight: 500;">Manage your upcoming interview invitations and schedules.</p>
+            </div>
+        </div>
 
-  <section class="content">
-    <div class="page-title">
-      <h1>Interviews</h1>
-      <p>View and confirm upcoming interview schedules.</p>
-    </div>
+        <div class="interview-grid">
+            
+            <div class="interview-card" th:each="i : ${interviews}">
+                <div class="card-header">
+                    <div class="company-info">
+                        <div class="company-logo">
+                            <img th:if="${i.logoPath}" th:src="${i.logoPath}" alt="Logo">
+                            <span th:unless="${i.logoPath}" th:text="${#strings.substring(i.company, 0, 1)}">C</span>
+                        </div>
+                        <div>
+                            <h3 class="role-title" th:text="${i.title}">Position</h3>
+                            <p class="company-name" th:text="${i.company}">Company</p>
+                        </div>
+                    </div>
+                    <span class="status-badge" 
+                          th:classappend="${i.status == 'CONFIRMED'} ? 'status-confirmed' : 'status-pending'"
+                          th:text="${i.status == 'CONFIRMED' ? 'Confirmed' : 'Pending Confirmation'}">
+                        Pending
+                    </span>
+                </div>
 
-    <div class="panel">
-      <div class="panel-title">Upcoming Interviews</div>
+                <div class="schedule-info">
+                    <div class="schedule-item">
+                        <span class="schedule-label">Date</span>
+                        <span class="schedule-value">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            <span th:text="${i.date}">Date</span>
+                        </span>
+                    </div>
+                    <div class="schedule-item">
+                        <span class="schedule-label">Time</span>
+                        <span class="schedule-value">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <span th:text="${i.time}">Time</span>
+                        </span>
+                    </div>
+                </div>
 
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Internship</th>
-              <th>Company</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Mode</th>
-              <th>Location / Link</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
+                <div class="location-box">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <div>
+                        <strong style="display: block; color: #334155; margin-bottom: 2px;" th:text="${i.mode}">Mode</strong>
+                        <span th:text="${i.location}">Location or Link</span>
+                    </div>
+                </div>
 
-          <tbody>
-            <tr th:each="i : ${interviews}">
-              <td th:text="${i.title}">Title</td>
-              <td th:text="${i.company}">Company</td>
-              <td th:text="${i.date}">Date</td>
-              <td th:text="${i.time}">Time</td>
-              <td th:text="${i.mode}">Mode</td>
-              <td th:text="${i.location}">Location</td>
+                <div class="card-actions">
+                    <button class="btn-card btn-outline" th:if="${i.status == 'PENDING_CONFIRMATION'}">Decline</button>
+                    <button class="btn-card btn-primary" th:if="${i.status == 'PENDING_CONFIRMATION'}">Confirm Schedule</button>
+                    
+                    <a th:href="${i.location}" target="_blank" class="btn-card btn-primary" th:if="${i.status == 'CONFIRMED' && #strings.contains(i.mode, 'Online')}">Join Meeting</a>
+                    <button class="btn-card btn-outline" th:if="${i.status == 'CONFIRMED' && !#strings.contains(i.mode, 'Online')}">View Directions</button>
+                </div>
+            </div>
 
-              <td>
-                <span class="badge"
-                      th:classappend="${i.status == 'CONFIRMED'} ? ' badge-green' : ' badge-blue'"
-                      th:text="${i.status}">
-                  PENDING
-                </span>
-              </td>
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(interviews)}" style="grid-column: 1 / -1; text-align: center; padding: 80px 0;">
+                <div style="width: 80px; height: 80px; background: var(--uni-soft); border-radius: 24px; display: inline-flex; align-items: center; justify-content: center; color: #94a3b8; margin-bottom: 24px;">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <h3 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 12px; font-family: 'Plus Jakarta Sans', sans-serif;">Upcoming Interviews</h3>
+                <p style="color: #64748b; font-size: 16px; font-weight: 500; max-width: 400px; margin: 0 auto;">You don't have any scheduled interviews yet. Your applications will be updated as soon as companies review them.</p>
+            </div>
 
-              <td style="text-align:right;">
-                <button class="btn primary" type="button" th:if="${i.status != 'CONFIRMED'}">
-                  Confirm (UI)
-                </button>
-                <span class="muted" th:if="${i.status == 'CONFIRMED'}">—</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        </div>
 
-      <small class="hint">UI phase: these records will be created by Admin + Scheduling module later.</small>
-    </div>
-  </section>
+    </section>
 </main>
 
 </body>
