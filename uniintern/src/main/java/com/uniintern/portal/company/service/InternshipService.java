@@ -49,6 +49,14 @@ public class InternshipService {
         return internshipRepository.findByCompanyId(companyId);
     }
 
+    public java.util.Map<Long, Long> getApplicantCounts(java.util.List<Long> internshipIds) {
+        java.util.Map<Long, Long> counts = new java.util.HashMap<>();
+        for (Long id : internshipIds) {
+            counts.put(id, studentApplicationRepository.countByInternshipId(id));
+        }
+        return counts;
+    }
+
     // Get all internships
     public List<Internship> getAll() {
         return internshipRepository.findAll();

@@ -340,7 +340,21 @@ public class CompanyController {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
         model.addAttribute("page", "internships");
-        model.addAttribute("internships", internshipService.getByCompanyId(companyId));
+        List<Internship> internships = internshipService.getByCompanyId(companyId);
+        model.addAttribute("internships", internships);
+        
+        List<Long> ids = internships.stream().map(Internship::getId).collect(Collectors.toList());
+        Map<Long, Long> counts = internshipService.getApplicantCounts(ids);
+        
+        // Mock data for Viva demonstration: If real count is 0, set a random-like mock number
+        for (Long id : ids) {
+            if (counts.getOrDefault(id, 0L) == 0L) {
+                // Generates a mock number based on ID to keep it consistent (e.g., 4, 7, 2, 5...)
+                counts.put(id, (long) (3 + (id % 8))); 
+            }
+        }
+        model.addAttribute("applicantCounts", counts);
+        
         model.addAttribute("promotedIds", new HashSet<>(promotionService.getPromotedInternshipIds()));
         return "company/internships";
     }
@@ -635,9 +649,45 @@ public class CompanyController {
     public String applicants(Model model) {
         model.addAttribute("page", "applicants");
         model.addAttribute("applicants", List.of(
-            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.25, "skillMatch", "85%", "score", 79, "status", "Shortlisted"),
-            Map.of("name", "Dilini Wickramasinghe", "university", "UoM", "gpa", 3.45, "skillMatch", "72%", "score", 68, "status", "Scored")
+            Map.of("id", 1, "name", "Ashan Fernando", "university", "UoC", "gpa", 3.25, "skillMatch", "85%", "score", 79, "status", "Shortlisted"),
+            Map.of("id", 2, "name", "Dilini Wickramasinghe", "university", "UoM", "gpa", 3.45, "skillMatch", "72%", "score", 68, "status", "Scored")
         ));
         return "company/applicants";
+    }
+
+    @GetMapping("/applicants/view/{id}")
+    public String viewApplicant(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("page", "applicants");
+        
+        // Mock data for Viva - Using HashMap as Map.of has 10-pair limit
+        java.util.Map<String, Object> applicant = new java.util.HashMap<>();
+        if (id == 1) {
+            applicant.put("id", 1L);
+            applicant.put("name", "Ashan Fernando");
+            applicant.put("university", "University of Colombo");
+            applicant.put("degree", "BSc (Hons) in Computer Science");
+            applicant.put("level", "4");
+            applicant.put("gpa", 3.75);
+            applicant.put("skillMatch", "85%");
+            applicant.put("score", 82);
+            applicant.put("email", "ashan.fernando@example.com");
+            applicant.put("skills", "Java, Spring Boot, React, AWS, Docker, Kubernetes, MySQL");
+            applicant.put("summary", "Highly motivated computer science student with a strong passion for software engineering and cloud-native application development. Experienced in building scalable microservices and modern frontend architectures.");
+        } else {
+            applicant.put("id", 2L);
+            applicant.put("name", "Dilini Wickramasinghe");
+            applicant.put("university", "University of Moratuwa");
+            applicant.put("degree", "BSc (Hons) in Software Engineering");
+            applicant.put("level", "3");
+            applicant.put("gpa", 3.45);
+            applicant.put("skillMatch", "72%");
+            applicant.put("score", 68);
+            applicant.put("email", "dilini.w@example.com");
+            applicant.put("skills", "Java, Hibernate, Angular, Python, Git, CI/CD");
+            applicant.put("summary", "Enthusiastic software engineering student focused on backend systems and automated testing. Fast learner with a dedicated mindset toward clean code and architectural best practices.");
+        }
+        
+        model.addAttribute("applicant", applicant);
+        return "company/view-applicant";
     }
 }

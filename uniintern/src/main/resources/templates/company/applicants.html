@@ -81,8 +81,8 @@
                 </td>
 
                 <td>
-                    <div class="icon-actions">
-                        <button type="button" class="icon-btn" title="View" onclick="viewApplicant()">👁</button>
+                    <div class="icon-actions modern-icon-actions">
+                        <a th:href="@{'/company/applicants/view/' + ${a.id}}" class="icon-btn icon-view" title="View">👁</a>
                         <button type="button" class="icon-btn approve-btn" title="Shortlist" onclick="shortlistApplicant(this)">👤</button>
                         <button type="button" class="icon-btn reject-btn" title="Reject" onclick="rejectApplicant(this)">👎</button>
                     </div>

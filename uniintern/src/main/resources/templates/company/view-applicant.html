@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='View Applicant',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+    <!-- Header Actions -->
+    <div class="applicants-header">
+        <div class="header-back">
+            <a th:href="@{/company/applicants}" class="btn-ghost">
+                <i class="bi bi-arrow-left me-2"></i>Back to Applicants
+            </a>
+            <h1 class="page-title mt-2" th:text="${applicant.name}">Ashan Fernando</h1>
+        </div>
+
+        <div class="action-buttons">
+            <button type="button" class="btn danger-outline me-2" onclick="alert('Applicant Rejected (Demo)')">Reject</button>
+            <button type="button" class="btn primary" onclick="alert('Applicant Shortlisted (Demo)')">Shortlist Candidate</button>
+        </div>
+    </div>
+
+    <div class="applicant-details-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 24px; margin-top: 24px;">
+        
+        <!-- MAIN INFO COLUMN -->
+        <div class="main-details">
+            <div class="settings-card no-margin">
+                <div class="profile-header-strip" style="display: flex; gap: 20px; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 24px; margin-bottom: 24px;">
+                    <div class="avatar-large" style="width: 80px; height: 80px; background: var(--primary-color); color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700;" th:text="${#strings.substring(applicant.name, 0, 1)}">A</div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 24px;" th:text="${applicant.name}">Ashan Fernando</h2>
+                        <p style="color: var(--text-muted); margin: 4px 0 0;" th:text="${applicant.university + ' | Level ' + (applicant.level ?: '4')}">University of Colombo | Level 4</p>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 class="section-title">Professional Summary</h3>
+                    <p style="line-height: 1.6; color: var(--text-main);" th:text="${applicant.summary}">Highly motivated computer science student with a strong passion for software engineering and web development. Experienced in Java, Spring Boot, and modern React frameworks. Seeking an internship opportunity to apply academic knowledge to real-world projects.</p>
+                </div>
+
+                <div class="detail-section mt-4">
+                    <h3 class="section-title">Technical Skills</h3>
+                    <div class="skill-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span th:each="skill : ${#strings.arraySplit(applicant.skills, ',')}" 
+                              class="pill-tag" 
+                              style="background: rgba(43, 108, 176, 0.1); color: var(--primary-color); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500;"
+                              th:text="${skill.trim()}">Java</span>
+                    </div>
+                </div>
+
+                <div class="detail-section mt-4">
+                    <h3 class="section-title">Education</h3>
+                    <div class="edu-item" style="border-left: 2px solid var(--primary-color); padding-left: 16px;">
+                        <div style="font-weight: 600;" th:text="${applicant.degree}">BSc (Hons) in Computer Science</div>
+                        <div style="color: var(--text-muted); font-size: 14px;" th:text="${applicant.university}">University of Colombo</div>
+                        <div style="font-size: 14px;" th:text="${'Current GPA: ' + applicant.gpa}">Current GPA: 3.75</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-card mt-4">
+                <div class="section-title">CV / Resume</div>
+                <div class="cv-preview-box" style="border: 1px dashed var(--border-color); border-radius: 12px; padding: 32px; text-align: center; background: #fafafa;">
+                    <i class="bi bi-file-earmark-pdf" style="font-size: 48px; color: #ef4444;"></i>
+                    <p style="margin: 16px 0;">Resume_Ashan_Fernando_2024.pdf</p>
+                    <button class="btn-ghost" onclick="alert('Downloading CV... (Demo)')"><i class="bi bi-download me-2"></i>Download File</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR INFO COLUMN -->
+        <div class="side-details">
+            <div class="settings-card no-margin">
+                <div class="section-title">Application Score</div>
+                <div class="score-display" style="text-align: center; padding: 20px 0;">
+                    <div style="font-size: 48px; font-weight: 800; color: var(--primary-color);" th:text="${applicant.score}">82</div>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px;">OUT OF 100</div>
+                    <div class="progress" style="height: 8px; background: #edf2f7; border-radius: 4px; overflow: hidden;">
+                        <div class="progress-bar" th:style="'width: ' + ${applicant.score} + '%; background: var(--primary-color); height: 100%; transition: width 0.5s ease;'"></div>
+                    </div>
+                </div>
+                
+                <div class="score-breakdown" style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                        <span>Skill Match</span>
+                        <span style="font-weight: 600;" th:text="${applicant.skillMatch}">85%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                        <span>GPA Weight</span>
+                        <span style="font-weight: 600;">Full (100%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card mt-4">
+                <div class="section-title">Contact Information</div>
+                <div class="contact-info">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <i class="bi bi-envelope" style="color: var(--primary-color);"></i>
+                        <span style="font-size: 14px;" th:text="${applicant.email}">ashan@example.com</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <i class="bi bi-telephone" style="color: var(--primary-color);"></i>
+                        <span style="font-size: 14px;">+94 77 123 4567</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="bi bi-linkedin" style="color: #0077b5;"></i>
+                        <span style="font-size: 14px;">linkedin.com/in/ashanf</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<style>
+    .no-margin { margin-top: 0 !important; }
+    .mt-4 { margin-top: 24px !important; }
+    .pill-tag { background: #f0f7ff; color: #2b6cb0; border: 1px solid rgba(43, 108, 176, 0.1); }
+</style>
+</body>
+</html>

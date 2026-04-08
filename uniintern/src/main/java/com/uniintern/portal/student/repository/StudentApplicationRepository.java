@@ -10,6 +10,7 @@ public interface StudentApplicationRepository extends JpaRepository<StudentAppli
     List<StudentApplication> findByStudentId(Long studentId);
     List<StudentApplication> findByStatus(com.uniintern.portal.student.model.ApplicationStatus status);
     List<StudentApplication> findByInternshipId(Long internshipId);
+    long countByInternshipId(Long internshipId);
 
     @Modifying
     @Transactional
