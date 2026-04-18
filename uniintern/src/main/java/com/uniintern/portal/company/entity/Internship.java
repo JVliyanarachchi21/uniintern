@@ -40,6 +40,9 @@ public class Internship {
     private Integer certificatesWeight;
     private Integer topNCandidates;
     private Double minimumThreshold;
+    private boolean approvedNotificationSeen = false;
+    private boolean rejectedNotificationSeen = false;
+
 
     public Internship() {
     }
@@ -187,4 +190,21 @@ public class Internship {
     public void setMinimumThreshold(Double minimumThreshold) {
         this.minimumThreshold = minimumThreshold;
     }
+
+    public boolean isApprovedNotificationSeen() {
+        return approvedNotificationSeen;
+    }
+
+    public void setApprovedNotificationSeen(boolean approvedNotificationSeen) {
+        this.approvedNotificationSeen = approvedNotificationSeen;
+    }
+
+    public boolean isRejectedNotificationSeen() {
+        return rejectedNotificationSeen;
+    }
+
+    public void setRejectedNotificationSeen(boolean rejectedNotificationSeen) {
+        this.rejectedNotificationSeen = rejectedNotificationSeen;
+    }
+
 }

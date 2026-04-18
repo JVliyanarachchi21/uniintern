@@ -32,13 +32,13 @@ public class PageController {
     
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
-        Long companyId = (Long) session.getAttribute("companyId");
-        model.addAttribute("readyInternshipsCount", dashboardService.getReadyInternshipsCount());
-        model.addAttribute("missingGuidesCount", dashboardService.getMissingGuidesCount());
-        model.addAttribute("awaitingDeadlineCount", dashboardService.getAwaitingDeadlineCount());
-        model.addAttribute("completedRunsCount", dashboardService.getCompletedRunsCount());
-        model.addAttribute("pendingApprovalsCount", dashboardService.getPendingApprovalsCount());
-        model.addAttribute("recentRuns", dashboardService.getRecentRuns(5));
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        model.addAttribute("readyInternshipsCount", dashboardService.getReadyInternshipsCount(companyId));
+        model.addAttribute("missingGuidesCount", dashboardService.getMissingGuidesCount(companyId));
+        model.addAttribute("awaitingDeadlineCount", dashboardService.getAwaitingDeadlineCount(companyId));
+        model.addAttribute("completedRunsCount", dashboardService.getCompletedRunsCount(companyId));
+        model.addAttribute("pendingApprovalsCount", dashboardService.getPendingApprovalsCount(companyId));
+        model.addAttribute("recentRuns", dashboardService.getRecentRuns(5, companyId));
         model.addAttribute("userRole", "company");
         model.addAttribute("companyId", companyId);
         return "cv_filtering/dashboard";
@@ -46,7 +46,7 @@ public class PageController {
     
     @GetMapping("/marking-guides")
     public String markingGuides(Model model, HttpSession session) {
-        Long companyId = (Long) session.getAttribute("companyId");
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         model.addAttribute("internships", dashboardService.getInternshipsByCompanyId(companyId));
         model.addAttribute("userRole", "company");
         return "cv_filtering/marking-guides";
@@ -54,7 +54,7 @@ public class PageController {
     
     @GetMapping("/marking-guide-detail/{id}")
     public String markingGuideDetail(@PathVariable String id, Model model, HttpSession session) {
-        Long companyId = (Long) session.getAttribute("companyId");
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         Internship guide = dashboardService.getInternshipById(id);
         
         // Verify internship belongs to company
@@ -69,7 +69,7 @@ public class PageController {
     
     @GetMapping("/run-filtering")
     public String runFiltering(Model model, HttpSession session) {
-        Long companyId = (Long) session.getAttribute("companyId");
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         // Show ALL approved internships, not just those with weights set
         model.addAttribute("internships", dashboardService.getAllApprovedInternshipsByCompanyId(companyId));
         model.addAttribute("userRole", "company");
@@ -80,7 +80,7 @@ public class PageController {
     public String runFilteringPost(@RequestParam String internshipId, 
                                    HttpSession session,
                                    RedirectAttributes redirectAttributes) {
-        Long companyId = (Long) session.getAttribute("companyId");
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         String companyName = (String) session.getAttribute("companyName");
         
         // Check if internship has weights configured
@@ -103,6 +103,7 @@ public class PageController {
             FilteringLog log = new FilteringLog(
                 companyName != null ? companyName : "Company " + companyId,
                 "company",
+                companyId,
                 run.getInternshipId(),
                 run.getInternshipTitle(),
                 LocalDateTime.now(),
@@ -120,7 +121,7 @@ public class PageController {
     
     @GetMapping("/applicants-preview")
     public String applicantsPreview(@RequestParam String internshipId, Model model, HttpSession session) {
-        Long companyId = (Long) session.getAttribute("companyId");
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         Internship internship = dashboardService.getInternshipById(internshipId);
         
         // Verify internship belongs to company
@@ -137,7 +138,8 @@ public class PageController {
     
     @GetMapping("/results")
     public String results(Model model, HttpSession session) {
-        model.addAttribute("runs", dashboardService.getAllRuns());
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        model.addAttribute("runs", dashboardService.getAllRuns(companyId));
         model.addAttribute("userRole", "company");
         return "cv_filtering/results";
     }
@@ -184,7 +186,8 @@ public class PageController {
     
     @GetMapping("/logs")
     public String logs(Model model, HttpSession session) {
-        model.addAttribute("logs", filteringLogRepository.findAllByOrderByRunAtDesc());
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        model.addAttribute("logs", filteringLogRepository.findByCompanyIdOrderByRunAtDesc(companyId));
         model.addAttribute("userRole", "company");
         return "cv_filtering/logs";
     }

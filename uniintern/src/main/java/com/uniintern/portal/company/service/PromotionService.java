@@ -35,6 +35,10 @@ public class PromotionService {
                 .collect(Collectors.toList());
     }
 
+    public long countActivePromotionsForCompany(Long companyId) {
+        return getActivePromotionsForCompany(companyId).size();
+    }
+
     public boolean isInternshipPromoted(Long internshipId) {
         List<Promotion> promotions = promotionRepository.findByInternshipIdAndStatus(internshipId, "ACTIVE");
         return promotions.stream().anyMatch(p -> p.getEndDate().isAfter(LocalDateTime.now()));

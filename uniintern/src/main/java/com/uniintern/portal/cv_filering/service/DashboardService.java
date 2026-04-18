@@ -57,39 +57,65 @@ public class DashboardService {
 
     @Autowired
     private TemplateEngine templateEngine;
-    
-    public long getReadyInternshipsCount() {
-        return internshipRepository.findAll().stream()
-                .filter(i -> "closed".equals(i.getStatus()) && i.getSkillsWeight() != null)
-                .count();
-    }
-    
-    public long getMissingGuidesCount() {
-        return internshipRepository.findAll().stream()
-                .filter(i -> i.getSkillsWeight() == null)
-                .count();
-    }
-    
-    public long getAwaitingDeadlineCount() {
-        return internshipRepository.findAll().stream()
-                .filter(i -> "open".equals(i.getStatus()))
-                .count();
-    }
-    
-    public long getCompletedRunsCount() {
-        return filterRunRepository.findAll().stream()
-                .filter(r -> "approved".equals(r.getStatus()) || "completed".equals(r.getStatus()))
-                .count();
-    }
-    
-    public long getPendingApprovalsCount() {
-        return filterRunRepository.findAll().stream()
+
+    @jakarta.annotation.PostConstruct
+    @Transactional
+    public void migratePendingRuns() {
+        logger.info("Migrating any legacy 'pending_approval' filter runs to 'completed'...");
+        List<FilterRun> pendingRuns = filterRunRepository.findAll().stream()
                 .filter(r -> "pending_approval".equals(r.getStatus()))
+                .collect(Collectors.toList());
+        
+        for (FilterRun run : pendingRuns) {
+            run.setStatus("completed");
+            filterRunRepository.save(run);
+        }
+        if (!pendingRuns.isEmpty()) {
+            logger.info("Successfully migrated {} runs.", pendingRuns.size());
+        }
+    }
+    
+    public long getReadyInternshipsCount(Long companyId) {
+        return internshipRepository.findAll().stream()
+                .filter(i -> (companyId == null || i.getCompanyId().equals(companyId)) && 
+                             "closed".equals(i.getStatus()) && i.getSkillsWeight() != null)
                 .count();
     }
     
-    public List<FilterRun> getRecentRuns(int limit) {
-        return filterRunRepository.findAllByOrderByFinishedAtDesc().stream()
+    public long getMissingGuidesCount(Long companyId) {
+        return internshipRepository.findAll().stream()
+                .filter(i -> (companyId == null || i.getCompanyId().equals(companyId)) && 
+                             i.getSkillsWeight() == null)
+                .count();
+    }
+    
+    public long getAwaitingDeadlineCount(Long companyId) {
+        return internshipRepository.findAll().stream()
+                .filter(i -> (companyId == null || i.getCompanyId().equals(companyId)) && 
+                             "open".equals(i.getStatus()))
+                .count();
+    }
+    
+    public long getCompletedRunsCount(Long companyId) {
+        return filterRunRepository.findAll().stream()
+                .filter(r -> (companyId == null || (r.getCompanyId() != null && r.getCompanyId().equals(companyId))) && 
+                             ("approved".equals(r.getStatus()) || "completed".equals(r.getStatus())))
+                .count();
+    }
+    
+    public long getPendingApprovalsCount(Long companyId) {
+        return filterRunRepository.findAll().stream()
+                .filter(r -> (companyId == null || (r.getCompanyId() != null && r.getCompanyId().equals(companyId))) && 
+                             "pending_approval".equals(r.getStatus()))
+                .count();
+    }
+    
+    public List<FilterRun> getRecentRuns(int limit, Long companyId) {
+        List<FilterRun> runs = (companyId == null) ? 
+            filterRunRepository.findAllByOrderByFinishedAtDesc() : 
+            filterRunRepository.findByCompanyIdOrderByFinishedAtDesc(companyId);
+            
+        return runs.stream()
                 .limit(limit)
                 .collect(Collectors.toList());
     }
@@ -156,8 +182,11 @@ public class DashboardService {
         }
     }
     
-    public List<FilterRun> getAllRuns() {
-        return filterRunRepository.findAllByOrderByFinishedAtDesc();
+    public List<FilterRun> getAllRuns(Long companyId) {
+        if (companyId == null) {
+            return filterRunRepository.findAllByOrderByFinishedAtDesc();
+        }
+        return filterRunRepository.findByCompanyIdOrderByFinishedAtDesc(companyId);
     }
     
     public FilterRun getRunById(String id) {
@@ -232,11 +261,12 @@ public class DashboardService {
         FilterRun newRun = new FilterRun(
             internship.getId(),
             internship.getTitle(),
+            companyId,
             (companyName != null) ? companyName : ("Company " + internship.getCompanyId()),
             startedAt,
             null,
             0,
-            (companyId == null) ? "completed" : "pending_approval",
+            "completed",
             topN,
             internship.getMinimumThreshold()
         );
@@ -316,7 +346,7 @@ public class DashboardService {
         newRun.setApplicantsProcessed(runResults.size());
         filterRunRepository.save(newRun);
         
-        String logMessage = (companyId == null) ? "Analysis finalized by Administrator." : "Completed successfully. Awaiting admin approval.";
+        String logMessage = "Analysis completed successfully for " + internship.getTitle();
         
         LogEntry log = new LogEntry(
             newRun.getId(),

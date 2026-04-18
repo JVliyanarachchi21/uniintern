@@ -54,9 +54,21 @@ public class Student {
     private StudentStatus status;
 
     @Column(nullable = false)
+    private Boolean loginAlertsEnabled = false;
+
+    @Column(nullable = false)
+    private Boolean twoFactorEnabled = false;
+
+    @Column(nullable = false)
+    private Boolean rememberDeviceEnabled = false;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     public Student() {
+        this.loginAlertsEnabled = false;
+        this.twoFactorEnabled = false;
+        this.rememberDeviceEnabled = false;
     }
 
     @PrePersist
@@ -65,6 +77,9 @@ public class Student {
         if (this.status == null) {
             this.status = StudentStatus.PENDING_VERIFICATION;
         }
+        if (this.loginAlertsEnabled == null) this.loginAlertsEnabled = false;
+        if (this.twoFactorEnabled == null) this.twoFactorEnabled = false;
+        if (this.rememberDeviceEnabled == null) this.rememberDeviceEnabled = false;
     }
 
     public Long getId() {
@@ -193,6 +208,30 @@ public class Student {
     public int getExperienceMonths() {
         if (experience == null || experience.isEmpty()) return 0;
         return getExperienceCount() * 6; 
+    }
+
+    public Boolean getLoginAlertsEnabled() {
+        return loginAlertsEnabled;
+    }
+
+    public void setLoginAlertsEnabled(Boolean loginAlertsEnabled) {
+        this.loginAlertsEnabled = loginAlertsEnabled;
+    }
+
+    public Boolean getTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(Boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public Boolean getRememberDeviceEnabled() {
+        return rememberDeviceEnabled;
+    }
+
+    public void setRememberDeviceEnabled(Boolean rememberDeviceEnabled) {
+        this.rememberDeviceEnabled = rememberDeviceEnabled;
     }
 
     public LocalDateTime getCreatedAt() {

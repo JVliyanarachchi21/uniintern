@@ -31,10 +31,14 @@ public class WebController {
     // Dashboard - List all available courses
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) {
+            return "redirect:/student/login";
+        }
+
         // Get student name from session (set by existing student login)
         String userName = (String) session.getAttribute("studentName");
         if (userName == null) {
-            // Fallback to generic name if not logged in through student portal
             userName = "Student";
         }
         model.addAttribute("userName", userName);
@@ -47,6 +51,11 @@ public class WebController {
     public String course(@PathVariable String courseId,
                          HttpSession session,
                          Model model) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) {
+            return "redirect:/student/login";
+        }
+
         String userName = (String) session.getAttribute("studentName");
         if (userName == null) {
             userName = "Student";
@@ -71,6 +80,11 @@ public class WebController {
     public String quiz(@RequestParam String courseId,
                        HttpSession session,
                        Model model) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) {
+            return "redirect:/student/login";
+        }
+
         String userName = (String) session.getAttribute("studentName");
         if (userName == null) {
             userName = "Student";
@@ -104,6 +118,11 @@ public class WebController {
                           @RequestParam boolean passed,
                           HttpSession session,
                           Model model) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) {
+            return "redirect:/student/login";
+        }
+
         String userName = (String) session.getAttribute("studentName");
         if (userName == null) {
             userName = "Student";
@@ -136,6 +155,11 @@ public class WebController {
     public String certificate(@RequestParam String courseId,
                               HttpSession session,
                               Model model) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) {
+            return "redirect:/student/login";
+        }
+
         String userName = (String) session.getAttribute("studentName");
         if (userName == null) {
             userName = "Student";

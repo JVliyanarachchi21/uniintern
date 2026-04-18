@@ -76,7 +76,7 @@
     </div>
 
     <!-- Certificate Container -->
-    <div id="certificate-container" style="width: 100%; max-width: 1000px; aspect-ratio: 1.414/1; background: white; position: relative; overflow: hidden; margin: 0 auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+    <div id="certificate-container" style="width: 100%; max-width: 900px; aspect-ratio: 1.414/1; background: white; position: relative; overflow: hidden; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 8px;">
       
       <!-- Decorative Borders -->
       <div class="certificate-border"></div>
@@ -92,47 +92,47 @@
       <div style="position: absolute; inset: 0; opacity: 0.03; pointer-events: none; background-image: radial-gradient(#1e3a8a 2px, transparent 2px); background-size: 30px 30px;"></div>
       
       <!-- Content -->
-      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem; text-align: center; z-index: 10;">
-        <div style="margin-bottom: 2rem;">
-          <h2 style="font-size: 1.875rem; font-weight: 700; color: #1e3a8a; letter-spacing: 0.1em; text-transform: uppercase; font-family: serif;">Uni Intern</h2>
-          <div style="width: 6rem; height: 4px; background: #3b82f6; margin: 1rem auto 0;"></div>
+      <div style="position: absolute; inset: 3.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 10;">
+        <div style="margin-bottom: 1rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e3a8a; letter-spacing: 0.1em; text-transform: uppercase; font-family: serif; margin: 0;">Uni Intern</h2>
+          <div style="width: 4rem; height: 3px; background: #3b82f6; margin: 0.5rem auto 0;"></div>
         </div>
         
-        <h1 style="font-size: 3rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem; letter-spacing: -0.025em; font-family: serif;">Certificate of Completion</h1>
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; letter-spacing: -0.01em; font-family: serif;">Certificate of Completion</h1>
         
-        <p style="font-size: 1.25rem; color: #475569; margin-bottom: 1.5rem; font-style: italic; font-family: serif;">This is to certify that</p>
+        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 1rem; font-style: italic; font-family: serif;">This is to certify that</p>
         
-        <h2 th:text="${userName} ?: 'Student Name'" style="font-size: 2.25rem; font-weight: 700; color: #1d4ed8; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; padding-left: 3rem; padding-right: 3rem; display: inline-block;">
+        <h2 id="studentNameDisplay" th:text="${userName} ?: 'Student Name'" style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; padding-left: 2rem; padding-right: 2rem; display: inline-block;">
           Student Name
         </h2>
         
-        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 1rem; max-width: 42rem;">
+        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 1rem; width: 100%; max-width: 40rem; letter-spacing: normal; font-family: serif; line-height: normal;">
           has successfully completed the comprehensive curriculum and passed the final assessment for the course:
         </p>
         
-        <h3 th:text="${courseTitle} ?: 'Course Title'" style="font-size: 1.875rem; font-weight: 700; color: #0f172a; margin-bottom: 3rem;">Course Title</h3>
+        <h3 id="courseTitleDisplay" th:text="${courseTitle} ?: 'Course Title'" style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 2rem;">Course Title</h3>
         
         <!-- Footer details -->
-        <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end; padding-left: 4rem; padding-right: 4rem; margin-top: auto;">
+        <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 2rem; margin-top: auto;">
           <div style="text-align: center;">
-            <div th:text="${#dates.format(#dates.createNow(), 'MMMM d, yyyy')}" style="font-size: 1.125rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">Date</div>
-            <div style="width: 10rem; height: 1px; background: #94a3b8; margin-bottom: 0.5rem;"></div>
-            <div style="font-size: 0.875rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Date of Issue</div>
+            <div th:text="${#dates.format(#dates.createNow(), 'MMMM d, yyyy')}" style="font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">Date</div>
+            <div style="width: 8rem; height: 1px; background: #94a3b8; margin-bottom: 0.5rem;"></div>
+            <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Date of Issue</div>
           </div>
           
           <div style="text-align: center;">
-            <div style="width: 6rem; height: 6rem; border-radius: 50%; border: 4px solid #dbeafe; display: flex; align-items: center; justify-content: center; background: white; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); margin-bottom: 1rem; margin-left: auto; margin-right: auto;">
+            <div style="width: 5rem; height: 5rem; border-radius: 50%; border: 3px solid #dbeafe; display: flex; align-items: center; justify-content: center; background: white; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); margin-bottom: 0.5rem; margin-left: auto; margin-right: auto;">
               <div style="text-align: center;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Grade</div>
-                <div th:text="${grade} ?: 'A'" style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">A</div>
+                <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Grade</div>
+                <div th:text="${grade} ?: 'A'" style="font-size: 1.25rem; font-weight: 700; color: #2563eb;">A</div>
               </div>
             </div>
           </div>
           
           <div style="text-align: center;">
-            <div style="font-family: serif; font-size: 1.5rem; color: #1e293b; font-style: italic; margin-bottom: 0.25rem;">N.K Hatharasinghe</div>
-            <div style="width: 12rem; height: 1px; background: #94a3b8; margin-bottom: 0.5rem;"></div>
-            <div style="font-size: 0.875rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Program Director</div>
+            <div style="font-family: serif; font-size: 1.25rem; color: #1e293b; font-style: italic; margin-bottom: 0.25rem;">N.K Hatharasinghe</div>
+            <div style="width: 10rem; height: 1px; background: #94a3b8; margin-bottom: 0.5rem;"></div>
+            <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Program Director</div>
           </div>
         </div>
       </div>
@@ -173,8 +173,8 @@
 
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
 
-      const userName = document.querySelector('h2[style*="font-size: 2.25rem"]').textContent.trim().replace(/\s+/g, '_');
-      const courseTitle = document.querySelector('h3').textContent.trim().replace(/\s+/g, '_');
+      const userName = document.getElementById('studentNameDisplay').textContent.trim().replace(/\s+/g, '_');
+      const courseTitle = document.getElementById('courseTitleDisplay').textContent.trim().replace(/\s+/g, '_');
       pdf.save(`${userName}_${courseTitle}_Certificate.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);

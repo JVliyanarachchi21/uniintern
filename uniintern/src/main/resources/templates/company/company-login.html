@@ -67,7 +67,7 @@
             <h2>Welcome back</h2>
             <p class="auth-sub">Sign in to your recruiter portal</p>
 
-            <form th:action="@{/company/dashboard}" method="get">
+            <form th:action="@{/company/login}" method="post">
                 <div th:if="${error}" style="background: #fee2e2; color: #ef4444; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
                     <span th:text="${error}"></span>
                 </div>
@@ -88,6 +88,9 @@
                     <div class="input-wrap">
                         <span class="input-icon">🔒</span>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <div style="text-align: right; margin-top: 6px;">
+                        <a th:href="@{/company/forgot-password}" style="font-size: 13px; color: #3b82f6; text-decoration: none; font-weight: 500;">Forgot Password?</a>
                     </div>
                 </div>
 

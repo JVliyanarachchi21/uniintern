@@ -27,6 +27,10 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
+    public Company findByEmail(String email) {
+        return companyRepository.findByEmail(email).orElse(null);
+    }
+
     public Company getOrCreateMockCompany() {
         return companyRepository.findAll().stream().findFirst().orElseGet(() -> {
             Company dummy = new Company();
@@ -113,5 +117,57 @@ public class CompanyService {
         companyRepository.save(company);
         
         return true;
+    }
+
+    public void generatePasswordResetOtp(String email) {
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found with email: " + email));
+
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        company.setVerificationCode(otp);
+        company.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        companyRepository.save(company);
+
+        emailService.sendPasswordResetOtp(email, otp);
+    }
+
+    public boolean verifyPasswordResetOtp(String email, String otp) {
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+
+        if (company.getVerificationCodeExpiresAt() == null || company.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("OTP has expired. Please request a new one.");
+        }
+
+        if (!otp.equals(company.getVerificationCode())) {
+            throw new IllegalArgumentException("Invalid OTP");
+        }
+
+        return true;
+    }
+
+    public void resetPassword(String email, String newPassword) {
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+
+        company.setPassword(newPassword);
+        company.setVerificationCode(null);
+        company.setVerificationCodeExpiresAt(null);
+        companyRepository.save(company);
+    }
+
+    public void updatePassword(Long companyId, String currentPassword, String newPassword) {
+        Company company = findById(companyId);
+        if (company == null) {
+            throw new IllegalArgumentException("Company not found");
+        }
+        
+        // Simple password comparison (Plain text since no hashing used in this project)
+        if (!company.getPassword().equals(currentPassword)) {
+            throw new IllegalArgumentException("Current password does not match");
+        }
+        
+        company.setPassword(newPassword);
+        companyRepository.save(company);
     }
 }

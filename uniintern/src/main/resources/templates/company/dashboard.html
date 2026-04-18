@@ -73,11 +73,22 @@
     </div>
 
     <div class="panel">
-      <div class="panel-title">Recent Notifications</div>
+      <div class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+          Recent Notifications
+          <a th:href="@{/company/notifications}" style="font-size: 13px; font-weight: 500; color: #3b82f6; text-decoration: none;">View All</a>
+      </div>
 
-      <div th:each="n : ${notifications}" class="note">
-        <div class="msg" th:text="${n.message}">Your internship has been approved!</div>
-        <div class="date" th:text="${n.date}">2/24/2026</div>
+      <div th:each="n : ${notifications}" class="note" th:classappend="${n.isNew != null && n.isNew} ? ' unread' : ''">
+        <div class="msg">
+            <span th:text="${n.message}">Your internship has been approved!</span>
+            <span class="new-dot" th:if="${n.isNew}"></span>
+        </div>
+        <div class="date" th:text="${n.date}">Today</div>
+
+      </div>
+      
+      <div th:if="${#lists.isEmpty(notifications)}" style="padding: 20px; text-align: center; color: #64748b;">
+          <p>No recent notifications.</p>
       </div>
     </div>
   </div>

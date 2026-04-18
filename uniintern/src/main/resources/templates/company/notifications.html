@@ -10,19 +10,21 @@
     <div class="notifications-page-header">
         <div>
             <h1 class="page-title">Notifications</h1>
-            <p class="page-sub" th:text="${unreadCount + ' unread notifications'}">0 unread notifications</p>
+            <p class="page-sub"><span th:text="${unreadCount}">0</span> unread notifications</p>
+
         </div>
     </div>
 
     <div class="notifications-list">
-        <div class="notification-card-item" th:each="n : ${notifications}">
+        <div class="notification-card-item" th:classappend="${n.type} + (${n.isNew} ? ' unread' : '')" th:each="n : ${notifications}">
             <div class="notification-card-icon">
-                <i class="bi bi-bell"></i>
+                <i th:class="'bi ' + ${n.icon}"></i>
             </div>
 
             <div class="notification-card-content">
-                <div class="notification-card-message" th:text="${n.message}">
-                    Your internship has been approved.
+                <div class="notification-card-message">
+                    <span th:text="${n.message}">Your internship has been approved.</span>
+                    <span class="new-badge" th:if="${n.isNew}">New</span>
                 </div>
                 <div class="notification-card-time" th:text="${n.date}">
                     2/24/2026, 10:30:00 AM

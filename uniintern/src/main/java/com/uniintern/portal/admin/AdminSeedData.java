@@ -4,6 +4,9 @@ import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.repository.CompanyRepository;
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.repository.InternshipRepository;
+import com.uniintern.portal.student.model.Student;
+import com.uniintern.portal.student.model.StudentStatus;
+import com.uniintern.portal.student.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -19,10 +22,14 @@ public class AdminSeedData implements CommandLineRunner {
 
     private final CompanyRepository companyRepository;
     private final InternshipRepository internshipRepository;
+    private final StudentRepository studentRepository;
 
-    public AdminSeedData(CompanyRepository companyRepository, InternshipRepository internshipRepository) {
+    public AdminSeedData(CompanyRepository companyRepository, 
+                        InternshipRepository internshipRepository,
+                        StudentRepository studentRepository) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -70,6 +77,28 @@ public class AdminSeedData implements CommandLineRunner {
 
                 internshipRepository.save(i1);
                 internshipRepository.save(i2);
+            }
+
+            if (studentRepository.count() == 0) {
+                Student s = new Student();
+                s.setFullName("Test Student");
+                s.setEmail("student@my.sliit.lk");
+                s.setPassword("Student@123");
+                s.setUniversity("SLIIT");
+                s.setDegreeProgram("Information Technology");
+                s.setRegistrationNumber("IT23537538");
+                s.setNicNumber("20019980873");
+                s.setGpa(3.5);
+                s.setAcademicYear("3rd Year");
+                s.setStatus(StudentStatus.VERIFIED);
+                
+                // Set default security fields to avoid NOT NULL constraints
+                s.setLoginAlertsEnabled(false);
+                s.setTwoFactorEnabled(false);
+                s.setRememberDeviceEnabled(false);
+                
+                studentRepository.save(s);
+                log.info("Seeded test student account: student@my.sliit.lk / Student@123");
             }
 
             log.info("Seed data check completed.");

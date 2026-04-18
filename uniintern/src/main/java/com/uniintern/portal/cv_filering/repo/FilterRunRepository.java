@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface FilterRunRepository extends JpaRepository<FilterRun, Long> {
     List<FilterRun> findAllByOrderByFinishedAtDesc();
+    List<FilterRun> findByCompanyIdOrderByFinishedAtDesc(Long companyId);
+    List<FilterRun> findByCompanyId(Long companyId);
 }

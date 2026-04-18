@@ -9,114 +9,145 @@
 
     <div class="settings-header">
         <div>
-            <h1 class="page-title">Security Settings</h1>
-            <p class="page-sub">Manage your password, account protection, and login preferences.</p>
+            <h1 class="page-title">Settings & Privacy</h1>
+            <p class="page-sub">Manage your security and notification preferences.</p>
         </div>
     </div>
 
-    <div class="settings-grid">
+    <!-- Success/Error Alerts -->
+    <div th:if="${success}" class="settings-alert success">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${success}">Success message</span>
+    </div>
+    <div th:if="${error}" class="settings-alert error">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${error}">Error message</span>
+    </div>
 
-        <!-- Change Password -->
-        <div class="settings-card">
-            <div class="section-title">Change Password</div>
+    <!-- Tab Navigation -->
+    <div class="settings-tabs">
+        <button class="settings-tab active" id="security-btn" onclick="switchSettingsTab('security')">
+            <i class="bi bi-shield-lock me-2"></i>Security
+        </button>
+        <button class="settings-tab" id="notifications-btn" onclick="switchSettingsTab('notifications')">
+            <i class="bi bi-bell me-2"></i>Notifications
+        </button>
+    </div>
 
-            <div class="field">
-                <label for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" placeholder="Enter current password">
+    <!-- SECURITY TAB -->
+    <div id="security-tab" class="tab-content" style="display: block;">
+        <div class="settings-grid">
+            <!-- Change Password -->
+            <div class="settings-card">
+                <div class="section-title">Change Password</div>
+                <form th:action="@{/company/settings/update-password}" method="post">
+                    <div class="field">
+                        <label for="currentPassword">Current Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" name="currentPassword" id="currentPassword" required placeholder="Enter current password">
+                            <i class="bi bi-eye toggle-password" onclick="togglePasswordVisibility('currentPassword', this)"></i>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="newPassword">New Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" name="newPassword" id="newPassword" required placeholder="Enter new password">
+                            <i class="bi bi-eye toggle-password" onclick="togglePasswordVisibility('newPassword', this)"></i>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="confirmPassword" required placeholder="Re-enter new password">
+                            <i class="bi bi-eye toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)"></i>
+                        </div>
+                    </div>
+                    <div class="form-actions no-border-actions">
+                        <button type="submit" class="btn primary">Update Password</button>
+                    </div>
+                </form>
             </div>
 
-            <div class="field">
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPassword" placeholder="Enter new password">
-            </div>
-
-            <div class="field">
-                <label for="confirmPassword">Confirm New Password</label>
-                <input type="password" id="confirmPassword" placeholder="Re-enter new password">
-            </div>
-
-            <div class="form-actions no-border-actions">
-                <button type="button" class="btn primary" onclick="updatePassword()">Update Password</button>
+            <!-- Security Preferences -->
+            <div class="settings-card">
+                <div class="section-title">Security Preferences</div>
+                <div class="security-option">
+                    <div>
+                        <div class="security-title">Two-Factor Authentication</div>
+                        <div class="security-desc">Add an extra verification step when signing in.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="twoFactorToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <div class="security-title">Login Alerts</div>
+                        <div class="security-desc">Receive email alerts for new login attempts.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="loginAlertToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-actions no-border-actions">
+                    <button type="button" class="btn" onclick="alert('Preferences saved locally (Simulated)')">Save Preferences</button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Security Preferences -->
-        <div class="settings-card">
-            <div class="section-title">Security Preferences</div>
-
-            <div class="security-option">
-                <div>
-                    <div class="security-title">Two-Factor Authentication</div>
-                    <div class="security-desc">Add an extra verification step when signing in.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="twoFactorToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="security-option">
-                <div>
-                    <div class="security-title">Login Alerts</div>
-                    <div class="security-desc">Receive email alerts for new login attempts.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="loginAlertToggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="security-option">
-                <div>
-                    <div class="security-title">Remember Trusted Device</div>
-                    <div class="security-desc">Reduce verification prompts on trusted devices.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="trustedDeviceToggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="form-actions no-border-actions">
-                <button type="button" class="btn" onclick="saveSecurityPreferences()">Save Preferences</button>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
+    <!-- NOTIFICATIONS TAB -->
+    <div id="notifications-tab" class="tab-content">
         <div class="settings-card full-width-card">
-            <div class="section-title">Recent Security Activity</div>
-
-            <div class="security-log">
-                <div class="security-log-item">
-                    <div>
-                        <div class="security-title">Password changed</div>
-                        <div class="security-desc">Your password was updated successfully.</div>
-                    </div>
-                    <div class="security-time">2026-03-21 10:30 AM</div>
+            <div class="section-title">Notification Preferences</div>
+            <div class="security-option">
+                <div>
+                    <div class="security-title">Candidate Applications</div>
+                    <div class="security-desc">Get notified when a student applies for your internships.</div>
                 </div>
-
-                <div class="security-log-item">
-                    <div>
-                        <div class="security-title">New login detected</div>
-                        <div class="security-desc">Login from Colombo, Sri Lanka.</div>
-                    </div>
-                    <div class="security-time">2026-03-20 08:15 PM</div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="security-option">
+                <div>
+                    <div class="security-title">Promotion Expiry</div>
+                    <div class="security-desc">Receive notification 24 hours before a boost expires.</div>
                 </div>
-
-                <div class="security-log-item">
-                    <div>
-                        <div class="security-title">Security preferences updated</div>
-                        <div class="security-desc">Login alerts were enabled.</div>
-                    </div>
-                    <div class="security-time">2026-03-18 02:00 PM</div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="security-option">
+                <div>
+                    <div class="security-title">Marketing Emails</div>
+                    <div class="security-desc">Stay updated with our latest features and news.</div>
                 </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
+    </div>
 
+    <!-- DANGER ZONE (Visible on all tabs) -->
+    <div class="danger-zone">
+        <div class="danger-card">
+            <div class="danger-text">
+                <div class="danger-title">Delete Company Account</div>
+                <div class="danger-desc">Once you delete your account, there is no going back. All internships and applicant data will be lost.</div>
+            </div>
+            <button class="btn danger" onclick="confirm('Are you absolutely sure? This action cannot be undone.')">Delete Account</button>
+        </div>
     </div>
 
 </section>
 
 <script src="/js/company.js"></script>
 </body>
-</html>
+</html>

@@ -13,6 +13,7 @@ public class FilteringLog {
     
     private String runBy;
     private String userRole; // "admin" or "company"
+    private Long companyId;
     private Long internshipId;
     private String internshipTitle;
     private LocalDateTime runAt;
@@ -21,10 +22,11 @@ public class FilteringLog {
     
     public FilteringLog() {}
     
-    public FilteringLog(String runBy, String userRole, Long internshipId, String internshipTitle,
+    public FilteringLog(String runBy, String userRole, Long companyId, Long internshipId, String internshipTitle,
                         LocalDateTime runAt, int totalCandidates, String status) {
         this.runBy = runBy;
         this.userRole = userRole;
+        this.companyId = companyId;
         this.internshipId = internshipId;
         this.internshipTitle = internshipTitle;
         this.runAt = runAt;
@@ -40,6 +42,9 @@ public class FilteringLog {
     
     public String getUserRole() { return userRole; }
     public void setUserRole(String userRole) { this.userRole = userRole; }
+    
+    public Long getCompanyId() { return companyId; }
+    public void setCompanyId(Long companyId) { this.companyId = companyId; }
     
     public Long getInternshipId() { return internshipId; }
     public void setInternshipId(Long internshipId) { this.internshipId = internshipId; }

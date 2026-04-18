@@ -36,11 +36,11 @@
       justify-content:center;
       padding:14px 22px;
       border-radius:16px;
-      background:linear-gradient(135deg, #10B981, #059669);
+      background:linear-gradient(135deg, #5483B3, #052659);
       color:#fff;
       font-weight:800;
       text-decoration:none;
-      box-shadow:0 14px 30px rgba(16,185,129,0.18);
+      box-shadow:0 14px 30px rgba(5,38,89,0.18);
       white-space:nowrap;
     }
 
@@ -147,18 +147,18 @@
     }
 
     .schedule-badge-scheduled{
-      background:#DCFCE7;
-      color:#166534;
+      background:#C1E8FF;
+      color:#052659;
     }
 
     .schedule-badge-completed{
-      background:#DBEAFE;
-      color:#1D4ED8;
+      background:#7DA0CA;
+      color:#021024;
     }
 
     .schedule-badge-cancelled{
-      background:#FEE2E2;
-      color:#B91C1C;
+      background:#021024;
+      color:#C1E8FF;
     }
 
     .schedule-empty{
@@ -197,7 +197,10 @@
         <p>Track scheduled interviews, monitor status changes, and keep the recruitment workflow organized through a cleaner admin scheduling experience.</p>
       </div>
 
-      <a href="/admin/schedule" class="schedule-create-btn">+ Schedule Interview</a>
+      <div style="display:flex; gap:12px;">
+          <a th:href="@{/admin/scheduling/advanced}" class="schedule-create-btn" style="background:#fff; color:#052659; border:2px solid #052659; box-shadow:none;">Advanced Hub</a>
+          <a th:href="@{/admin/schedule}" class="schedule-create-btn">+ Manual Schedule</a>
+      </div>
     </div>
 
     <div class="schedule-stat-grid">
@@ -240,9 +243,9 @@
               <td th:text="${i.internshipTitle}">Internship Title</td>
               <td th:text="${i.interviewDateTime}">2026-03-01T10:00</td>
               <td>
-                <span th:if="${i.status.name() == 'SCHEDULED'}" class="schedule-badge schedule-badge-scheduled">Scheduled</span>
-                <span th:if="${i.status.name() == 'COMPLETED'}" class="schedule-badge schedule-badge-completed">Completed</span>
-                <span th:if="${i.status.name() == 'CANCELLED'}" class="schedule-badge schedule-badge-cancelled">Cancelled</span>
+                <span th:if="${i.status == 'SCHEDULED'}" class="schedule-badge schedule-badge-scheduled">Scheduled</span>
+                <span th:if="${i.status == 'COMPLETED'}" class="schedule-badge schedule-badge-completed">Completed</span>
+                <span th:if="${i.status == 'CANCELLED'}" class="schedule-badge schedule-badge-cancelled">Cancelled</span>
               </td>
             </tr>
           </tbody>

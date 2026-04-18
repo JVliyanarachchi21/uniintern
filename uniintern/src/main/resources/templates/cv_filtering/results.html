@@ -44,9 +44,8 @@
                                 </td>
                                 <td class="px-10 py-8 text-center">
                                     <span th:class="'px-4 py-2 text-[10px] font-black uppercase rounded-full tracking-widest shadow-sm ' + 
-                                        (${run.status == 'completed' || run.status == 'approved'} ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 
-                                        (${run.status == 'pending_approval'} ? 'bg-amber-100 text-amber-700 border border-amber-100' : 'bg-rose-50 text-rose-700 border border-rose-100'))"
-                                          th:text="${run.status == 'pending_approval'} ? 'Awaiting Admin' : ${run.status}">
+                                        (${run.status == 'completed' || run.status == 'approved' || run.status == 'pending_approval'} ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100')"
+                                          th:text="${run.status == 'pending_approval' ? 'SUCCESS' : run.status}">
                                         Status
                                     </span>
                                 </td>

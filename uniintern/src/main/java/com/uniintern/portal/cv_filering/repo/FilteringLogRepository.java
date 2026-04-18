@@ -12,4 +12,6 @@ public interface FilteringLogRepository extends JpaRepository<FilteringLog, Long
     List<FilteringLog> findAllByOrderByRunAtDesc();
     
     List<FilteringLog> findByUserRoleOrderByRunAtDesc(String userRole);
+
+    List<FilteringLog> findByCompanyIdOrderByRunAtDesc(Long companyId);
 }

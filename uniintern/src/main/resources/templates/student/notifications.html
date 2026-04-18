@@ -196,10 +196,12 @@
         <h1>Notifications</h1>
         <p>Stay updated with your applications and internship alerts.</p>
       </div>
-      <button class="mark-read-btn" type="button">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        Mark all as read
-      </button>
+      <form th:action="@{/student/notifications/mark-all-read}" method="post">
+        <button class="mark-read-btn" type="submit">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Mark all as read
+        </button>
+      </form>
     </div>
 
     <!-- Floating Cards Feed -->
