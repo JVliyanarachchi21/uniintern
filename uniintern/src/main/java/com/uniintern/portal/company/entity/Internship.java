@@ -39,6 +39,7 @@ public class Internship {
     private Integer experienceWeight;
     private Integer certificatesWeight;
     private Integer topNCandidates;
+    private Double minimumThreshold;
 
     public Internship() {
     }
@@ -177,5 +178,13 @@ public class Internship {
 
     public void setTopNCandidates(Integer topNCandidates) {
         this.topNCandidates = topNCandidates;
+    }
+
+    public Double getMinimumThreshold() {
+        return minimumThreshold;
+    }
+
+    public void setMinimumThreshold(Double minimumThreshold) {
+        this.minimumThreshold = minimumThreshold;
     }
 }

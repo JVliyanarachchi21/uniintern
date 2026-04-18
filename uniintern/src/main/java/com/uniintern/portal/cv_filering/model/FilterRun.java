@@ -19,12 +19,13 @@ public class FilterRun {
     private int applicantsProcessed;
     private String status; // pending_approval, approved, rejected, failed
     private int topN;
+    private Double minimumThreshold;
     
     public FilterRun() {}
     
     public FilterRun(Long internshipId, String internshipTitle, String company, 
                      LocalDateTime startedAt, LocalDateTime finishedAt, 
-                     int applicantsProcessed, String status, int topN) {
+                     int applicantsProcessed, String status, int topN, Double minimumThreshold) {
         this.internshipId = internshipId;
         this.internshipTitle = internshipTitle;
         this.company = company;
@@ -33,6 +34,7 @@ public class FilterRun {
         this.applicantsProcessed = applicantsProcessed;
         this.status = status;
         this.topN = topN;
+        this.minimumThreshold = minimumThreshold;
     }
 
     public Long getId() { return id; }
@@ -61,4 +63,7 @@ public class FilterRun {
     
     public int getTopN() { return topN; }
     public void setTopN(int topN) { this.topN = topN; }
+
+    public Double getMinimumThreshold() { return minimumThreshold; }
+    public void setMinimumThreshold(Double minimumThreshold) { this.minimumThreshold = minimumThreshold; }
 }

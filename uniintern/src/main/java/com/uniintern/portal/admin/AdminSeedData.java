@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -25,6 +26,7 @@ public class AdminSeedData implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) {
         try {
             if (companyRepository.count() == 0) {

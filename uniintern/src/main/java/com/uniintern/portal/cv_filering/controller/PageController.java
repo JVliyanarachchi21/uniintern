@@ -4,12 +4,15 @@ import com.uniintern.portal.cv_filering.model.*;
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.student.model.StudentApplication;
 import com.uniintern.portal.cv_filering.service.DashboardService;
+import com.uniintern.portal.cv_filering.repo.FilteringLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -19,45 +22,95 @@ public class PageController {
     @Autowired
     private DashboardService dashboardService;
     
+    @Autowired
+    private FilteringLogRepository filteringLogRepository;
+    
     @GetMapping("/")
     public String redirectToDashboard() {
         return "redirect:/company/cv/dashboard";
     }
     
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("companyId");
         model.addAttribute("readyInternshipsCount", dashboardService.getReadyInternshipsCount());
         model.addAttribute("missingGuidesCount", dashboardService.getMissingGuidesCount());
         model.addAttribute("awaitingDeadlineCount", dashboardService.getAwaitingDeadlineCount());
         model.addAttribute("completedRunsCount", dashboardService.getCompletedRunsCount());
         model.addAttribute("pendingApprovalsCount", dashboardService.getPendingApprovalsCount());
         model.addAttribute("recentRuns", dashboardService.getRecentRuns(5));
+        model.addAttribute("userRole", "company");
+        model.addAttribute("companyId", companyId);
         return "cv_filtering/dashboard";
     }
     
     @GetMapping("/marking-guides")
-    public String markingGuides(Model model) {
-        model.addAttribute("internships", dashboardService.getAllInternships());
+    public String markingGuides(Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("companyId");
+        model.addAttribute("internships", dashboardService.getInternshipsByCompanyId(companyId));
+        model.addAttribute("userRole", "company");
         return "cv_filtering/marking-guides";
     }
     
     @GetMapping("/marking-guide-detail/{id}")
-    public String markingGuideDetail(@PathVariable String id, Model model) {
+    public String markingGuideDetail(@PathVariable String id, Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("companyId");
         Internship guide = dashboardService.getInternshipById(id);
+        
+        // Verify internship belongs to company
+        if (guide != null && !guide.getCompanyId().equals(companyId)) {
+            return "redirect:/company/cv/marking-guides";
+        }
+        
         model.addAttribute("guide", guide);
+        model.addAttribute("userRole", "company");
         return "cv_filtering/marking-guide-detail";
     }
     
     @GetMapping("/run-filtering")
-    public String runFiltering(Model model) {
-        model.addAttribute("availableInternships", dashboardService.getAvailableInternships());
+    public String runFiltering(Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("companyId");
+        // Show ALL approved internships, not just those with weights set
+        model.addAttribute("internships", dashboardService.getAllApprovedInternshipsByCompanyId(companyId));
+        model.addAttribute("userRole", "company");
         return "cv_filtering/run-filtering";
     }
     
     @PostMapping("/run-filtering")
-    public String runFilteringPost(@RequestParam String internshipId, RedirectAttributes redirectAttributes) {
-        FilterRun run = dashboardService.runFiltering(internshipId);
+    public String runFilteringPost(@RequestParam String internshipId, 
+                                   HttpSession session,
+                                   RedirectAttributes redirectAttributes) {
+        Long companyId = (Long) session.getAttribute("companyId");
+        String companyName = (String) session.getAttribute("companyName");
+        
+        // Check if internship has weights configured
+        try {
+            Long id = Long.parseLong(internshipId);
+            var internship = dashboardService.getInternshipById(internshipId);
+            if (internship != null && internship.getSkillsWeight() == null) {
+                redirectAttributes.addFlashAttribute("error", 
+                    "Cannot run filtering: Marking guide weights are not set for this internship. Please configure weights first.");
+                return "redirect:/company/cv/run-filtering";
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Invalid internship selected.");
+            return "redirect:/company/cv/run-filtering";
+        }
+        
+        FilterRun run = dashboardService.runFilteringForCompany(internshipId, companyId, companyName);
         if (run != null) {
+            // Log the filtering run
+            FilteringLog log = new FilteringLog(
+                companyName != null ? companyName : "Company " + companyId,
+                "company",
+                run.getInternshipId(),
+                run.getInternshipTitle(),
+                LocalDateTime.now(),
+                run.getApplicantsProcessed(),
+                "success"
+            );
+            filteringLogRepository.save(log);
+            
             redirectAttributes.addFlashAttribute("message", "Filtering completed successfully!");
             return "redirect:/company/cv/results";
         }
@@ -66,18 +119,39 @@ public class PageController {
     }
     
     @GetMapping("/applicants-preview")
-    public String applicantsPreview(@RequestParam String internshipId, Model model) {
+    public String applicantsPreview(@RequestParam String internshipId, Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("companyId");
         Internship internship = dashboardService.getInternshipById(internshipId);
+        
+        // Verify internship belongs to company
+        if (internship != null && !internship.getCompanyId().equals(companyId)) {
+            return "redirect:/company/cv/run-filtering";
+        }
+        
         List<StudentApplication> applications = dashboardService.getApplicationsByInternshipId(internshipId);
         model.addAttribute("internship", internship);
         model.addAttribute("applications", applications);
+        model.addAttribute("userRole", "company");
         return "cv_filtering/applicants-preview";
     }
     
     @GetMapping("/results")
-    public String results(Model model) {
+    public String results(Model model, HttpSession session) {
         model.addAttribute("runs", dashboardService.getAllRuns());
+        model.addAttribute("userRole", "company");
         return "cv_filtering/results";
+    }
+    
+    @GetMapping("/results/{id}/download")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<byte[]> downloadRunResults(@PathVariable String id) {
+        byte[] pdfBytes = dashboardService.generatePdfForRun(id);
+        
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "UniIntern_Results_" + id + ".pdf");
+        
+        return new org.springframework.http.ResponseEntity<>(pdfBytes, headers, org.springframework.http.HttpStatus.OK);
     }
     
     @GetMapping("/ranking-detail/{id}")
@@ -86,6 +160,7 @@ public class PageController {
         List<FilterResult> results = dashboardService.getResultsByRunId(id);
         model.addAttribute("run", run);
         model.addAttribute("results", results);
+        model.addAttribute("userRole", "company");
         return "cv_filtering/ranking-detail";
     }
     
@@ -102,18 +177,59 @@ public class PageController {
     }
     
     @GetMapping("/rules-weights")
-    public String rulesAndWeights() {
+    public String rulesAndWeights(Model model) {
+        model.addAttribute("userRole", "company");
         return "cv_filtering/rules-weights";
     }
     
     @GetMapping("/logs")
-    public String logs(Model model) {
-        model.addAttribute("logs", dashboardService.getAllLogs());
+    public String logs(Model model, HttpSession session) {
+        model.addAttribute("logs", filteringLogRepository.findAllByOrderByRunAtDesc());
+        model.addAttribute("userRole", "company");
         return "cv_filtering/logs";
     }
     
-    @GetMapping("/settings")
-    public String settings() {
-        return "cv_filtering/settings";
+    @PostMapping("/save-weights")
+    public String saveWeights(@RequestParam String internshipId,
+                             @RequestParam Integer skillsWeight,
+                             @RequestParam Integer gpaWeight,
+                             @RequestParam Integer experienceWeight,
+                             @RequestParam Integer certificatesWeight,
+                             @RequestParam(required = false) Double minimumThreshold,
+                             @RequestParam(required = false) Integer topN,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            var internship = dashboardService.getInternshipById(internshipId);
+            if (internship == null) {
+                redirectAttributes.addFlashAttribute("error", "Internship not found.");
+                return "redirect:/company/cv/marking-guides";
+            }
+            
+            // Validate weights sum to 100
+            int total = (skillsWeight != null ? skillsWeight : 0) + 
+                        (gpaWeight != null ? gpaWeight : 0) + 
+                        (experienceWeight != null ? experienceWeight : 0) + 
+                        (certificatesWeight != null ? certificatesWeight : 0);
+                        
+            if (total != 100) {
+                redirectAttributes.addFlashAttribute("error", "Weights must sum to 100%. Current total: " + total + "%");
+                return "redirect:/company/cv/marking-guide-detail/" + internshipId;
+            }
+            
+            internship.setSkillsWeight(skillsWeight);
+            internship.setGpaWeight(gpaWeight);
+            internship.setExperienceWeight(experienceWeight);
+            internship.setCertificatesWeight(certificatesWeight);
+            internship.setMinimumThreshold(minimumThreshold);
+            if (topN != null) internship.setTopNCandidates(topN);
+            
+            dashboardService.saveInternship(internship);
+            
+            redirectAttributes.addFlashAttribute("message", "Marking guide updated successfully!");
+            return "redirect:/company/cv/marking-guide-detail/" + internshipId;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error saving weights: " + e.getMessage());
+            return "redirect:/company/cv/marking-guides";
+        }
     }
 }

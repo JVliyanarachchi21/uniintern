@@ -1,80 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{cv_filtering/fragments/layout :: head('Marking Guides')}"></head>
-<body class="flex h-screen w-full bg-gray-100 overflow-hidden font-sans">
-    <div th:replace="~{cv_filtering/fragments/layout :: sidebar('MarkingGuides')}"></div>
-    
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <div th:replace="~{cv_filtering/fragments/layout :: header('MarkingGuides')}"></div>
-        
-        <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
-            <div class="max-w-7xl mx-auto">
-                <div class="space-y-6 animate-fade-in">
-                    <div class="mb-8 flex justify-between items-end">
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Marking Guides</h2>
-                            <p class="text-gray-500 mt-1">Review and validate scoring rules set by companies.</p>
-                        </div>
-                    </div>
+<body class="flex h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-900">
+    <div th:replace="~{cv_filtering/fragments/layout :: main('MarkingGuides', ~{::content})}">
+        <div th:fragment="content" class="space-y-10 animate-fade-in pb-20">
+            <div class="mb-10">
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight">Marking Guides</h2>
+                <p class="text-slate-500 font-bold text-lg">Define selection criteria and weights for your internship openings.</p>
+            </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
-                                    <tr>
-                                        <th class="px-6 py-4 font-medium">Internship</th>
-                                        <th class="px-6 py-4 font-medium">Company</th>
-                                        <th class="px-6 py-4 font-medium">Weights (S/G/E/C)</th>
-                                        <th class="px-6 py-4 font-medium">Top N</th>
-                                        <th class="px-6 py-4 font-medium">Status</th>
-                                        <th class="px-6 py-4 font-medium text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100">
-                                    <tr th:each="internship : ${internships}" class="hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-4">
-                                            <div class="font-medium text-gray-900" th:text="${internship.title}">Title</div>
-                                            <div class="text-xs text-gray-500" th:text="${internship.department}">Department</div>
-                                        </td>
-                                        <td class="px-6 py-4 text-gray-600" th:text="${internship.company}">Company</td>
-                                        <td class="px-6 py-4">
-                                            <div th:if="${internship.guide != null}" class="flex space-x-2 text-xs font-mono">
-                                                <span class="text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded" th:text="'S:' + ${internship.guide.skillsWeight}">S:50</span>
-                                                <span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded" th:text="'G:' + ${internship.guide.gpaWeight}">G:20</span>
-                                                <span class="text-accent-600 bg-accent-50 px-1.5 py-0.5 rounded" th:text="'E:' + ${internship.guide.experienceWeight}">E:20</span>
-                                                <span class="text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded" th:text="'C:' + ${internship.guide.certWeight}">C:10</span>
-                                            </div>
-                                            <span th:if="${internship.guide == null}" class="text-gray-400 italic">Not set</span>
-                                        </td>
-                                        <td class="px-6 py-4 font-medium text-gray-900" th:text="${internship.guide != null} ? ${internship.guide.topN} : '-'">3</td>
-                                        <td class="px-6 py-4">
-                                            <span th:if="${internship.guide == null}" class="px-2 py-1 text-xs font-medium rounded-full badge-missing">Missing</span>
-                                            <span th:if="${internship.guide != null and internship.guide.isValid}" class="px-2 py-1 text-xs font-medium rounded-full badge-valid">Valid</span>
-                                            <span th:if="${internship.guide != null and !internship.guide.isValid}" class="px-2 py-1 text-xs font-medium rounded-full badge-invalid">Invalid</span>
-                                        </td>
-                                        <td class="px-6 py-4 text-right space-x-2">
-                                            <a th:if="${internship.guide != null}" 
-                                               th:href="@{/marking-guide-detail/{id}(id=${internship.id})}"
-                                               class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                                                <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                </svg>
-                                                View
-                                            </a>
-                                            <button th:if="${internship.guide == null}" disabled
-                                                    class="inline-flex items-center px-3 py-1.5 border border-gray-200 shadow-sm text-xs font-medium rounded text-gray-400 bg-gray-50 cursor-not-allowed">
-                                                Waiting on Co.
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/40 border border-gray-50 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100">
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Internship Details</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Weights Allocation (S / G / E / C)</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr th:if="${#lists.isEmpty(internships)}">
+                                <td colspan="4" class="px-10 py-20 text-center text-slate-400 font-bold italic">No active internship openings detected for marking configuration.</td>
+                            </tr>
+                            <tr th:each="internship : ${internships}" class="hover:bg-slate-50/50 transition-colors group">
+                                <td class="px-10 py-8">
+                                    <div class="text-sm font-black text-slate-900" th:text="${internship.title}">Software Engineering Intern</div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-widest" th:text="${internship.location}">Colombo, LK</div>
+                                </td>
+                                <td class="px-10 py-8">
+                                    <div class="flex items-center justify-center space-x-3">
+                                        <div th:class="${internship.skillsWeight != null} ? 'flex flex-col items-center px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-2xl min-w-[3rem]' : 'flex flex-col items-center px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl min-w-[3rem] opacity-40 italic'">
+                                            <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">Skill</span>
+                                            <span class="text-xs font-black text-indigo-700" th:text="${internship.skillsWeight != null ? internship.skillsWeight : '-'}">25</span>
+                                        </div>
+                                        <div th:class="${internship.gpaWeight != null} ? 'flex flex-col items-center px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-2xl min-w-[3rem]' : 'flex flex-col items-center px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl min-w-[3rem] opacity-40 italic'">
+                                            <span class="text-[8px] font-black text-emerald-400 uppercase tracking-tighter">GPA</span>
+                                            <span class="text-xs font-black text-emerald-700" th:text="${internship.gpaWeight != null ? internship.gpaWeight : '-'}">25</span>
+                                        </div>
+                                        <div th:class="${internship.experienceWeight != null} ? 'flex flex-col items-center px-4 py-2 bg-amber-50 border border-amber-100 rounded-2xl min-w-[3rem]' : 'flex flex-col items-center px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl min-w-[3rem] opacity-40 italic'">
+                                            <span class="text-[8px] font-black text-amber-400 uppercase tracking-tighter">Exp</span>
+                                            <span class="text-xs font-black text-amber-700" th:text="${internship.experienceWeight != null ? internship.experienceWeight : '-'}">25</span>
+                                        </div>
+                                        <div th:class="${internship.certificatesWeight != null} ? 'flex flex-col items-center px-4 py-2 bg-purple-50 border border-purple-100 rounded-2xl min-w-[3rem]' : 'flex flex-col items-center px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl min-w-[3rem] opacity-40 italic'">
+                                            <span class="text-[8px] font-black text-purple-400 uppercase tracking-tighter">Cert</span>
+                                            <span class="text-xs font-black text-purple-700" th:text="${internship.certificatesWeight != null ? internship.certificatesWeight : '-'}">25</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-10 py-8 text-center text-sm font-bold">
+                                    <span th:if="${internship.skillsWeight == null}" class="px-4 py-1.5 text-[10px] font-black uppercase rounded-full bg-amber-50 text-amber-700 border border-amber-100 items-center inline-flex">
+                                        <i class="bi bi-exclamation-triangle mr-1.5"></i> Configuration Required
+                                    </span>
+                                    <span th:if="${internship.skillsWeight != null}" class="px-4 py-1.5 text-[10px] font-black uppercase rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 items-center inline-flex">
+                                        <i class="bi bi-check-circle-fill mr-1.5"></i> Fully Configured
+                                    </span>
+                                </td>
+                                <td class="px-10 py-8 text-right">
+                                    <a th:href="@{${userRole == 'admin' ? '/admin/cv/marking-guide-detail/' + internship.id : '/company/cv/marking-guide-detail/' + internship.id}}"
+                                       class="inline-flex items-center px-6 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-black text-slate-700 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-all shadow-sm">
+                                        <i class="bi bi-pencil-square mr-2"></i> Configure Criteria
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 </body>
 </html>

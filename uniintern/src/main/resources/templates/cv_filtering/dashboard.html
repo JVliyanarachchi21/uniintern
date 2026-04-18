@@ -1,191 +1,148 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{cv_filtering/fragments/layout :: head('Dashboard')}"></head>
-<body class="flex h-screen w-full bg-gray-100 overflow-hidden font-sans">
-    <div th:replace="~{cv_filtering/fragments/layout :: sidebar('Dashboard')}"></div>
-    
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <div th:replace="~{cv_filtering/fragments/layout :: header('Dashboard')}"></div>
-        
-        <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
-            <div class="max-w-7xl mx-auto">
-                <div class="space-y-6 animate-fade-in">
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900">Filtering Dashboard</h2>
-                        <p class="text-gray-500 mt-1">Overview of your candidate ranking engine status.</p>
+<body class="flex h-screen w-full bg-slate-50 overflow-hidden font-sans">
+    <div th:replace="~{cv_filtering/fragments/layout :: main('Dashboard', ~{::content})}">
+        <div th:fragment="content" class="space-y-10 animate-fade-in pb-20">
+            <div class="mb-10 items-center flex justify-between">
+                <div class="space-y-1">
+                    <h2 class="text-4xl font-black text-slate-900 tracking-tight">Filtering Dashboard</h2>
+                    <p class="text-slate-500 font-bold text-lg">Real-time overview of your talent identification engine.</p>
+                </div>
+                <div class="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-lg shadow-emerald-200"></span>
+                    <span class="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Engine Status: Online</span>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all transform group-hover:rotate-6">
+                        <i class="bi bi-briefcase-fill text-2xl"></i>
                     </div>
-
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                        <!-- Ready for Filtering -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-2 bg-blue-50 rounded-lg">
-                                    <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-sm font-medium text-gray-500">Ready for Filtering</h3>
-                            <p class="text-2xl font-bold text-gray-900 mt-1" th:text="${readyInternshipsCount}">0</p>
-                        </div>
-
-                        <!-- Awaiting Guide -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-2 bg-accent-50 rounded-lg">
-                                    <svg class="w-6 h-6 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-sm font-medium text-gray-500">Awaiting Guide</h3>
-                            <p class="text-2xl font-bold text-gray-900 mt-1" th:text="${missingGuidesCount}">0</p>
-                        </div>
-
-                        <!-- Awaiting Deadline -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-2 bg-purple-50 rounded-lg">
-                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-sm font-medium text-gray-500">Awaiting Deadline</h3>
-                            <p class="text-2xl font-bold text-gray-900 mt-1" th:text="${awaitingDeadlineCount}">0</p>
-                        </div>
-
-                        <!-- Completed Runs -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-2 bg-emerald-50 rounded-lg">
-                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-sm font-medium text-gray-500">Completed Runs</h3>
-                            <p class="text-2xl font-bold text-gray-900 mt-1" th:text="${completedRunsCount}">0</p>
-                            <p class="text-xs text-gray-400 mt-1">This week</p>
-                        </div>
-
-                        <!-- Pending Approvals -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-2 bg-red-50 rounded-lg">
-                                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-sm font-medium text-gray-500">Pending Approvals</h3>
-                            <p class="text-2xl font-bold text-gray-900 mt-1" th:text="${pendingApprovalsCount}">0</p>
-                        </div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Ready for Filtering</span>
+                    <p class="text-4xl font-black text-slate-900 mt-1" th:text="${readyInternshipsCount}">0</p>
+                    <div class="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <i class="bi bi-briefcase-fill text-[6rem]"></i>
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-                        <!-- Recent Runs Table -->
-                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                                <h3 class="text-lg font-bold text-gray-900">Recent Filter Runs</h3>
-                                <a th:href="@{/company/cv/results}" class="text-sm font-medium text-brand-600 hover:text-brand-800 flex items-center">
-                                    View All
-                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm text-left">
-                                    <thead class="text-xs text-gray-500 uppercase bg-gray-50">
-                                        <tr>
-                                            <th class="px-6 py-3 font-medium">Internship</th>
-                                            <th class="px-6 py-3 font-medium">Date</th>
-                                            <th class="px-6 py-3 font-medium">Applicants</th>
-                                            <th class="px-6 py-3 font-medium">Status</th>
-                                            <th class="px-6 py-3 font-medium text-right">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100">
-                                        <tr th:if="${#lists.isEmpty(recentRuns)}">
-                                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                                                No recent filter runs found.
-                                            </td>
-                                        </tr>
-                                        <tr th:each="run : ${recentRuns}" class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-6 py-4">
-                                                <div class="font-medium text-gray-900" th:text="${run.internshipTitle}">Internship Title</div>
-                                                <div class="text-xs text-gray-500" th:text="${run.company}">Company</div>
-                                            </td>
-                                            <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(run.finishedAt, 'MMM dd, yyyy')}">Date</td>
-                                            <td class="px-6 py-4 text-gray-600" th:text="${run.applicantsProcessed}">0</td>
-                                            <td class="px-6 py-4">
-                                                <span th:class="'px-2 py-1 text-xs font-medium rounded-full ' + 
-                                                    (${run.status == 'completed'} ? 'badge-completed' : 
-                                                    (${run.status == 'pending_approval'} ? 'badge-pending' : 
-                                                    (${run.status == 'approved'} ? 'badge-approved' : 
-                                                    (${run.status == 'rejected'} ? 'badge-rejected' : 'badge-failed'))))"
-                                                      th:text="${run.status == 'pending_approval'} ? 'Pending Approval' : ${#strings.capitalize(run.status)}">
-                                                    Status
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <a th:href="@{/company/cv/ranking-detail/{id}(id=${run.id})}"
-                                                   class="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded transition-colors"
-                                                   title="View Results">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                    </svg>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-amber-600 group-hover:text-white transition-all transform group-hover:rotate-6">
+                        <i class="bi bi-clipboard-check-fill text-2xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Awaiting Guide</span>
+                    <p class="text-4xl font-black text-slate-900 mt-1" th:text="${missingGuidesCount}">0</p>
+                    <div class="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <i class="bi bi-clipboard-check-fill text-[6rem]"></i>
+                    </div>
+                </div>
 
-                        <!-- Quick Start Panel -->
-                        <div class="bg-white rounded-xl shadow-sm border border-brand-100 overflow-hidden flex flex-col">
-                            <div class="px-6 py-4 border-b border-brand-100 bg-brand-50">
-                                <h3 class="text-lg font-bold text-brand-900 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    Quick Start
-                                </h3>
-                            </div>
-                            <div class="p-6 flex-1 flex flex-col justify-center space-y-6">
-                                <p class="text-sm text-gray-600">
-                                    Select an internship that is ready for filtering to generate candidate rankings instantly.
-                                </p>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-purple-600 group-hover:text-white transition-all transform group-hover:rotate-6">
+                        <i class="bi bi-clock-history text-2xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Completed Runs</span>
+                    <p class="text-4xl font-black text-slate-900 mt-1" th:text="${completedRunsCount}">0</p>
+                    <div class="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <i class="bi bi-clock-history text-[6rem]"></i>
+                    </div>
+                </div>
 
-                                <div class="space-y-4">
-                                    <a th:href="@{/company/cv/run-filtering}"
-                                       class="w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg shadow-sm transition-all flex items-center justify-center group">
-                                        <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        Run Filtering Engine
-                                    </a>
-
-                                    <a th:href="@{/company/cv/marking-guides}"
-                                       class="w-full py-3 px-4 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg shadow-sm transition-all flex items-center justify-center">
-                                        <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                        Review Marking Guides
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-rose-600 group-hover:text-white transition-all transform group-hover:rotate-6">
+                        <i class="bi bi-hourglass-split text-2xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pending Approval</span>
+                    <p class="text-4xl font-black text-slate-900 mt-1" th:text="${pendingApprovalsCount}">0</p>
+                    <div class="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <i class="bi bi-hourglass-split text-[6rem]"></i>
                     </div>
                 </div>
             </div>
-        </main>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Recent Runs -->
+                <div class="lg:col-span-2 bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-gray-50 overflow-hidden">
+                    <div class="px-10 py-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+                        <h3 class="text-xl font-black text-slate-900 tracking-tight">Recent Filter Runs</h3>
+                        <a th:href="@{${userRole == 'admin' ? '/admin/cv/results' : '/company/cv/results'}}" class="text-xs font-black text-indigo-600 hover:text-indigo-800 uppercase tracking-[0.2em] transition-colors">View All Analysis</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-100">
+                                    <th class="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Internship</th>
+                                    <th class="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Applicants</th>
+                                    <th class="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                                    <th class="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr th:if="${#lists.isEmpty(recentRuns)}">
+                                    <td colspan="4" class="px-10 py-16 text-center text-slate-400 font-bold italic">No recent activity detected in the filtering system.</td>
+                                </tr>
+                                <tr th:each="run : ${recentRuns}" class="hover:bg-slate-50/80 transition-colors group">
+                                    <td class="px-10 py-6">
+                                        <div class="text-sm font-black text-slate-900" th:text="${run.internshipTitle}">Title</div>
+                                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-wide" th:text="${#temporals.format(run.finishedAt, 'MMM dd, yyyy')}">Date</div>
+                                    </td>
+                                    <td class="px-10 py-6">
+                                        <div class="inline-flex items-center px-3 py-1 bg-slate-100/50 rounded-lg text-xs font-black text-slate-600 border border-slate-200" th:text="${run.applicantsProcessed}">0</div>
+                                    </td>
+                                    <td class="px-10 py-6">
+                                        <span th:class="'px-4 py-1.5 text-[10px] font-black uppercase rounded-full tracking-widest shadow-sm ' + 
+                                            (${run.status == 'completed' || run.status == 'approved'} ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 
+                                            (${run.status == 'pending_approval'} ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-rose-50 text-rose-700 border border-rose-100'))"
+                                              th:text="${run.status == 'pending_approval'} ? 'Awaiting Admin' : ${run.status}">Status</span>
+                                    </td>
+                                    <td class="px-10 py-6 text-right">
+                                        <a th:href="@{${userRole == 'admin' ? '/admin/cv/ranking-detail/' + run.id : '/company/cv/ranking-detail/' + run.id}}"
+                                           class="text-slate-300 hover:text-indigo-600 transition-all transform hover:scale-110 inline-block">
+                                            <i class="bi bi-arrow-right-circle-fill text-2xl"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-6">
+                    <div class="bg-indigo-600 p-10 rounded-[3rem] text-white shadow-2xl shadow-indigo-200 relative overflow-hidden group">
+                        <div class="relative z-10 space-y-6">
+                            <div>
+                                <h3 class="text-2xl font-black tracking-tight mb-2">Run Engine</h3>
+                                <p class="text-indigo-100 text-sm font-bold opacity-80">Identify top talent from new applicants instantly using AI scoring.</p>
+                            </div>
+                            <a th:href="@{${userRole == 'admin' ? '/admin/cv/run-filtering' : '/company/cv/run-filtering'}}" 
+                               class="inline-block w-full text-center bg-white text-indigo-600 font-black py-5 rounded-[1.8rem] hover:bg-indigo-50 transition-all transform active:scale-95 shadow-xl shadow-indigo-700/20">
+                                <i class="bi bi-lightning-charge-fill mr-2"></i>
+                                Start Analysis
+                            </a>
+                        </div>
+                        <i class="bi bi-cpu absolute -bottom-4 -right-4 text-[10rem] text-indigo-500 opacity-20 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500"></i>
+                    </div>
+
+                    <div class="bg-white p-10 rounded-[3rem] border border-gray-50 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
+                        <div class="relative z-10 space-y-6">
+                            <div>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tight mb-2">Marking Rules</h3>
+                                <p class="text-slate-500 text-sm font-bold">Fine-tune weights for skills, GPA, and professional experience.</p>
+                            </div>
+                            <a th:href="@{${userRole == 'admin' ? '/admin/cv/marking-guides' : '/company/cv/marking-guides'}}" 
+                               class="inline-block w-full text-center bg-slate-50 text-slate-700 font-black py-5 rounded-[1.8rem] border border-gray-100 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 transition-all transform active:scale-95">
+                                <i class="bi bi-gear-fill mr-2"></i>
+                                Manage Weights
+                            </a>
+                        </div>
+                        <i class="bi bi-command absolute -bottom-4 -right-4 text-[10rem] text-slate-50 opacity-50 group-hover:rotate-12 transition-all duration-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

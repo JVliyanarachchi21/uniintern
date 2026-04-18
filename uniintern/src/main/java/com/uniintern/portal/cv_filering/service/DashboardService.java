@@ -13,6 +13,8 @@ import com.uniintern.portal.cv_filering.repo.FilterResultRepository;
 import com.uniintern.portal.cv_filering.repo.FilterRunRepository;
 import com.uniintern.portal.cv_filering.repo.LogEntryRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +22,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.io.ByteArrayOutputStream;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 @Service
 public class DashboardService {
+    
+    private static final Logger logger = LoggerFactory.getLogger(DashboardService.class);
     
     @Autowired
     private InternshipRepository internshipRepository;
@@ -44,6 +51,12 @@ public class DashboardService {
     
     @Autowired
     private LogEntryRepository logEntryRepository;
+    
+    @Autowired
+    private CVScoringService cvScoringService;
+
+    @Autowired
+    private TemplateEngine templateEngine;
     
     public long getReadyInternshipsCount() {
         return internshipRepository.findAll().stream()
@@ -84,10 +97,36 @@ public class DashboardService {
     public List<Internship> getAllInternships() {
         return internshipRepository.findAll();
     }
+    
+    public List<Internship> getInternshipsByCompanyId(Long companyId) {
+        if (companyId == null) {
+            return new ArrayList<>();
+        }
+        return internshipRepository.findByCompanyId(companyId);
+    }
 
     public List<Internship> getAvailableInternships() {
-        return internshipRepository.findAll().stream()
-                .filter(i -> i.getSkillsWeight() != null)
+        return internshipRepository.findBySkillsWeightIsNotNull();
+    }
+    
+    public List<Internship> getAvailableInternshipsByCompanyId(Long companyId) {
+        if (companyId == null) {
+            return new ArrayList<>();
+        }
+        return internshipRepository.findByCompanyIdAndSkillsWeightIsNotNull(companyId);
+    }
+    
+    /**
+     * Get ALL approved internships for a company (for run filtering dropdown)
+     * Shows internships even if weights are not set yet
+     */
+    public List<Internship> getAllApprovedInternshipsByCompanyId(Long companyId) {
+        if (companyId == null) {
+            return new ArrayList<>();
+        }
+        // Fetch all and filter to handle mixed casing (APPROVED/approved)
+        return internshipRepository.findByCompanyId(companyId).stream()
+                .filter(i -> "APPROVED".equalsIgnoreCase(i.getStatus()) || "OPEN".equalsIgnoreCase(i.getStatus()))
                 .collect(Collectors.toList());
     }
 
@@ -108,8 +147,11 @@ public class DashboardService {
     public List<StudentApplication> getApplicationsByInternshipId(String internshipId) {
          try {
             Long longId = Long.parseLong(internshipId);
-            return applicationRepository.findByInternshipId(longId);
+            List<StudentApplication> apps = applicationRepository.findByInternshipId(longId);
+            logger.info("Retrieved {} applications for internship ID: {}", apps.size(), internshipId);
+            return apps;
         } catch(Exception e) {
+            logger.error("Error retrieving applications for internship ID: {}: {}", internshipId, e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -162,61 +204,84 @@ public class DashboardService {
     
     @Transactional
     public FilterRun runFiltering(String internshipIdStr) {
+        return runFilteringForCompany(internshipIdStr, null, "admin");
+    }
+    
+    @Transactional
+    public FilterRun runFilteringForCompany(String internshipIdStr, Long companyId, String companyName) {
         Internship internship = getInternshipById(internshipIdStr);
         List<StudentApplication> apps = getApplicationsByInternshipId(internshipIdStr);
         
-        if (internship == null || internship.getSkillsWeight() == null) return null;
+        if (internship == null || internship.getSkillsWeight() == null) {
+            return null;
+        }
+        
+        // For companies, verify ownership
+        if (companyId != null && !internship.getCompanyId().equals(companyId)) {
+            return null;
+        }
         
         LocalDateTime startedAt = LocalDateTime.now();
         
-        // We assume MarkingGuide properties are built in Internship
         List<String> requiredSkills = internship.getRequiredSkills() != null ? 
             Arrays.asList(internship.getRequiredSkills().split(",")) : new ArrayList<>();
             
         int topN = internship.getTopNCandidates() != null ? internship.getTopNCandidates() : 10;
+        Double minimumThreshold = internship.getMinimumThreshold();
         
         FilterRun newRun = new FilterRun(
             internship.getId(),
             internship.getTitle(),
-            "Company " + internship.getCompanyId(), // placeholder
+            (companyName != null) ? companyName : ("Company " + internship.getCompanyId()),
             startedAt,
-            LocalDateTime.now(), // to be updated
-            apps.size(),
-            "pending_approval",
-            topN
+            null,
+            0,
+            (companyId == null) ? "completed" : "pending_approval",
+            topN,
+            internship.getMinimumThreshold()
         );
-        newRun = filterRunRepository.save(newRun);
+        filterRunRepository.save(newRun);
         
         List<FilterResult> runResults = new ArrayList<>();
-        int rank = 1;
 
         for (StudentApplication app : apps) {
             Student student = studentRepository.findById(app.getStudentId()).orElse(null);
             if (student == null) continue;
             
-            // Calculate scores
-            int skillsMatched = 0;
-            for (String skill : requiredSkills) {
-                if (student.getSkills() != null && student.getSkills().contains(skill.trim())) {
-                    skillsMatched++;
-                }
-            }
-            double skillScore = requiredSkills.isEmpty() ? 0 : 
-                ((double) skillsMatched / requiredSkills.size()) * internship.getSkillsWeight();
+            // Use CVScoringService to calculate scores
+            double totalScore = cvScoringService.calculateTotalScore(student, internship);
             
-            double studentGpa = student.getGpa() != null ? student.getGpa() : 0.0;
+            // Calculate individual scores for display
+            int skillsWeight = internship.getSkillsWeight() != null ? internship.getSkillsWeight() : 0;
             int gpaWeight = internship.getGpaWeight() != null ? internship.getGpaWeight() : 0;
-            double gpaScore = (studentGpa / 4.0) * gpaWeight;
+            int experienceWeight = internship.getExperienceWeight() != null ? internship.getExperienceWeight() : 0;
+            int certificatesWeight = internship.getCertificatesWeight() != null ? internship.getCertificatesWeight() : 0;
             
-            double expScore = 0.0; // Needs parsing experience
-            int certWeight = internship.getCertificatesWeight() != null ? internship.getCertificatesWeight() : 0;
-            double certScore = (student.getCertifications() == null || student.getCertifications().isEmpty()) ? 0 : certWeight;
+            double skillScore = cvScoringService.calculateSkillScore(
+                student.getSkills(), internship.getRequiredSkills(), skillsWeight);
+            double gpaScore = cvScoringService.calculateGpaScore(student.getGpa(), gpaWeight);
+            double experienceScore = cvScoringService.calculateExperienceScore(
+                student.getExperience(), experienceWeight);
+            double certScore = cvScoringService.calculateCertificateScore(
+                student.getCertifications(), certificatesWeight);
             
-            double totalScore = skillScore + gpaScore + expScore + certScore;
+            // Apply minimum threshold filter
+            if (minimumThreshold != null && totalScore < minimumThreshold) {
+                continue; // Skip students below threshold
+            }
             
             // Update StudentApplication Score
             app.setScore(totalScore);
             applicationRepository.save(app);
+            
+            int skillsMatched = 0;
+            if (student.getSkills() != null && internship.getRequiredSkills() != null) {
+                for (String skill : requiredSkills) {
+                    if (student.getSkills().toLowerCase().contains(skill.trim().toLowerCase())) {
+                        skillsMatched++;
+                    }
+                }
+            }
             
             FilterResult result = new FilterResult(
                 newRun.getId(),
@@ -226,10 +291,10 @@ public class DashboardService {
                 totalScore,
                 skillScore,
                 gpaScore,
-                expScore,
+                experienceScore,
                 certScore,
-                0, // rank updated later
-                false, // topN updated later
+                0,
+                false,
                 skillsMatched,
                 requiredSkills.size()
             );
@@ -248,19 +313,70 @@ public class DashboardService {
         }
         
         newRun.setFinishedAt(LocalDateTime.now());
+        newRun.setApplicantsProcessed(runResults.size());
         filterRunRepository.save(newRun);
+        
+        String logMessage = (companyId == null) ? "Analysis finalized by Administrator." : "Completed successfully. Awaiting admin approval.";
         
         LogEntry log = new LogEntry(
             newRun.getId(),
             internship.getTitle(),
             startedAt,
             newRun.getFinishedAt(),
-            apps.size(),
+            runResults.size(),
             "success",
-            "Completed successfully. Awaiting admin approval."
+            logMessage
         );
         logEntryRepository.save(log);
         
         return newRun;
+    }
+
+    @Transactional
+    public void saveInternship(Internship internship) {
+        internshipRepository.save(internship);
+    }
+
+    public String generateCsvForRun(String runId) {
+        List<FilterResult> results = getResultsByRunId(runId);
+        
+        StringBuilder csv = new StringBuilder();
+        csv.append("Rank,Candidate Name,University,Total Score,Skill Score,GPA Score,Experience Score,Certificate Score\n");
+        
+        for (FilterResult res : results) {
+            csv.append(String.format("%d,%s,%s,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+                res.getRankNumber(),
+                res.getStudentName().replace(",", " "),
+                res.getUniversity().replace(",", " "),
+                res.getTotalScore(),
+                res.getSkillScore(),
+                res.getGpaScore(),
+                res.getExperienceScore(),
+                res.getCertScore()
+            ));
+        }
+        return csv.toString();
+    }
+
+    public byte[] generatePdfForRun(String runId) {
+        List<FilterResult> results = getResultsByRunId(runId);
+        FilterRun run = getRunById(runId);
+        
+        Context context = new Context();
+        context.setVariable("results", results);
+        context.setVariable("run", run);
+        
+        String html = templateEngine.process("cv_filtering/pdf-report", context);
+        
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.useFastMode();
+            builder.withHtmlContent(html, null);
+            builder.toStream(os);
+            builder.run();
+            return os.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate PDF: " + e.getMessage(), e);
+        }
     }
 }

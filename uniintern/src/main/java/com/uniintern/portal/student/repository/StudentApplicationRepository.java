@@ -2,9 +2,13 @@ package com.uniintern.portal.student.repository;
 
 import com.uniintern.portal.student.model.StudentApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface StudentApplicationRepository extends JpaRepository<StudentApplication, Long> {
     List<StudentApplication> findByStudentId(Long studentId);
-    List<StudentApplication> findByInternshipId(Long internshipId);
+
+    @Query("SELECT a FROM StudentApplication a LEFT JOIN FETCH a.student WHERE a.internshipId = :internshipId")
+    List<StudentApplication> findByInternshipId(@Param("internshipId") Long internshipId);
 }

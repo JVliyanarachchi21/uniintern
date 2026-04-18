@@ -1,91 +1,107 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{cv_filtering/fragments/layout :: head('Marking Guide Detail')}"></head>
-<body class="flex h-screen w-full bg-gray-100 overflow-hidden font-sans">
-    <div th:replace="~{cv_filtering/fragments/layout :: sidebar('MarkingGuideDetail')}"></div>
-    
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <div th:replace="~{cv_filtering/fragments/layout :: header('MarkingGuideDetail')}"></div>
-        
-        <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
-            <div class="max-w-7xl mx-auto">
-                <div class="space-y-6 animate-fade-in">
-                    <div class="mb-8 flex justify-between items-end">
-                        <div>
-                            <a th:href="@{/marking-guides}" class="text-sm text-brand-600 hover:text-brand-800 flex items-center mb-2">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                </svg>
-                                Back to Marking Guides
-                            </a>
-                            <h2 class="text-2xl font-bold text-gray-900" th:text="${guide?.internshipTitle} ?: 'Marking Guide Detail'">Marking Guide Detail</h2>
-                            <p class="text-gray-500 mt-1" th:if="${guide != null}" th:text="${guide.company}">Company</p>
+<body class="flex h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-900">
+    <div th:replace="~{cv_filtering/fragments/layout :: main('MarkingGuideDetail', ~{::content})}">
+        <div th:fragment="content" class="max-w-4xl mx-auto space-y-10 animate-fade-in pb-20">
+            <!-- Header section with Back link -->
+            <div class="space-y-2">
+                <a th:href="@{${userRole == 'admin' ? '/admin/cv/marking-guides' : '/company/cv/marking-guides'}}" class="group flex items-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors mb-2">
+                    <i class="bi bi-arrow-left-short text-xl group-hover:-translate-x-1 transition-transform"></i>
+                    Back to All Guides
+                </a>
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight">Configure Criteria</h2>
+                <p class="text-slate-500 font-bold text-lg" th:text="${guide.title}">Internship Title</p>
+            </div>
+
+            <!-- Form Section -->
+            <form th:action="@{${userRole == 'admin' ? '/admin/cv/marking-guide-detail/' + guide.id + '/update' : '/company/cv/save-weights'}}" method="POST" class="space-y-8">
+                <input type="hidden" name="internshipId" th:value="${guide.id}">
+                
+                <div th:if="${message}" class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-8 py-5 rounded-[2rem] flex items-center shadow-sm">
+                    <i class="bi bi-check-circle-fill text-xl mr-3"></i>
+                    <span class="font-bold" th:text="${message}">Success message</span>
+                </div>
+                
+                <div th:if="${error}" class="bg-rose-50 border border-rose-200 text-rose-700 px-8 py-5 rounded-[2rem] flex items-center shadow-sm">
+                    <i class="bi bi-exclamation-octagon-fill text-xl mr-3"></i>
+                    <span class="font-bold" th:text="${error}">Error message</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Weight Inputs -->
+                    <div class="space-y-6 bg-white p-10 rounded-[3rem] border border-gray-50 shadow-2xl shadow-slate-200/40">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <i class="bi bi-sliders text-2xl text-indigo-600"></i>
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight">Weights Allocation</h3>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Skills Match Weight (%)</label>
+                                <input type="number" name="skillsWeight" th:value="${guide.skillsWeight}" required min="0" max="100"
+                                       class="w-full p-5 bg-slate-50 border-2 border-transparent rounded-2xl font-black text-slate-700 focus:bg-white focus:border-indigo-600 outline-none transition-all">
+                            </div>
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">GPA Weight (%)</label>
+                                <input type="number" name="gpaWeight" th:value="${guide.gpaWeight}" required min="0" max="100"
+                                       class="w-full p-5 bg-slate-50 border-2 border-transparent rounded-2xl font-black text-slate-700 focus:bg-white focus:border-indigo-600 outline-none transition-all">
+                            </div>
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Experience Weight (%)</label>
+                                <input type="number" name="experienceWeight" th:value="${guide.experienceWeight}" required min="0" max="100"
+                                       class="w-full p-5 bg-slate-50 border-2 border-transparent rounded-2xl font-black text-slate-700 focus:bg-white focus:border-indigo-600 outline-none transition-all">
+                            </div>
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Certificate Weight (%)</label>
+                                <input type="number" name="certificatesWeight" th:value="${guide.certificatesWeight}" required min="0" max="100"
+                                       class="w-full p-5 bg-slate-50 border-2 border-transparent rounded-2xl font-black text-slate-700 focus:bg-white focus:border-indigo-600 outline-none transition-all">
+                            </div>
                         </div>
                     </div>
 
-                    <div th:if="${guide == null}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-                        <p class="text-gray-500">No marking guide found for this internship.</p>
-                    </div>
-
-                    <div th:if="${guide != null}" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Weights Card -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Scoring Weights</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between p-3 bg-brand-50 rounded-lg">
-                                    <span class="text-brand-800 font-medium">Skills Weight</span>
-                                    <span class="text-brand-600 font-bold" th:text="${guide.skillsWeight} + '%'">50%</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
-                                    <span class="text-emerald-800 font-medium">GPA Weight</span>
-                                    <span class="text-emerald-600 font-bold" th:text="${guide.gpaWeight} + '%'">20%</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-accent-50 rounded-lg">
-                                    <span class="text-accent-800 font-medium">Experience Weight</span>
-                                    <span class="text-accent-600 font-bold" th:text="${guide.experienceWeight} + '%'">20%</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                                    <span class="text-purple-800 font-medium">Certifications Weight</span>
-                                    <span class="text-purple-600 font-bold" th:text="${guide.certWeight} + '%'">10%</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-600">Total</span>
-                                    <span class="font-bold" th:text="${guide.skillsWeight + guide.gpaWeight + guide.experienceWeight + guide.certWeight} + '%'">100%</span>
-                                </div>
-                            </div>
+                    <!-- Guidelines Panel -->
+                    <div class="space-y-6 px-4">
+                        <div class="bg-indigo-600 p-10 rounded-[3rem] text-white shadow-2xl shadow-indigo-200 relative overflow-hidden group">
+                            <h4 class="text-2xl font-black mb-4">Weighting Strategy</h4>
+                            <p class="text-indigo-100 text-sm font-bold opacity-80 leading-relaxed">
+                                Customize how the filtering engine prioritizes candidates. The sum of all weights 
+                                <span class="bg-white/20 px-2 py-0.5 rounded-lg border border-white/30">MUST BE EXACTLY 100%</span> 
+                                to accurately calculate talent rankings.
+                            </p>
+                            <i class="bi bi-lightbulb-fill absolute -bottom-4 -right-4 text-[10rem] text-indigo-500 opacity-20 transition-all group-hover:scale-110"></i>
                         </div>
 
-                        <!-- Requirements Card -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Requirements</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <span class="text-sm text-gray-500">Top N Selection</span>
-                                    <p class="text-xl font-bold text-gray-900" th:text="${guide.topN}">3</p>
-                                </div>
-                                <div>
-                                    <span class="text-sm text-gray-500">Required Skills</span>
-                                    <div class="flex flex-wrap gap-2 mt-2">
-                                        <span th:each="skill : ${guide.requiredSkills}" 
-                                              class="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded"
-                                              th:text="${skill}">Skill</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="text-sm text-gray-500">Status</span>
-                                    <div class="mt-2">
-                                        <span th:if="${guide.isValid}" class="px-2 py-1 text-xs font-medium rounded-full badge-valid">Valid</span>
-                                        <span th:if="${!guide.isValid}" class="px-2 py-1 text-xs font-medium rounded-full badge-invalid">Invalid</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="p-8 bg-white/40 border border-gray-100 rounded-[2.5rem] space-y-4">
+                            <h5 class="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center">
+                                <i class="bi bi-info-circle mr-2"></i> Criteria Tips
+                            </h5>
+                            <ul class="space-y-3">
+                                <li class="flex items-start text-xs font-bold text-slate-600 space-x-2 leading-relaxed">
+                                    <span class="w-4 h-4 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]"><i class="bi bi-check"></i></span>
+                                    <span>High **Skill Weight** is best for technical/specialized roles.</span>
+                                </li>
+                                <li class="flex items-start text-xs font-bold text-slate-600 space-x-2 leading-relaxed">
+                                    <span class="w-4 h-4 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]"><i class="bi bi-check"></i></span>
+                                    <span>**GPA Weight** highlights academic excellence.</span>
+                                </li>
+                                <li class="flex items-start text-xs font-bold text-slate-600 space-x-2 leading-relaxed">
+                                    <span class="w-4 h-4 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px]"><i class="bi bi-check"></i></span>
+                                    <span>**Experience** matters for senior or client-facing internships.</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
+
+                <div class="flex justify-end pt-6">
+                    <button type="submit" class="w-full md:w-auto px-12 py-5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-3xl shadow-2xl shadow-indigo-200 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center">
+                        <i class="bi bi-save2-fill mr-3"></i>
+                        Deploy Selection Rules
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>
