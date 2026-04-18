@@ -35,6 +35,10 @@ public class PromotionService {
                 .collect(Collectors.toList());
     }
 
+    public long countActivePromotionsForCompany(Long companyId) {
+        return getActivePromotionsForCompany(companyId).size();
+    }
+
     public boolean isInternshipPromoted(Long internshipId) {
         List<Promotion> promotions = promotionRepository.findByInternshipIdAndStatus(internshipId, "ACTIVE");
         return promotions.stream().anyMatch(p -> p.getEndDate().isAfter(LocalDateTime.now()));
@@ -56,9 +60,5 @@ public class PromotionService {
 
     public List<Promotion> getAllPromotionsForCompany(Long companyId) {
         return promotionRepository.findByCompanyId(companyId);
-    }
-
-    public long countActivePromotionsForCompany(Long companyId) {
-        return getActivePromotionsForCompany(companyId).size();
     }
 }

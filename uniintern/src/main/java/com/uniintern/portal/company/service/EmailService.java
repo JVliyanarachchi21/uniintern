@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 @Service("companyEmailService")
 public class EmailService {
 
-    @org.springframework.beans.factory.annotation.Autowired
-    @org.springframework.beans.factory.annotation.Qualifier("companyMailSender")
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
-    @org.springframework.beans.factory.annotation.Value("${company.mail.username}")
+
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
     private String fromEmail;
 
-    public EmailService() {
+    public EmailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
     }
 
     public void sendVerificationOtp(String toEmail, String otp) {
@@ -58,4 +58,5 @@ public class EmailService {
             System.err.println("Failed to send password reset email to " + toEmail + ": " + e.getMessage());
         }
     }
+
 }

@@ -309,11 +309,60 @@ function proceedToPayment() {
 }
 
 //promotion checkout js
-// Payment Checkout Validation with Inline Errors
-// Payment validation functions moved to inline script in payments-checkout.html for reliability
+function payNow() {
+  const cardName = document.getElementById("cardName");
+  const cardNumber = document.getElementById("cardNumber");
+  const expiry = document.getElementById("expiry");
+  const cvv = document.getElementById("cvv");
+  const email = document.getElementById("billingEmail");
 
+  let formValid = true;
 
+  [cardName, cardNumber, expiry, cvv, email].forEach(input => {
+      if (input && input.value.trim() === "") {
+          input.style.borderColor = "red";
+          formValid = false;
+      } else if (input) {
+          input.style.borderColor = "";
+      }
+  });
 
+  if (!formValid) {
+      alert("Please fill in all payment fields before proceeding.");
+      return;
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email && !emailPattern.test(email.value.trim())) {
+      alert("Please enter a valid billing email address.");
+      email.style.borderColor = "red";
+      email.focus();
+      return;
+  }
+
+  if (cardNumber && cardNumber.value.replace(/\s/g, '').length < 16) {
+      alert("Card Number must be precisely 16 digits.");
+      cardNumber.style.borderColor = "red";
+      cardNumber.focus();
+      return;
+  }
+
+  if (expiry && expiry.value.length < 5) {
+      alert("Expiry date must completely match MM/YY format.");
+      expiry.style.borderColor = "red";
+      expiry.focus();
+      return;
+  }
+
+  if (cvv && cvv.value.length < 3) {
+      alert("CVV must be 3 or 4 digits.");
+      cvv.style.borderColor = "red";
+      cvv.focus();
+      return;
+  }
+
+  alert("Payment completed successfully! Promotion activated.");
+}
 
 
 //company history
@@ -420,28 +469,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (expiry) {
+        // MM/YY auto-slash and boundary checks
         expiry.addEventListener('input', function(e) {
-            let val = this.value.replace(/[^\d]/g, '');
+            let val = this.value.replace(/[^\d]/g, '').substring(0, 4);
             
             if (e.inputType === 'deleteContentBackward') {
-                this.value = val.length >= 2 ? val.substring(0, 2) + '/' + val.substring(2, 4) : val;
+                this.value = val;
                 return;
             }
 
-            // Smart Month Formatting
             if (val.length === 1 && parseInt(val) > 1) {
-                val = '0' + val;
-            } else if (val.length >= 2) {
-                let month = parseInt(val.substring(0, 2));
-                if (month === 0) val = '01' + val.substring(2);
-                if (month > 12) val = '12' + val.substring(2);
+                val = '0' + val + '/';
+            } else if (val.length === 2) {
+                let month = parseInt(val);
+                if (month === 0) {
+                    val = '01/';
+                } else if (month > 12) {
+                    val = '12/';
+                } else {
+                    val = val + '/';
+                }
+            } else if (val.length > 2) {
+                let monthStr = val.substring(0, 2);
+                let month = parseInt(monthStr);
+                if (month === 0) monthStr = '01';
+                else if (month > 12) monthStr = '12';
+                val = monthStr + '/' + val.substring(2);
             }
+            
+            this.value = val;
+        });
 
-            // Apply slash
-            if (val.length >= 2) {
-                this.value = val.substring(0, 2) + '/' + val.substring(2, 4);
-            } else {
-                this.value = val;
+        expiry.addEventListener('blur', function() {
+            if (this.value.length === 5) {
+                let parts = this.value.split('/');
+                let month = parseInt(parts[0]);
+                let year = parseInt("20" + parts[1]);
+                let now = new Date();
+                let currentYear = now.getFullYear();
+                let currentMonth = now.getMonth() + 1;
+
+                if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                    alert("This card has expired. Please use a valid card.");
+                    this.style.borderColor = "red";
+                    this.style.color = "red";
+                } else {
+                    this.style.borderColor = "";
+                    this.style.color = "";
+                }
             }
         });
     }
@@ -453,8 +528,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-
 
 // Ensure GPA input doesn't accept -, +, e, E and validates on blur/input
 document.addEventListener('DOMContentLoaded', () => {

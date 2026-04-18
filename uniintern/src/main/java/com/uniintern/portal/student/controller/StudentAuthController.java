@@ -97,6 +97,7 @@ public class StudentAuthController {
         // }
 
         session.setAttribute("loggedInStudentId", student.getId());
+        session.setAttribute("studentName", student.getFullName());
         return "redirect:/student/dashboard";
     }
 
@@ -270,6 +271,7 @@ public class StudentAuthController {
             
             // Set student in session
             session.setAttribute("loggedInStudentId", student.getId());
+            session.setAttribute("studentName", student.getFullName());
 
             // Create notification for account verification
             notificationService.createNotification(student.getId(), "Account Verified", "Welcome to UniIntern! Your account has been successfully verified.", "Account");

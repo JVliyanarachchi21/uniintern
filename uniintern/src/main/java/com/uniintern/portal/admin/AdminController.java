@@ -2,11 +2,11 @@ package com.uniintern.portal.admin;
 
 import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.repository.CompanyRepository;
-import com.uniintern.portal.company.service.EmailService;
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.repository.InternshipRepository;
 import com.uniintern.portal.company.entity.Interview;
 import com.uniintern.portal.company.repository.InterviewRepository;
+import com.uniintern.portal.company.service.EmailService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +34,7 @@ public class AdminController {
     private final SystemMessageRepository systemMessageRepository;
     private final AdminReportService adminReportService;
 
+
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
             InterviewRepository interviewRepository,
@@ -42,6 +43,7 @@ public class AdminController {
             AdminSchedulingService adminSchedulingService,
             SystemMessageRepository systemMessageRepository,
             AdminReportService adminReportService) {
+
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
@@ -50,13 +52,14 @@ public class AdminController {
         this.adminSchedulingService = adminSchedulingService;
         this.systemMessageRepository = systemMessageRepository;
         this.adminReportService = adminReportService;
+
     }
 
     @GetMapping({ "/dashboard", "" })
     public String dashboard(Model model) {
 
         long pendingCompanies = companyRepository
-                .findByStatus("PENDING_APPROVAL")
+                .findByStatus("PENDING_VERIFICATION")
                 .size();
 
         long pendingInternships = internshipRepository
@@ -82,7 +85,7 @@ public class AdminController {
 
     @GetMapping("/companies")
     public String companyApprovals(Model model) {
-        List<Company> pending = companyRepository.findByStatus("PENDING_APPROVAL");
+        List<Company> pending = companyRepository.findByStatus("PENDING_VERIFICATION");
         model.addAttribute("companies", pending);
         return "admin/company-approvals";
     }
@@ -101,12 +104,8 @@ public class AdminController {
     @GetMapping("/companies/{id}/approve")
     public String approveCompany(@PathVariable Long id) {
         Company c = companyRepository.findById(id).orElseThrow();
-        c.setStatus("APPROVED");
+        c.setStatus("VERIFIED");
         companyRepository.save(c);
-        
-        // Send email notification to company
-        emailService.sendApprovalNotification(c.getEmail(), c.getCompanyName());
-        
         return "redirect:/admin/companies";
     }
 
