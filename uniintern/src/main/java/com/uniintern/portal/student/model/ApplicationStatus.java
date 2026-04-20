@@ -5,6 +5,9 @@ public enum ApplicationStatus {
     SHORTLISTED,
     REJECTED,
     INTERVIEW_SCHEDULED,
+    TECHNICAL_ROUND,
+    HR_ROUND,
+    OFFER_EXTENDED,
     ACCEPTED,
     DECLINED
 }

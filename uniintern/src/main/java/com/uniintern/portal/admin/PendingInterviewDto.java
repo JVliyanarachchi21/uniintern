@@ -7,8 +7,15 @@ public class PendingInterviewDto {
     private String internshipTitle;
     private Long internshipId;
     private Long companyId;
+    private String status;
+    private double matchScore;
 
     public PendingInterviewDto() {}
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public double getMatchScore() { return matchScore; }
+    public void setMatchScore(double matchScore) { this.matchScore = matchScore; }
 
     public Long getApplicationId() {
         return applicationId;

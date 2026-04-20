@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ranking Detail')}"></head>
+<body class="flex h-screen w-full bg-gray-100 overflow-hidden font-sans">
+    <div th:replace="~{fragments/layout :: sidebar('RankingDetail')}"></div>
+    
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div th:replace="~{fragments/layout :: header('RankingDetail')}"></div>
+        
+        <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
+            <div class="max-w-7xl mx-auto">
+                <div class="space-y-6 animate-fade-in">
+                    <div class="mb-8 flex justify-between items-end">
+                        <div>
+                            <a th:href="@{/results}" class="text-sm text-brand-600 hover:text-brand-800 flex items-center mb-2">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                Back to Results
+                            </a>
+                            <h2 class="text-2xl font-bold text-gray-900">Ranking Detail</h2>
+                            <p class="text-gray-500 mt-1" th:if="${run != null}" th:text="${run.internshipTitle} + ' at ' + ${run.company}">Internship at Company</p>
+                        </div>
+                        <div th:if="${run != null and run.status == 'pending_approval'}" class="flex space-x-2">
+                            <form th:action="@{/ranking-detail/{id}/approve(id=${run.id})}" method="post" class="inline">
+                                <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg shadow-sm transition-colors">
+                                    Approve
+                                </button>
+                            </form>
+                            <form th:action="@{/ranking-detail/{id}/reject(id=${run.id})}" method="post" class="inline">
+                                <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg shadow-sm transition-colors">
+                                    Reject
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div th:if="${run != null}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase">Status</span>
+                                <p>
+                                    <span th:class="'px-2 py-1 text-xs font-medium rounded-full ' + 
+                                        (${run.status == 'completed'} ? 'badge-completed' : 
+                                        (${run.status == 'pending_approval'} ? 'badge-pending' : 
+                                        (${run.status == 'approved'} ? 'badge-approved' : 'badge-rejected')))"
+                                          th:text="${run.status == 'pending_approval'} ? 'Pending Approval' : ${#strings.capitalize(run.status)}">Status</span>
+                                </p>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase">Applicants Processed</span>
+                                <p class="font-medium text-gray-900" th:text="${run.applicantsProcessed}">8</p>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase">Top N</span>
+                                <p class="font-medium text-gray-900" th:text="${run.topN}">3</p>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase">Run Date</span>
+                                <p class="font-medium text-gray-900" th:text="${#temporals.format(run.finishedAt, 'MMM dd, yyyy')}">Date</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(results)}" class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+                        <p class="text-gray-500">No ranking results found.</p>
+                    </div>
+
+                    <div th:if="${!#lists.isEmpty(results)}" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 font-medium">Rank</th>
+                                        <th class="px-6 py-4 font-medium">Student</th>
+                                        <th class="px-6 py-4 font-medium">University</th>
+                                        <th class="px-6 py-4 font-medium">Skills Match</th>
+                                        <th class="px-6 py-4 font-medium">Total Score</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr th:each="result : ${results}" 
+                                        th:class="${result.isTopN} ? 'bg-brand-50 hover:bg-brand-100 transition-colors' : 'hover:bg-gray-50 transition-colors'">
+                                        <td class="px-6 py-4 font-bold text-gray-900" th:text="${result.rank}">1</td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-medium text-gray-900" th:text="${result.studentName}">Name</div>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600" th:text="${result.university}">University</td>
+                                        <td class="px-6 py-4 text-gray-600" th:text="${result.skillsMatched} + '/' + ${result.skillsRequired}">3/4</td>
+                                        <td class="px-6 py-4">
+                                            <span class="font-bold" th:class="${result.isTopN} ? 'text-brand-600' : 'text-gray-900'" th:text="${#numbers.formatDecimal(result.totalScore, 1, 1)}">85.5</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span th:if="${result.isTopN}" class="px-2 py-1 text-xs font-medium rounded-full badge-approved">Top N</span>
+                                            <span th:if="${!result.isTopN}" class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">Ranked</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

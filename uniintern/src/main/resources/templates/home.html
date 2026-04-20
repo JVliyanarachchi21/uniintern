@@ -28,7 +28,7 @@
                 <a href="#how-it-works">How It Works</a>
                 <a href="#who-its-for">Who It&apos;s For</a>
                 <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
-                <a th:href="@{/dashboard}" href="/dashboard">Free Course</a>
+                <a th:href="@{/student/courses/dashboard}" href="/student/courses/dashboard">Free Course</a>
             </nav>
 
             <div class="nav-actions desktop-actions">
@@ -48,8 +48,9 @@
             <a href="#how-it-works">How It Works</a>
             <a href="#who-its-for">Who It&apos;s For</a>
             <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
-            <a th:href="@{/dashboard}" href="/dashboard">Free Course</a>
+            <a th:href="@{/student/courses/dashboard}" href="/student/courses/dashboard">Free Course</a>
             <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
+
             <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
         </div>
     </header>
@@ -423,7 +424,6 @@
     </footer>
 </div>
 
-<script th:src="@{/js/home.js}" src="/js/home.js"></script>
+<script th:src="@{/admin/js/home.js}" src="/admin/js/home.js"></script>
 </body>
-</html>
 </html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Courses | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('courses')"></div>
+
+<main class="main dashboard-main-content">
+  <div th:replace="fragments/student-topbar :: studentTopbar(${userName})"></div>
+
+  <section class="dashboard-page-container">
+    
+    <div class="dashboard-greeting">
+      <h1>Free Learning Courses</h1>
+      <p>Select a course to begin learning. You must complete the video to unlock the certification quiz.</p>
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="content-grid-row" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+      
+      <!-- SQL Course -->
+      <div class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <svg class="panel-icon" style="color: #3b82f6;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.375m-16.5-3.375v3.375m0 11.25c0 2.278 3.694 4.125 8.25 4.125s8.25-1.847 8.25-4.125M3.75 9.75v3.375m0-3.375c0 2.278 3.694 4.125 8.25 4.125s8.25-1.847 8.25-4.125M3.75 9.75V6.375m16.5 3.375v3.375m0-3.375c0 2.278-3.694 4.125-8.25 4.125S3.75 11.653 3.75 9.75" />
+          </svg>
+          <h2>SQL for Beginners</h2>
+        </div>
+        <div style="padding: 1.5rem; flex: 1;">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Learn Database Management and SQL queries from scratch. Master SELECT, INSERT, UPDATE, DELETE statements and more.</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+            <span>4 Hours</span>
+          </div>
+          <a th:href="@{/student/courses/view/sql}" class="btn-dashboard btn-primary" style="width: 100%; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>
+            Start Course
+          </a>
+        </div>
+      </div>
+
+      <!-- Python Course -->
+      <div class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <svg class="panel-icon" style="color: #f59e0b;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+          <h2>Python Full Course</h2>
+        </div>
+        <div style="padding: 1.5rem; flex: 1;">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Master Python programming, from basic syntax to advanced concepts including OOP, data structures, and file handling.</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+            <span>6 Hours</span>
+          </div>
+          <a th:href="@{/student/courses/view/python}" class="btn-dashboard btn-primary" style="width: 100%; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>
+            Start Course
+          </a>
+        </div>
+      </div>
+
+      <!-- HTML CSS Course -->
+      <div class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <svg class="panel-icon" style="color: #ec4899;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+          </svg>
+          <h2>HTML + CSS Full Course</h2>
+        </div>
+        <div style="padding: 1.5rem; flex: 1;">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build responsive websites using modern HTML5 and CSS3. Learn flexbox, grid, animations, and best practices.</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+            <span>5 Hours</span>
+          </div>
+          <a th:href="@{/student/courses/view/htmlcss}" class="btn-dashboard btn-primary" style="width: 100%; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>
+            Start Course
+          </a>
+        </div>
+      </div>
+
+      <!-- Java Course -->
+      <div class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <svg class="panel-icon" style="color: #ef4444;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          <h2>Java Full Course</h2>
+        </div>
+        <div style="padding: 1.5rem; flex: 1;">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Comprehensive Java tutorial covering OOP, data structures, exception handling, and more.</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+            <span>8 Hours</span>
+          </div>
+          <a th:href="@{/student/courses/view/java}" class="btn-dashboard btn-primary" style="width: 100%; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>
+            Start Course
+          </a>
+        </div>
+      </div>
+
+      <!-- C++ Course -->
+      <div class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <svg class="panel-icon" style="color: #8b5cf6;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75 16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+          </svg>
+          <h2>C++ Full Course</h2>
+        </div>
+        <div style="padding: 1.5rem; flex: 1;">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Deep dive into C++ programming, memory management, pointers, and STL containers.</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+            <span>7 Hours</span>
+          </div>
+          <a th:href="@{/student/courses/view/cpp}" class="btn-dashboard btn-primary" style="width: 100%; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>
+            Start Course
+          </a>
+        </div>
+      </div>
+
+      <!-- Cyber Security Course -->
+      <div class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <svg class="panel-icon" style="color: #10b981;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+          </svg>
+          <h2>Cyber Security Full Course</h2>
+        </div>
+        <div style="padding: 1.5rem; flex: 1;">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">Learn ethical hacking, network security, cryptography, and how to protect systems from cyber threats.</p>
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+            <span>10 Hours</span>
+          </div>
+          <a th:href="@{/student/courses/view/cyber}" class="btn-dashboard btn-primary" style="width: 100%; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>
+            Start Course
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</main>
+
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>

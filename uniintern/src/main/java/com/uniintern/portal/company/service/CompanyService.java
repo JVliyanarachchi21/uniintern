@@ -35,12 +35,12 @@ public class CompanyService {
         return companyRepository.findById(id).orElse(null);
     }
 
-    public Company findByEmail(String email) {
-        return companyRepository.findByEmail(email).orElse(null);
-    }
-
     public java.util.List<Company> getAllCompanies() {
         return companyRepository.findAll();
+    }
+
+    public Company findByEmail(String email) {
+        return companyRepository.findByEmail(email).orElse(null);
     }
 
     public Company getOrCreateMockCompany() {
@@ -60,10 +60,7 @@ public class CompanyService {
     }
 
     public void updateProfile(Long id, String companyName, String industry, String email, String phone, String website, String address, String description, String logoPath) {
-        Company company = findById(id);
-        if (company == null) {
-            throw new IllegalArgumentException("Company not found");
-        }
+        Company company = getOrCreateMockCompany(); // Always use our mock company
         company.setCompanyName(companyName);
         company.setIndustry(industry);
         company.setEmail(email);
@@ -84,13 +81,7 @@ public class CompanyService {
             throw new IllegalArgumentException("Passwords do not match");
         }
         if (companyRepository.existsByEmail(dto.getEmail())) {
-            Company existing = companyRepository.findByEmail(dto.getEmail()).orElse(null);
-            if (existing != null && !"APPROVED".equals(existing.getStatus()) && !"ACTIVE".equals(existing.getStatus())) {
-                companyRepository.delete(existing);
-                companyRepository.flush();
-            } else {
-                throw new IllegalArgumentException("Email already registered and approved. Please log in.");
-            }
+            throw new IllegalArgumentException("Email already registered");
         }
 
         Company company = new Company();
@@ -130,11 +121,11 @@ public class CompanyService {
             throw new IllegalArgumentException("Invalid OTP");
         }
         
-        // OTP matches, mark as verified and pending approval from admin
+        // OTP matches, mark as verified
         company.setEmailVerified(true);
         company.setVerificationCode(null);
         company.setVerificationCodeExpiresAt(null);
-        company.setStatus("PENDING_APPROVAL");
+        company.setStatus("ACTIVE");
         companyRepository.save(company);
         
         return true;

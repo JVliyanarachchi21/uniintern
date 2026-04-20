@@ -3,6 +3,8 @@ package com.uniintern.portal.admin;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -52,8 +54,20 @@ public class AuditLoggingAspect {
         saveLog("Invite", "Staff Member", email);
     }
 
+    @AfterReturning(pointcut = "execution(* com.uniintern.portal.admin.AdminController.changePassword(..))", returning = "result")
+    public void logPasswordChange(JoinPoint joinPoint, String result) {
+        if (result != null && result.contains("settings")) {
+            saveLog("Change", "Security", "Admin Password Updated");
+        }
+    }
+
     private void saveLog(String action, String targetType, String targetName) {
-        AuditLog log = new AuditLog(action, targetType, targetName, "System Admin");
+        String performer = "System";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            performer = auth.getName();
+        }
+        AuditLog log = new AuditLog(action, targetType, targetName, performer);
         auditLogRepository.save(log);
     }
 }

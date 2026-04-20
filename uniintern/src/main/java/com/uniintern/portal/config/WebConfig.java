@@ -20,7 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // ... Admin Interceptor
+        registry.addInterceptor(companyInterceptor)
+                .addPathPatterns("/company/**");
+
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns(
@@ -31,10 +33,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/js/**",
                         "/images/**",
                         "/webjars/**");
-                        
-        // ... Company Interceptor
-        registry.addInterceptor(companyInterceptor)
-                .addPathPatterns("/company/**");
     }
 
     @Override
