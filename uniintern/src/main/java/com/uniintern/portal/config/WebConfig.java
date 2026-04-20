@@ -17,7 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
         this.adminInterceptor = adminInterceptor;
         this.companyInterceptor = companyInterceptor;
     }
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
