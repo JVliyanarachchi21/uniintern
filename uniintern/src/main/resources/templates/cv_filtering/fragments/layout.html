@@ -42,18 +42,19 @@
 </head>
 <body>
     <!-- Sidebar Fragment - Standard Site Navigation -->
-    <div th:fragment="sidebar(currentPage)" class="sidebar w-64 bg-slate-900 text-white flex flex-col h-full shadow-2xl z-20 relative">
-        <div class="sidebar-brand p-8 flex items-center space-x-3 border-b border-slate-800">
-            <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <i class="bi bi-mortarboard-fill text-white text-xl"></i>
-            </div>
-            <span class="brand-text font-black text-2xl tracking-tighter text-white">UniIntern</span>
+    <div th:fragment="sidebar(currentPage)" class="sidebar w-[250px] text-white flex flex-col h-full shadow-2xl z-20 relative" style="background: linear-gradient(180deg, #041a52 0%, #03133d 100%);">
+
+        <div class="sidebar-brand px-6 py-8 flex items-center space-x-3 border-b border-white/10 mb-4">
+            <img src="/images/logo.png" alt="UniIntern" class="w-7 h-7 object-contain">
+            <span class="brand-text font-extrabold text-lg tracking-tight text-white">UniIntern</span>
         </div>
+
 
         <ul class="sidebar-menu flex-1 px-4 space-y-2 overflow-y-auto mt-6">
             <li class="mb-1">
                 <a th:href="@{${userRole == 'admin' ? '/admin/cv/dashboard' : '/company/cv/dashboard'}}" 
-                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-400 hover:bg-slate-800 hover:text-white group">
+                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-300 hover:bg-white/10 hover:text-white group">
+
                     <i class="bi bi-grid-fill text-lg group-hover:text-indigo-400"></i>
                     <span class="font-bold text-sm">Main Dashboard</span>
                 </a>
@@ -61,7 +62,8 @@
 
             <li class="mb-1" th:if="${userRole == 'company'}">
                 <a th:href="@{/company/profile}" 
-                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-400 hover:bg-slate-800 hover:text-white group">
+                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-300 hover:bg-white/10 hover:text-white group">
+
                     <i class="bi bi-building text-lg group-hover:text-indigo-400"></i>
                     <span class="font-bold text-sm">Profile</span>
                 </a>
@@ -69,7 +71,8 @@
 
             <li class="mb-1" th:if="${userRole == 'company'}">
                 <a th:href="@{/company/internships}" 
-                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-400 hover:bg-slate-800 hover:text-white group">
+                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-300 hover:bg-white/10 hover:text-white group">
+
                     <i class="bi bi-briefcase-fill text-lg group-hover:text-indigo-400"></i>
                     <span class="font-bold text-sm">My Internships</span>
                 </a>
@@ -77,10 +80,11 @@
 
             <li class="mb-1">
                 <a th:href="@{${userRole == 'admin' ? '/admin/cv/dashboard' : '/company/cv/dashboard'}}" 
-                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 bg-indigo-600 text-white shadow-xl shadow-indigo-500/20">
+                   class="w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-white shadow-lg" style="background-color: #22418c;">
                     <i class="bi bi-funnel-fill text-lg"></i>
                     <span class="font-black text-sm">CV Filtering Engine</span>
                 </a>
+
             </li>
 
             <!-- RETURN TO PLATFORM BUTTON -->
@@ -93,9 +97,10 @@
             </li>
         </ul>
 
-        <div class="p-6 border-t border-slate-800 text-center">
-            <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">v1.0 — Platform Engine</p>
+        <div class="p-6 border-t border-white/10 text-center">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">v1.0 — Platform Engine</p>
         </div>
+
     </div>
 
     <!-- Header Fragment - Clean Normal Website Look -->
@@ -108,9 +113,10 @@
             <div class="flex items-center space-x-4">
                 <div class="text-right hidden sm:block">
                     <p class="text-sm font-black text-slate-900 leading-none" th:text="${session.companyName != null ? session.companyName : (userRole == 'admin' ? 'Administrator' : 'User')}">User Name</p>
-                    <p class="text-[10px] font-black text-indigo-600 uppercase tracking-widest mt-1.5" th:text="${userRole}">Role</p>
+                    <p class="text-[10px] font-black text-[#5483B3] uppercase tracking-widest mt-1.5" th:text="${userRole}">Role</p>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 font-black shadow-sm">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#22418c] font-black shadow-sm">
+
                     <span th:text="${userRole != null ? #strings.substring(userRole, 0, 1).toUpperCase() : 'U'}">U</span>
                 </div>
             </div>
@@ -123,43 +129,44 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Dashboard Box -->
                 <a th:href="@{${userRole == 'admin' ? '/admin/cv/dashboard' : '/company/cv/dashboard'}}"
-                   th:class="${currentTab == 'Dashboard'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-indigo-600 shadow-2xl shadow-indigo-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group'">
-                    <div th:class="${currentTab == 'Dashboard'} ? 'w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200' : 'w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all transform group-hover:rotate-6'">
+                   th:class="${currentTab == 'Dashboard'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-[#22418c] shadow-2xl shadow-blue-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/50 transition-all duration-300 group'">
+                    <div th:class="${currentTab == 'Dashboard'} ? 'w-12 h-12 rounded-2xl bg-[#22418c] text-white flex items-center justify-center mb-4 shadow-lg shadow-blue-200' : 'w-12 h-12 rounded-2xl bg-blue-50 text-[#22418c] flex items-center justify-center mb-4 group-hover:bg-[#22418c] group-hover:text-white transition-all transform group-hover:rotate-6'">
                         <i class="bi bi-speedometer2 text-2xl"></i>
                     </div>
-                    <span th:class="${currentTab == 'Dashboard'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-indigo-600 transition-colors'">Dashboard</span>
+                    <span th:class="${currentTab == 'Dashboard'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-[#22418c] transition-colors'">Dashboard</span>
                     <span class="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-wide">Overview & Stats</span>
                 </a>
 
                 <!-- Marking Guide Box -->
                 <a th:href="@{${userRole == 'admin' ? '/admin/cv/marking-guides' : '/company/cv/marking-guides'}}" 
-                   th:class="${currentTab == 'MarkingGuides' || currentTab == 'MarkingGuideDetail'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-indigo-600 shadow-2xl shadow-indigo-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group'">
-                    <div th:class="${currentTab == 'MarkingGuides' || currentTab == 'MarkingGuideDetail'} ? 'w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200' : 'w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all transform group-hover:rotate-6'">
+                   th:class="${currentTab == 'MarkingGuides' || currentTab == 'MarkingGuideDetail'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-[#22418c] shadow-2xl shadow-blue-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/50 transition-all duration-300 group'">
+                    <div th:class="${currentTab == 'MarkingGuides' || currentTab == 'MarkingGuideDetail'} ? 'w-12 h-12 rounded-2xl bg-[#22418c] text-white flex items-center justify-center mb-4 shadow-lg shadow-blue-200' : 'w-12 h-12 rounded-2xl bg-blue-50 text-[#22418c] flex items-center justify-center mb-4 group-hover:bg-[#22418c] group-hover:text-white transition-all transform group-hover:rotate-6'">
                         <i class="bi bi-journal-check text-2xl"></i>
                     </div>
-                    <span th:class="${currentTab == 'MarkingGuides' || currentTab == 'MarkingGuideDetail'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-indigo-600 transition-colors'">Marking Guide</span>
+                    <span th:class="${currentTab == 'MarkingGuides' || currentTab == 'MarkingGuideDetail'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-[#22418c] transition-colors'">Marking Guide</span>
                     <span class="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-wide">Rules & Weights</span>
                 </a>
 
                 <!-- Run Filtering Box -->
                 <a th:href="@{${userRole == 'admin' ? '/admin/cv/run-filtering' : '/company/cv/run-filtering'}}" 
-                   th:class="${currentTab == 'RunFiltering' || currentTab == 'ApplicantsPreview'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-indigo-600 shadow-2xl shadow-indigo-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group'">
-                    <div th:class="${currentTab == 'RunFiltering' || currentTab == 'ApplicantsPreview'} ? 'w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200' : 'w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all transform group-hover:rotate-6'">
+                   th:class="${currentTab == 'RunFiltering' || currentTab == 'ApplicantsPreview'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-[#22418c] shadow-2xl shadow-blue-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/50 transition-all duration-300 group'">
+                    <div th:class="${currentTab == 'RunFiltering' || currentTab == 'ApplicantsPreview'} ? 'w-12 h-12 rounded-2xl bg-[#22418c] text-white flex items-center justify-center mb-4 shadow-lg shadow-blue-200' : 'w-12 h-12 rounded-2xl bg-blue-50 text-[#22418c] flex items-center justify-center mb-4 group-hover:bg-[#22418c] group-hover:text-white transition-all transform group-hover:rotate-6'">
                         <i class="bi bi-play-circle text-2xl"></i>
                     </div>
-                    <span th:class="${currentTab == 'RunFiltering' || currentTab == 'ApplicantsPreview'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-indigo-600 transition-colors'">Run Filtering</span>
+                    <span th:class="${currentTab == 'RunFiltering' || currentTab == 'ApplicantsPreview'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-[#22418c] transition-colors'">Run Filtering</span>
                     <span class="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-wide">Start Engine</span>
                 </a>
 
                 <!-- Results Box -->
                 <a th:href="@{${userRole == 'admin' ? '/admin/cv/results' : '/company/cv/results'}}" 
-                   th:class="${currentTab == 'ResultsList' || currentTab == 'RankingDetail'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-indigo-600 shadow-2xl shadow-indigo-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group'">
-                    <div th:class="${currentTab == 'ResultsList' || currentTab == 'RankingDetail'} ? 'w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200' : 'w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all transform group-hover:rotate-6'">
+                   th:class="${currentTab == 'ResultsList' || currentTab == 'RankingDetail'} ? 'flex flex-col p-6 bg-white rounded-[2rem] border-2 border-[#22418c] shadow-2xl shadow-blue-200 transform scale-[1.03] transition-all duration-300' : 'flex flex-col p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/50 transition-all duration-300 group'">
+                    <div th:class="${currentTab == 'ResultsList' || currentTab == 'RankingDetail'} ? 'w-12 h-12 rounded-2xl bg-[#22418c] text-white flex items-center justify-center mb-4 shadow-lg shadow-blue-200' : 'w-12 h-12 rounded-2xl bg-blue-50 text-[#22418c] flex items-center justify-center mb-4 group-hover:bg-[#22418c] group-hover:text-white transition-all transform group-hover:rotate-6'">
                         <i class="bi bi-trophy text-2xl"></i>
                     </div>
-                    <span th:class="${currentTab == 'ResultsList' || currentTab == 'RankingDetail'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-indigo-600 transition-colors'">Results</span>
+                    <span th:class="${currentTab == 'ResultsList' || currentTab == 'RankingDetail'} ? 'font-black text-slate-900' : 'font-black text-slate-500 group-hover:text-[#22418c] transition-colors'">Results</span>
                     <span class="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-wide">Rankings & Logs</span>
                 </a>
+
             </div>
         </div>
     </div>

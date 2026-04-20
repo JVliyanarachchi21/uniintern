@@ -7,7 +7,8 @@
             <!-- Header Section with Back Link -->
             <div class="space-y-4">
                 <a th:href="@{${userRole == 'admin' ? '/admin/cv/run-filtering' : '/company/cv/run-filtering'}}" 
-                   class="group flex items-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors">
+                   class="group flex items-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#22418c] transition-colors">
+
                     <i class="bi bi-arrow-left-short text-xl group-hover:-translate-x-1 transition-transform"></i>
                     Back to Selection Engine
                 </a>
@@ -16,7 +17,8 @@
                     <div>
                         <h2 class="text-4xl font-black text-slate-900 tracking-tight">Applicants Preview</h2>
                         <div class="mt-2 flex items-center space-x-3">
-                            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase rounded-lg border border-indigo-100" th:text="${internship.title}">Internship Title</span>
+                            <span class="px-3 py-1 bg-blue-50 text-[#22418c] text-[10px] font-black uppercase rounded-lg border border-blue-100" th:text="${internship.title}">Internship Title</span>
+
                             <span class="text-slate-400 font-bold text-sm">Targeting Company ID:</span>
                             <span class="text-slate-900 font-black text-sm" th:text="${internship.companyId}">001</span>
                         </div>
@@ -65,8 +67,9 @@
                                     </div>
                                     <div class="flex flex-wrap gap-1.5" th:if="${app.student != null}">
                                         <span th:each="skill : ${app.student.skills}" 
-                                              class="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[9px] font-black uppercase rounded-md border border-indigo-100"
+                                              class="px-2 py-0.5 bg-blue-50 text-[#22418c] text-[9px] font-black uppercase rounded-md border border-blue-100"
                                               th:text="${skill}">Skill</span>
+
                                     </div>
                                     <div class="text-[10px] font-bold text-slate-300 italic" th:if="${app.student == null}">No skills data</div>
                                 </td>
@@ -79,11 +82,12 @@
                                 <td class="px-10 py-8 text-right">
                                     <div class="flex flex-col items-end">
                                         <div class="flex items-center mb-2">
-                                            <span class="text-xs font-black text-indigo-600 mr-3" th:text="${app.completeness} + '%'">90%</span>
+                                            <span class="text-xs font-black text-[#22418c] mr-3" th:text="${app.completeness} + '%'">90%</span>
                                             <div class="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
-                                                <div class="bg-indigo-600 h-full transition-all duration-1000" th:style="'width:' + ${app.completeness} + '%'"></div>
+                                                <div class="bg-[#22418c] h-full transition-all duration-1000" th:style="'width:' + ${app.completeness} + '%'"></div>
                                             </div>
                                         </div>
+
                                         <span class="text-[9px] font-black uppercase tracking-widest" 
                                               th:classappend="${app.completeness >= 80 ? 'text-emerald-500' : (app.completeness >= 50 ? 'text-amber-500' : 'text-rose-500')}"
                                               th:text="${app.completeness >= 80 ? 'Optimal Data' : (app.completeness >= 50 ? 'Partial Data' : 'Insufficient')}">Optimal Data</span>
