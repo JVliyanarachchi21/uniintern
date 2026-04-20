@@ -198,6 +198,18 @@ public class Student {
         this.status = status;
     }
 
+    @Transient
+    public int getExperienceCount() {
+        if (experience == null || experience.isEmpty()) return 0;
+        return experience.split(",").length;
+    }
+
+    @Transient
+    public int getExperienceMonths() {
+        if (experience == null || experience.isEmpty()) return 0;
+        return getExperienceCount() * 6; 
+    }
+
     public Boolean getLoginAlertsEnabled() {
         return loginAlertsEnabled;
     }

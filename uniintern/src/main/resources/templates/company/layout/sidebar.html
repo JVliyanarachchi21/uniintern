@@ -43,6 +43,13 @@
         </li>
 
         <li>
+            <a th:href="@{/company/cv/dashboard}" th:classappend="${page=='cv_filtering'} ? 'active' : ''">
+                <i class="bi bi-funnel"></i>
+                <span>CV Filtering</span>
+            </a>
+        </li>
+
+        <li>
             <a th:href="@{/company/promotions}" th:classappend="${page=='promotions'} ? 'active' : ''">
                 <i class="bi bi-star"></i>
                 <span>Promotions</span>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{cv_filtering/fragments/layout :: head('Applicants Preview')}"></head>
+<body class="flex h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-900">
+    <div th:replace="~{cv_filtering/fragments/layout :: main('RunFiltering', ~{::content})}">
+        <div th:fragment="content" class="space-y-10 animate-fade-in pb-20">
+            <!-- Header Section with Back Link -->
+            <div class="space-y-4">
+                <a th:href="@{${userRole == 'admin' ? '/admin/cv/run-filtering' : '/company/cv/run-filtering'}}" 
+                   class="group flex items-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors">
+                    <i class="bi bi-arrow-left-short text-xl group-hover:-translate-x-1 transition-transform"></i>
+                    Back to Selection Engine
+                </a>
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <h2 class="text-4xl font-black text-slate-900 tracking-tight">Applicants Preview</h2>
+                        <div class="mt-2 flex items-center space-x-3">
+                            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase rounded-lg border border-indigo-100" th:text="${internship.title}">Internship Title</span>
+                            <span class="text-slate-400 font-bold text-sm">Targeting Company ID:</span>
+                            <span class="text-slate-900 font-black text-sm" th:text="${internship.companyId}">001</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applicants Table Section -->
+            <div th:if="${#lists.isEmpty(applications)}" class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/40 border border-gray-50 p-20 text-center">
+                <div class="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+                    <i class="bi bi-people text-3xl text-slate-300"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2">No Applications Found</h3>
+                <p class="text-slate-400 font-bold">There are currently no candidates to preview for this opening.</p>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(applications)}" class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/40 border border-gray-50 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100">
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Candidate Info</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Academic & Skills</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Experience</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Data Completeness</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr th:each="app : ${applications}" class="hover:bg-slate-50/50 transition-colors group">
+                                <td class="px-10 py-8">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-lg border border-slate-200"
+                                             th:text="${app.student != null ? #strings.substring(app.student.fullName, 0, 1).toUpperCase() : '?'}">A</div>
+                                        <div>
+                                            <div class="font-black text-slate-900" th:text="${app.student?.fullName ?: 'Unknown Candidate'}">Candidate Name</div>
+                                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" th:text="${app.student?.email ?: 'No email'}">email@example.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-10 py-8">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <div class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-lg border border-emerald-100">
+                                            GPA <span th:text="${app.student?.gpa ?: 'N/A'}">3.5</span>
+                                        </div>
+                                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate" th:text="${app.student?.university ?: 'Unknown University'}">University Name</div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5" th:if="${app.student != null}">
+                                        <span th:each="skill : ${app.student.skills}" 
+                                              class="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[9px] font-black uppercase rounded-md border border-indigo-100"
+                                              th:text="${skill}">Skill</span>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-300 italic" th:if="${app.student == null}">No skills data</div>
+                                </td>
+                                <td class="px-10 py-8">
+                                    <div class="text-sm font-black text-slate-900" 
+                                         th:text="${app.student?.experienceCount ?: 0} + ' Projects'">2 Projects</div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" 
+                                         th:text="${app.student?.experienceMonths ?: 0} + ' Months Total'">12 Months Total</div>
+                                </td>
+                                <td class="px-10 py-8 text-right">
+                                    <div class="flex flex-col items-end">
+                                        <div class="flex items-center mb-2">
+                                            <span class="text-xs font-black text-indigo-600 mr-3" th:text="${app.completeness} + '%'">90%</span>
+                                            <div class="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
+                                                <div class="bg-indigo-600 h-full transition-all duration-1000" th:style="'width:' + ${app.completeness} + '%'"></div>
+                                            </div>
+                                        </div>
+                                        <span class="text-[9px] font-black uppercase tracking-widest" 
+                                              th:classappend="${app.completeness >= 80 ? 'text-emerald-500' : (app.completeness >= 50 ? 'text-amber-500' : 'text-rose-500')}"
+                                              th:text="${app.completeness >= 80 ? 'Optimal Data' : (app.completeness >= 50 ? 'Partial Data' : 'Insufficient')}">Optimal Data</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

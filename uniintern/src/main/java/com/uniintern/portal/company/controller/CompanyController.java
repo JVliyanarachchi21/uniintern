@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/company")
 public class CompanyController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CompanyController.class);
     private final InternshipService internshipService;
     private final CompanyService companyService;
     private final PromotionService promotionService;
@@ -90,6 +93,7 @@ public class CompanyController {
         Company company = companyService.findByEmail(email);
         
         if (company == null || !company.getPassword().equals(password)) {
+            logger.warn("Failed login attempt for email: {}", email);
             model.addAttribute("error", "Invalid email or password");
             return "company/company-login";
         }
@@ -109,6 +113,7 @@ public class CompanyController {
             return "company/company-login";
         }
         
+        logger.info("Successful login for company: {}", email);
         session.setAttribute("loggedInCompanyId", company.getId());
         return "redirect:/company/dashboard";
     }
@@ -262,6 +267,7 @@ public class CompanyController {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
 
+        logger.info("Accessing dashboard for company ID: {}", companyId);
         model.addAttribute("page", "dashboard");
         Company company = companyService.findById(companyId);
         if (company == null) return "redirect:/company/login";

@@ -63,8 +63,7 @@
         <form id="promoForm" action="/company/promotions/process" method="POST">
             <label for="promoInternship">Select Internship to Promote</label>
             <select id="promoInternship" name="internshipId" onchange="checkInternshipSelection()" required style="width: 100%; margin-bottom: 20px;">
-                <option value="" th:if="${not #lists.isEmpty(internships)}">Choose an approved internship</option>
-                <option value="" th:if="${#lists.isEmpty(internships)}">No eligible internships available (All already promoted)</option>
+                <option value="">Choose an approved internship</option>
                 <option th:each="internship : ${internships}" 
                         th:value="${internship.id}" 
                         th:text="${internship.title}">Software Engineering Intern</option>

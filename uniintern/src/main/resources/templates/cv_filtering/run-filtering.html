@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{cv_filtering/fragments/layout :: head('Run Filtering')}"></head>
+<body class="flex h-screen w-full bg-slate-50 overflow-hidden font-sans">
+    <div th:replace="~{cv_filtering/fragments/layout :: main('RunFiltering', ~{::content})}">
+        <div th:fragment="content" class="max-w-4xl mx-auto space-y-10 animate-fade-in pb-20">
+            <div class="text-center space-y-2">
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight">Filtering Engine</h2>
+                <p class="text-slate-500 font-bold text-lg">Select an internship to process and rank applicants instantly.</p>
+            </div>
+
+            <div class="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-slate-200/50 space-y-8 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <i class="bi bi-cpu text-[10rem] text-indigo-600"></i>
+                </div>
+
+                <form th:action="@{${userRole == 'admin' ? '/admin/cv/run-filtering' : '/company/cv/run-filtering'}}" method="POST" class="space-y-8 relative z-10">
+                    <div class="space-y-4">
+                        <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Target Internship</label>
+                        <div class="relative group/input">
+                            <select id="internship" name="internshipId" required 
+                                    class="w-full p-6 bg-slate-50 border-2 border-transparent rounded-[2rem] font-black text-slate-700 focus:bg-white focus:border-indigo-600 outline-none transition-all appearance-none cursor-pointer group-hover/input:bg-slate-100">
+                                <option value="">-- Choose an Internship --</option>
+                                <option th:each="intern : ${internships}" 
+                                        th:value="${intern.id}" 
+                                        th:text="${intern.title} + ( ${intern.skillsWeight == null} ? ' (⚠️ No Guide)' : ' (Ready)')">Software Engineering Intern</option>
+                            </select>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                <i class="bi bi-chevron-down text-xl font-black"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50/50 border border-indigo-100 p-8 rounded-[2rem] flex items-start space-x-5">
+                        <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-200">
+                            <i class="bi bi-lightning-charge-fill text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-black text-indigo-900 text-lg">Pre-processing Check</h4>
+                            <p class="text-sm text-indigo-700/80 font-bold mt-1 leading-relaxed">The engine will use your configured <strong>Marking Guide</strong> weights. Ensure they sum to 100% for the most accurate talent identification.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-5 pt-4">
+                        <button type="button" onclick="previewApplicants()" id="previewBtn" disabled
+                                class="flex-1 py-5 px-8 bg-white border-2 border-slate-100 text-slate-600 font-black rounded-3xl shadow-sm hover:bg-slate-50 hover:border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center group/btn">
+                            <i class="bi bi-people-fill mr-3 text-2xl group-hover:scale-110 transition-transform"></i>
+                            Preview Applicants
+                        </button>
+                        
+                        <button type="submit" id="runBtn" disabled
+                                class="flex-1 py-5 px-8 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-3xl shadow-2xl shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center group/run">
+                            <i class="bi bi-play-circle-fill mr-3 text-2xl group-hover:scale-110 transition-transform"></i>
+                            Analyze & Rank Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('internship').addEventListener('change', function() {
+            const hasValue = this.value !== '';
+            document.getElementById('previewBtn').disabled = !hasValue;
+            document.getElementById('runBtn').disabled = !hasValue;
+        });
+        
+        function previewApplicants() {
+            const internshipId = document.getElementById('internship').value;
+            if (internshipId) {
+                const role = window.location.pathname.includes('/admin/') ? 'admin' : 'company';
+                window.location.href = '/' + role + '/cv/applicants-preview?internshipId=' + internshipId;
+            }
+        }
+    </script>
+</body>
+</html>
