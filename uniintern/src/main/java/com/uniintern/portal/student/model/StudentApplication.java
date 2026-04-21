@@ -11,7 +11,7 @@ public class StudentApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "student_id", nullable = false)
     private Long studentId;
 
     @Column(nullable = false)
@@ -29,9 +29,39 @@ public class StudentApplication {
     @Column(columnDefinition = "TEXT")
     private String remarks;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", insertable = false, updatable = false)
+    private Student student;
+
     private String cvFilePath;
 
     public StudentApplication() {
+    }
+
+    @Transient
+    public int getCompleteness() {
+        if (student == null) return 50; // Default if not loaded
+        int filledFields = 0;
+        int totalFields = 8;
+        
+        if (student.getFullName() != null && !student.getFullName().isEmpty()) filledFields++;
+        if (student.getEmail() != null && !student.getEmail().isEmpty()) filledFields++;
+        if (student.getUniversity() != null && !student.getUniversity().isEmpty()) filledFields++;
+        if (student.getGpa() != null && student.getGpa() > 0) filledFields++;
+        if (student.getSkills() != null && !student.getSkills().isEmpty()) filledFields++;
+        if (student.getExperience() != null && !student.getExperience().isEmpty()) filledFields++;
+        if (student.getCertifications() != null && !student.getCertifications().isEmpty()) filledFields++;
+        if (student.getCvFilePath() != null && !student.getCvFilePath().isEmpty()) filledFields++;
+        
+        return (int) ((filledFields / (double) totalFields) * 100);
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     @PrePersist

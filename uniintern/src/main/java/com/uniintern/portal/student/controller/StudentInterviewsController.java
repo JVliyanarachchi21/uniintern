@@ -1,5 +1,7 @@
 package com.uniintern.portal.student.controller;
 
+import com.uniintern.portal.company.entity.Interview;
+import com.uniintern.portal.company.repository.InterviewRepository;
 import com.uniintern.portal.student.model.Student;
 import com.uniintern.portal.student.repository.StudentRepository;
 import jakarta.servlet.http.HttpSession;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,9 @@ public class StudentInterviewsController {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private InterviewRepository interviewRepository;
 
     @GetMapping("/student/interviews")
     public String interviews(HttpSession session, Model model) {
@@ -32,36 +38,42 @@ public class StudentInterviewsController {
         model.addAttribute("fullName", student.getFullName());
         model.addAttribute("student", student);
 
-        // Professional Mock Data for Demonstration
-        List<Map<String, Object>> mockInterviews = new ArrayList<>();
+        // Fetch Real Interviews from Database
+        List<Interview> realInterviews = interviewRepository.findByStudentId(studentId);
+        List<Map<String, Object>> formattedInterviews = new ArrayList<>();
 
-        // Interview 1: Pending
-        Map<String, Object> i1 = new HashMap<>();
-        i1.put("id", 101L);
-        i1.put("title", "UI/UX Design Intern");
-        i1.put("company", "Global Finance Bank");
-        i1.put("logoPath", "/images/companies/gfb-logo.png");
-        i1.put("date", "April 15, 2026");
-        i1.put("time", "10:30 AM");
-        i1.put("mode", "Online (Zoom)");
-        i1.put("location", "https://zoom.us/j/123456789");
-        i1.put("status", "PENDING_CONFIRMATION");
-        mockInterviews.add(i1);
+        DateTimeFormatter dateLabelFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
+        DateTimeFormatter timeLabelFormatter = DateTimeFormatter.ofPattern("hh:mm a");
 
-        // Interview 2: Confirmed
-        Map<String, Object> i2 = new HashMap<>();
-        i2.put("id", 102L);
-        i2.put("title", "Frontend Developer Intern");
-        i2.put("company", "TechVision Solutions");
-        i2.put("logoPath", "/images/companies/techvision-logo.png");
-        i2.put("date", "April 18, 2026");
-        i2.put("time", "02:00 PM");
-        i2.put("mode", "In-Person");
-        i2.put("location", "Level 12, Tech Tower, Colombo 03");
-        i2.put("status", "CONFIRMED");
-        mockInterviews.add(i2);
+        for (Interview interview : realInterviews) {
+            Map<String, Object> iMap = new HashMap<>();
+            iMap.put("id", interview.getId());
+            iMap.put("title", interview.getInternshipTitle());
+            
+            // Note: In a full implementation, we'd join with the Company table to get the logo and name
+            // For now, we use the title and basic formatting to ensure UI consistency
+            iMap.put("company", "Partner Organization");
+            iMap.put("logoPath", null); // Template will show first letter of company name
 
-        model.addAttribute("interviews", mockInterviews);
+            if (interview.getInterviewDateTime() != null) {
+                iMap.put("date", interview.getInterviewDateTime().format(dateLabelFormatter));
+                iMap.put("time", interview.getInterviewDateTime().format(timeLabelFormatter));
+            } else {
+                iMap.put("date", "TBD");
+                iMap.put("time", "TBD");
+            }
+            
+            // Map status for template badges
+            String status = interview.getStatus();
+            iMap.put("status", "SCHEDULED".equalsIgnoreCase(status) ? "CONFIRMED" : "PENDING_CONFIRMATION");
+            
+            iMap.put("mode", "Direct Interview");
+            iMap.put("location", "To be communicated by Admin");
+
+            formattedInterviews.add(iMap);
+        }
+
+        model.addAttribute("interviews", formattedInterviews);
         model.addAttribute("activePage", "interviews");
 
         return "student/interviews";

@@ -94,6 +94,7 @@
         .status-reviewing { background: #fef3c7; color: #b45309; }
         .status-accepted { background: #dcfce7; color: #15803d; }
         .status-rejected { background: #fee2e2; color: #b91c1c; }
+        .status-withdrawn { background: #f1f5f9; color: #475569; }
         
         .status-dot {
             width: 6px;
@@ -135,6 +136,22 @@
             background: #f1f5f9;
             border-color: #cbd5e1;
             color: #0f172a;
+        }
+        
+        .btn-withdraw {
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-withdraw:hover {
+            color: #ef4444;
+            background: #fef2f2;
         }
     </style>
 </head>
@@ -193,8 +210,17 @@
                                 <span th:text="${app.status}">APPLIED</span>
                             </span>
                         </td>
-                        <td style="text-align: right;">
-                            <a th:href="@{'/student/applications/' + ${app.id}}" class="btn-view" style="text-decoration: none;">View Details</a>
+                        <td style="text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+                            <a th:href="@{'/student/applications/' + ${app.id}}" class="btn-view" style="text-decoration: none;">View Status</a>
+                            
+                            <!-- Withdraw Form -->
+                            <form th:if="${app.status != T(com.uniintern.portal.student.model.ApplicationStatus).WITHDRAWN}" 
+                                  th:action="@{/student/applications/withdraw}" method="post" 
+                                  onsubmit="return confirm('Are you sure you want to withdraw this application? This action cannot be undone.');"
+                                  style="display: inline;">
+                                <input type="hidden" name="id" th:value="${app.id}">
+                                <button type="submit" class="btn-withdraw">Withdraw</button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>

@@ -101,7 +101,10 @@
         }
         .status-applied { background: #e0f2fe; color: #0369a1; }
         .status-shortlisted { background: #fef3c7; color: #b45309; }
+        .status-interview_scheduled, .status-technical_round, .status-hr_round { background: #fae8ff; color: #86198f; }
+        .status-offer_extended { background: #dcfce7; color: #15803d; border: 1px solid #16a34a; }
         .status-rejected { background: #fee2e2; color: #b91c1c; }
+        .status-withdrawn { background: #f1f5f9; color: #475569; }
         
         /* Weights Display */
         .weights-container {
@@ -168,6 +171,61 @@
             font-weight: 600;
             font-size: 14px;
             margin-bottom: 24px;
+        }
+
+        /* Timeline Styles */
+        .timeline-modern {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+            padding-left: 10px;
+        }
+        .timeline-node {
+            display: flex;
+            gap: 20px;
+            padding-bottom: 30px;
+            position: relative;
+        }
+        .timeline-node:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 20px;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        .node-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #cbd5e1;
+            z-index: 1;
+            margin-top: 4px;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        .node-active {
+            border-color: var(--uni-primary);
+            background: var(--uni-primary);
+            box-shadow: 0 0 0 4px rgba(5,38,89,0.1);
+        }
+        .node-error {
+            border-color: #ef4444;
+            background: #ef4444;
+        }
+        .node-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .node-date {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 2px;
         }
     </style>
 </head>
@@ -243,7 +301,7 @@
                 
                 <div class="timeline-modern">
                     <div class="timeline-node" th:each="node : ${timeline}">
-                        <div class="node-circle" th:classappend="${node.done} ? ' node-active' : ''"></div>
+                        <div class="node-circle" th:classappend="${node.done ? ' node-active' : ''} + ${node.error ? ' node-error' : ''}"></div>
                         <div>
                             <div class="node-title" th:text="${node.step}">Applied</div>
                             <div class="node-date" th:text="${node.date}">Apr 06, 2026</div>
