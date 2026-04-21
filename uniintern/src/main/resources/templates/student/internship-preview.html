@@ -8,15 +8,6 @@
     <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --uni-primary: #052659;
-            --uni-secondary: #0D8ABC;
-            --uni-accent: #C1E8FF;
-            --uni-soft: #F0F4F8;
-            --uni-white: #FFFFFF;
-            --uni-text: #0f172a;
-            --border-soft: #e2e8f0;
-        }
 
         .preview-grid {
             display: grid;
@@ -100,7 +91,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
                     <div>
                         <span style="background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; text-transform: uppercase;">Internship Opening</span>
-                        <h1 th:text="${internship.title}" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 800; color: #0f172a; margin: 12px 0 8px;">Software Engineering Intern</h1>
+                        <h1 th:text="${internship.title}" class="student-page-title" style="font-size: 36px; margin: 12px 0 8px;">Software Engineering Intern</h1>
                         <p th:text="${company != null ? company.companyName : 'Tech Partner'}" style="font-size: 18px; color: #64748b; font-weight: 600;">DataMinds Analytics</p>
                     </div>
                     <div style="background: #f0f7ff; border: 1.5px solid var(--uni-primary); border-radius: 16px; padding: 16px; text-align: center; min-width: 100px;">

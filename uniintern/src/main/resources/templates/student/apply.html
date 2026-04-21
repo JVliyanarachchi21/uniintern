@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/home.css(v=6)}">
     <link rel="stylesheet" th:href="@{/css/company.css(v=6)}">
+    <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
     <style>
         .pub-form-control:disabled {
             background-color: #f1f5f9;
@@ -59,7 +60,7 @@
             
             <div style="text-align: center; margin-bottom: 2.5rem;">
                 <span class="card-top-badge" style="margin-bottom: 1.2rem; display: inline-block;">Internship Application</span>
-                <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: var(--uni-primary); margin-bottom: 0.5rem; font-weight: 800; letter-spacing: -0.02em;" th:text="${internship.title}">Software Engineering Intern</h2>
+                <h2 class="student-page-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;" th:text="${internship.title}">Software Engineering Intern</h2>
                 <div class="internship-id-badge" th:text="'Ref ID: #' + ${internship.id}">#14</div>
                 <p style="color: rgba(17,24,39,0.6); font-size: 1.05rem; font-weight: 500;">Applying for <span th:text="${internship.title}" style="color: var(--uni-primary);">Internship</span> at <span th:text="${company?.companyName}" style="color: var(--uni-primary);">Company</span></p>
             </div>

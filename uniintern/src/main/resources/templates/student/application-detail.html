@@ -8,16 +8,6 @@
     <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --uni-primary: #052659;
-            --uni-secondary: #0D8ABC;
-            --uni-accent: #C1E8FF;
-            --uni-soft: #F0F4F8;
-            --uni-white: #FFFFFF;
-            --uni-text: #0f172a;
-            --uni-mid: #64748b;
-            --border-soft: #e2e8f0;
-        }
 
         .detail-grid {
             display: grid;
@@ -246,7 +236,7 @@
 
         <div class="total-match-badge" th:if="${app != null}">
             <div>
-                <h2 style="margin: 0; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 24px;">Application Matching Insight</h2>
+                <h2 class="student-page-title" style="font-size: 24px; margin: 0;">Application Matching Insight</h2>
                 <p style="margin: 6px 0 0; color: #64748b; font-size: 14px; font-weight: 500;">Calculated by comparing yours profile with the filtering criteria from the internship browse section.</p>
             </div>
             <div style="text-align: right; background: white; padding: 12px 24px; border-radius: 12px; border: 1px solid var(--border-soft);">
