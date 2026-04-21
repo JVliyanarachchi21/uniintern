@@ -36,7 +36,46 @@
     </div>
   </div>
 
+  <style>
+    /* Dashboard Alert Styles */
+    .intel-feed { display: flex; flex-direction: column; gap: 12px; }
+    .intel-item { display: flex; align-items: center; gap: 15px; padding: 16px; border-radius: 16px; border: 1px solid #e2e8f0; background: #fff; transition: 0.2s; }
+    .intel-item:hover { transform: translateX(5px); }
+    .intel-prio-high { border-left: 5px solid #ef4444; background: #fffafb; }
+    .intel-prio-med { border-left: 5px solid #f59e0b; background: #fffcf0; }
+    .intel-icon { font-size: 20px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #f1f5f9; }
+    .intel-prio-high .intel-icon { background: #fee2e2; color: #ef4444; }
+    .intel-prio-med .intel-icon { background: #fef3c7; color: #d97706; }
+    .intel-details h4 { margin: 0 0 4px 0; font-size: 14px; font-weight: 800; color: #1e293b; }
+    .intel-details p { margin: 0; font-size: 13px; color: #64748b; line-height: 1.4; }
+    .intel-meta { font-size: 11px; font-weight: 700; color: #94a3b8; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  </style>
+
   <div class="grid-2">
+    <div class="panel" style="background: #f8fafc; border: 1px dashed #cbd5e1;">
+      <h3 style="display:flex; align-items:center; gap:10px;">
+        <i class="bi bi-shield-shaded" style="color:var(--primary);"></i>
+        System Intelligence Feed
+      </h3>
+      <div class="intel-feed">
+        <div th:if="${#lists.isEmpty(newAlerts)}" style="text-align:center; padding:30px; color:#94a3b8;">
+            <i class="bi bi-check2-circle" style="font-size:32px;"></i>
+            <p style="margin-top:10px; font-weight:600;">No urgent actions detected at this time.</p>
+        </div>
+        <div th:each="alert : ${newAlerts}" class="intel-item" th:classappend="${alert.priority == 'HIGH'} ? 'intel-prio-high' : 'intel-prio-med'">
+          <div class="intel-icon">
+            <i th:if="${alert.type == 'REGISTRATION'}" class="bi bi-building-add"></i>
+            <i th:if="${alert.type == 'INTERNSHIP'}" class="bi bi-briefcase-fill"></i>
+          </div>
+          <div class="intel-details">
+            <h4 th:text="${alert.type}">TYPE</h4>
+            <p th:text="${alert.message}">Target Message</p>
+            <div class="intel-meta"><i class="bi bi-clock"></i> <span th:text="${#temporals.format(alert.createdAt, 'hh:mm a')}">TIME</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="panel">
   <h3>Latest Activity</h3>
   <ul class="activity">

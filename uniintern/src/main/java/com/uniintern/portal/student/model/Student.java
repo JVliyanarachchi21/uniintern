@@ -65,6 +65,8 @@ public class Student {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    private LocalDateTime lastLoginAt;
+
     public Student() {
         this.loginAlertsEnabled = false;
         this.twoFactorEnabled = false;
@@ -236,5 +238,13 @@ public class Student {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public LocalDateTime getLastLoginAt() {
+        return lastLoginAt;
+    }
+
+    public void setLastLoginAt(LocalDateTime lastLoginAt) {
+        this.lastLoginAt = lastLoginAt;
     }
 }

@@ -10,9 +10,17 @@ import com.uniintern.portal.company.service.EmailService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import com.uniintern.portal.student.service.NotificationService;
+import com.uniintern.portal.student.repository.StudentRepository;
+import com.uniintern.portal.student.repository.StudentApplicationRepository;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.format.DateTimeFormatter;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -36,6 +44,18 @@ public class AdminController {
     private final AdminAccountRepository adminAccountRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
+    // --- INTELLIGENT SENTRY SERVICES ---
+    private final AdminAlertService adminAlertService;
+
+    // --- ZERO-TOUCH INTEGRATION REPOSITORIES ---
+    private final StudentRepository studentRepository;
+    private final StudentApplicationRepository studentApplicationRepository;
+    private final NotificationService notificationService;
+    private final JavaMailSender javaMailSender;
+
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
 
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
@@ -46,7 +66,12 @@ public class AdminController {
             SystemMessageRepository systemMessageRepository,
             AdminReportService adminReportService,
             AdminAccountRepository adminAccountRepository,
-            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder,
+            StudentRepository studentRepository,
+            StudentApplicationRepository studentApplicationRepository,
+            NotificationService notificationService,
+            JavaMailSender javaMailSender,
+            AdminAlertService adminAlertService) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
         this.interviewRepository = interviewRepository;
@@ -57,24 +82,18 @@ public class AdminController {
         this.adminReportService = adminReportService;
         this.adminAccountRepository = adminAccountRepository;
         this.passwordEncoder = passwordEncoder;
+        this.studentRepository = studentRepository;
+        this.studentApplicationRepository = studentApplicationRepository;
+        this.notificationService = notificationService;
+        this.javaMailSender = javaMailSender;
+        this.adminAlertService = adminAlertService;
     }
 
     @GetMapping({ "/dashboard", "" })
     public String dashboard(Model model) {
-
-        long pendingCompanies = companyRepository
-                .findByStatus("PENDING_VERIFICATION")
-                .size();
-
-        long pendingInternships = internshipRepository
-                .findByStatus("PENDING_ADMIN_APPROVAL")
-                .size();
-
-        long interviewsToday = interviewRepository.findAll().stream()
-                .filter(i -> i.getInterviewDateTime() != null)
-                .filter(i -> i.getInterviewDateTime().toLocalDate()
-                        .equals(java.time.LocalDate.now()))
-                .count();
+        long pendingCompanies = companyRepository.countByStatus("PENDING_VERIFICATION");
+        long pendingInternships = internshipRepository.countByStatus("PENDING_ADMIN_APPROVAL");
+        long interviewsToday = interviewRepository.countInterviewsByDate(java.time.LocalDateTime.now());
 
         model.addAttribute("pendingCompanies", pendingCompanies);
         model.addAttribute("pendingInternships", pendingInternships);
@@ -87,9 +106,22 @@ public class AdminController {
         return "admin/dashboard";
     }
 
+    @GetMapping("/notifications")
+    public String notificationHub(Model model) {
+        return "admin/notifications";
+    }
+
+    @PostMapping("/notifications/mark-all-read")
+    public String markAllAlertsRead() {
+        adminAlertService.markAllAsRead();
+        return "redirect:/admin/notifications";
+    }
+
     @GetMapping("/companies")
     public String companyApprovals(Model model) {
-        List<Company> pending = companyRepository.findByStatus("PENDING_VERIFICATION");
+        // Show all companies waiting for verification or final approval
+        List<Company> pending = new java.util.ArrayList<>(companyRepository.findByStatus("PENDING_VERIFICATION"));
+        pending.addAll(companyRepository.findByStatus("PENDING_APPROVAL"));
         model.addAttribute("companies", pending);
         return "admin/company-approvals";
     }
@@ -108,7 +140,7 @@ public class AdminController {
     @GetMapping("/companies/{id}/approve")
     public String approveCompany(@PathVariable Long id) {
         Company c = companyRepository.findById(id).orElseThrow();
-        c.setStatus("VERIFIED");
+        c.setStatus("ACTIVE");
         companyRepository.save(c);
         return "redirect:/admin/companies";
     }
@@ -216,6 +248,8 @@ public class AdminController {
             @RequestParam(required = false) String candidateName,
             @RequestParam(required = false) Long internshipId,
             @RequestParam(required = false) String datetime,
+            @RequestParam(required = false) String mode,
+            @RequestParam(required = false) String locationLink,
             Model model) {
 
         List<Internship> approvedInternships = internshipRepository.findByStatus("APPROVED");
@@ -230,6 +264,8 @@ public class AdminController {
         model.addAttribute("candidateName", cleanCandidateName);
         model.addAttribute("internshipId", internshipId);
         model.addAttribute("datetime", cleanDatetime);
+        model.addAttribute("mode", mode);
+        model.addAttribute("locationLink", locationLink);
 
         if (cleanCandidateName.isBlank()) {
             model.addAttribute("candidateNameError", "Candidate name cannot be empty.");
@@ -260,11 +296,23 @@ public class AdminController {
             hasError = true;
         } else {
             try {
-                interviewDateTime = LocalDateTime.parse(cleanDatetime);
+                // Support both ISO format and the space-separated format from Flatpickr
+                String normalizedDatetime = cleanDatetime.replace(" ", "T");
+                if (normalizedDatetime.length() == 16) {
+                    normalizedDatetime += ":00"; // Add seconds if missing
+                }
+                interviewDateTime = LocalDateTime.parse(normalizedDatetime);
                 // Relaxed to allow any time from now onwards
                 if (interviewDateTime.isBefore(LocalDateTime.now().minusMinutes(1))) {
                     model.addAttribute("datetimeError", "Interview time cannot be in the past.");
                     hasError = true;
+                } else {
+                    // --- BUSINESS RULE: No same-day bookings after 8 PM ---
+                    LocalDateTime now = LocalDateTime.now();
+                    if (now.getHour() >= 20 && interviewDateTime.toLocalDate().equals(now.toLocalDate())) {
+                        model.addAttribute("datetimeError", "It is past 8:00 PM. Same-day interview scheduling is now closed. Please select a future date.");
+                        hasError = true;
+                    }
                 }
             } catch (DateTimeParseException e) {
                 model.addAttribute("datetimeError", "Invalid date format.");
@@ -292,17 +340,57 @@ public class AdminController {
         interview.setCandidateName(cleanCandidateName);
         interview.setInternshipTitle(selectedInternship.getTitle());
         interview.setInterviewDateTime(interviewDateTime);
+        interview.setMode(mode != null ? mode : "Online");
+        interview.setLocationLink(locationLink != null ? locationLink : "TBD");
         interview.setStatus("SCHEDULED");
+        
+        // Resolve Company Name for sync
+        companyRepository.findById(selectedInternship.getCompanyId())
+                .ifPresent(c -> interview.setCompanyName(c.getCompanyName()));
 
         interviewRepository.save(interview);
 
-        // Update the application status if this was an advanced match
+        // --- ZERO-TOUCH REAL-TIME NOTIFICATIONS ---
         if (applicationId != null) {
             com.uniintern.portal.student.model.StudentApplication app = 
                 adminSchedulingService.getApplicationById(applicationId);
             if (app != null) {
+                // 1. Update Application Status (Sync across modules)
                 app.setStatus(com.uniintern.portal.student.model.ApplicationStatus.INTERVIEW_SCHEDULED);
                 adminSchedulingService.saveApplication(app);
+
+                // 2. Fetch Entities for Communications (Direct repo access)
+                com.uniintern.portal.student.model.Student student = studentRepository.findById(app.getStudentId()).orElse(null);
+                Company company = companyRepository.findById(selectedInternship.getCompanyId()).orElse(null);
+
+                if (student != null) {
+                    // 3. Trigger In-App Notification (For Student Dashboard)
+                    String msg = "Congratulations! Your " + interview.getMode() + " interview for " + selectedInternship.getTitle() + " has been scheduled.";
+                    notificationService.createNotification(student.getId(), "Interview Scheduled", msg, "INTERVIEW");
+
+                    // 4. Send Email to Student (Detailed Invitation)
+                    sendAdminEmail(student.getEmail(), "UniIntern Interview Invitation", 
+                        "Dear " + student.getFullName() + ",\n\n" +
+                        "Your interview for the '" + selectedInternship.getTitle() + "' role at " + 
+                        (interview.getCompanyName() != null ? interview.getCompanyName() : "the designated company") + 
+                        " has been scheduled.\n\n" +
+                        "Details:\n" +
+                        "Date & Time: " + interviewDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")) + "\n" +
+                        "Mode: " + interview.getMode() + "\n" +
+                        "Location/Link: " + interview.getLocationLink() + "\n\n" +
+                        "Please check your student dashboard to confirm.\n\n" +
+                        "Best regards,\nUniIntern Administration");
+                }
+
+                if (company != null) {
+                    // 5. Send Email to Company Recruiter (Company Email)
+                    sendAdminEmail(company.getEmail(), "New Interview Scheduled - UniIntern", 
+                        "Hello " + company.getCompanyName() + ",\n\n" +
+                        "An interview has been scheduled for candidate " + cleanCandidateName + 
+                        " for your internship position: " + selectedInternship.getTitle() + ".\n\n" +
+                        "Scheduled Time: " + interviewDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")) + "\n\n" +
+                        "Best regards,\nUniIntern Administration");
+                }
             }
         }
 
@@ -311,34 +399,38 @@ public class AdminController {
         return "admin/schedule-form";
     }
 
+    private void sendAdminEmail(String to, String subject, String body) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(body);
+            javaMailSender.send(message);
+            System.out.println("[COMM-HUB] Real-time email dispatched to: " + to);
+        } catch (Exception e) {
+            System.err.println("[COMM-HUB] Email simulation - To: " + to + " | Sub: " + subject);
+        }
+    }
+
     @GetMapping("/reports")
     public String reports(Model model) {
 
         long totalCompanies = companyRepository.count();
-        long pendingCompanies = companyRepository.findByStatus("PENDING_VERIFICATION").size();
-        long verifiedCompanies = companyRepository.findByStatus("VERIFIED").size();
-        long rejectedCompanies = companyRepository.findByStatus("REJECTED").size();
+        long pendingCompanies = companyRepository.countByStatus("PENDING_VERIFICATION");
+        long verifiedCompanies = companyRepository.countByStatus("VERIFIED");
+        long rejectedCompanies = companyRepository.countByStatus("REJECTED");
 
-        long pendingInternships = internshipRepository.findByStatus("PENDING_ADMIN_APPROVAL").size();
-        long approvedInternships = internshipRepository.findByStatus("APPROVED").size();
-        long rejectedInternships = internshipRepository.findByStatus("REJECTED").size();
+        long pendingInternships = internshipRepository.countByStatus("PENDING_ADMIN_APPROVAL");
+        long approvedInternships = internshipRepository.countByStatus("APPROVED");
+        long rejectedInternships = internshipRepository.countByStatus("REJECTED");
 
-        List<Interview> interviews = interviewRepository.findAll();
-
-        long scheduledInterviews = interviews.stream()
-                .filter(i -> "SCHEDULED".equals(i.getStatus()))
-                .count();
-
-        long completedInterviews = interviews.stream()
-                .filter(i -> "COMPLETED".equals(i.getStatus()))
-                .count();
-
-        long cancelledInterviews = interviews.stream()
-                .filter(i -> "CANCELLED".equals(i.getStatus()))
-                .count();
+        long scheduledInterviews = interviewRepository.countByStatus("SCHEDULED");
+        long completedInterviews = interviewRepository.countByStatus("COMPLETED");
+        long cancelledInterviews = interviewRepository.countByStatus("CANCELLED");
 
         model.addAttribute("portalName", "UniIntern Portal");
-        model.addAttribute("generatedOn", LocalDateTime.now());
+        model.addAttribute("generatedOn", java.time.LocalDateTime.now());
 
         model.addAttribute("totalCompanies", totalCompanies);
         model.addAttribute("pendingCompanies", pendingCompanies);

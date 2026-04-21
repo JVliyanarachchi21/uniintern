@@ -57,27 +57,28 @@ public class AdminSeedData implements CommandLineRunner {
     public void run(String... args) {
         try {
             // Seed permanent Admin Account
-            if (adminAccountRepository.count() == 0) {
-                AdminAccount admin = new AdminAccount();
-                admin.setEmail("admin@uniintern.com");
-                admin.setPassword(passwordEncoder.encode("UniIntern@Admin2026!"));
-                adminAccountRepository.save(admin);
-                log.info("Seeded enterprise admin account: admin@uniintern.com");
-            }
+            // Seed or Update permanent Admin Account for Viva Readiness
+            AdminAccount admin = adminAccountRepository.findByEmail("admin@uniintern.com")
+                    .orElseGet(AdminAccount::new);
+            
+            admin.setEmail("admin@uniintern.com");
+            admin.setPassword(passwordEncoder.encode("UniIntern@Admin2026!"));
+            adminAccountRepository.save(admin);
+            log.info("Synchronized enterprise admin account for NoOp authentication: admin@uniintern.com");
 
             if (companyRepository.count() == 0) {
                 Company c1 = new Company();
                 c1.setCompanyName("TechVentures Inc.");
                 c1.setEmail("hr@techventures.com");
                 c1.setIndustry("Software");
-                c1.setStatus("APPROVED"); // Set to approved for production readiness
+                c1.setStatus("ACTIVE"); // Standardized ACTIVE status for dashboard access
                 companyRepository.save(c1);
 
                 Company c2 = new Company();
                 c2.setCompanyName("DataStream Analytics");
                 c2.setEmail("contact@datastream.com");
                 c2.setIndustry("Data Science");
-                c2.setStatus("APPROVED");
+                c2.setStatus("ACTIVE");
                 companyRepository.save(c2);
             }
 
@@ -108,13 +109,6 @@ public class AdminSeedData implements CommandLineRunner {
                 internshipRepository.save(i2);
             }
 
-            // Ensure all seeded internships are APPROVED
-            internshipRepository.findAll().forEach(i -> {
-                if (!"APPROVED".equals(i.getStatus())) {
-                    i.setStatus("APPROVED");
-                    internshipRepository.save(i);
-                }
-            });
 
             if (studentRepository.count() == 0) {
                 Student s = new Student();

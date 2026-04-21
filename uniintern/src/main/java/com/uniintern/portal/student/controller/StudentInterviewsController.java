@@ -50,9 +50,8 @@ public class StudentInterviewsController {
             iMap.put("id", interview.getId());
             iMap.put("title", interview.getInternshipTitle());
             
-            // Note: In a full implementation, we'd join with the Company table to get the logo and name
-            // For now, we use the title and basic formatting to ensure UI consistency
-            iMap.put("company", "Partner Organization");
+            // Reconciling Company Info
+            iMap.put("company", interview.getCompanyName() != null ? interview.getCompanyName() : "Partner Organization");
             iMap.put("logoPath", null); // Template will show first letter of company name
 
             if (interview.getInterviewDateTime() != null) {
@@ -65,17 +64,18 @@ public class StudentInterviewsController {
             
             // Map status for template badges
             String status = interview.getStatus();
-            iMap.put("status", "SCHEDULED".equalsIgnoreCase(status) ? "CONFIRMED" : "PENDING_CONFIRMATION");
+            iMap.put("status", "SCHEDULED".equalsIgnoreCase(status) ? "CONFIRMED" : status);
             
-            iMap.put("mode", "Direct Interview");
-            iMap.put("location", "To be communicated by Admin");
+            // Restoring enhanced scheduling fields from stashed changes
+            iMap.put("mode", interview.getMode() != null ? interview.getMode() : "Direct Interview");
+            iMap.put("location", interview.getLocationLink() != null ? interview.getLocationLink() : "To be communicated by Admin");
 
             formattedInterviews.add(iMap);
         }
 
         model.addAttribute("interviews", formattedInterviews);
         model.addAttribute("activePage", "interviews");
-
+        
         return "student/interviews";
     }
 }
