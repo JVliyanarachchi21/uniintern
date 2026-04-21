@@ -40,6 +40,7 @@ public class StudentInterviewsController {
 
         // Fetch Real Interviews from Database
         List<Interview> realInterviews = interviewRepository.findByStudentId(studentId);
+        
         List<Map<String, Object>> formattedInterviews = new ArrayList<>();
 
         DateTimeFormatter dateLabelFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
@@ -73,7 +74,12 @@ public class StudentInterviewsController {
             formattedInterviews.add(iMap);
         }
 
-        model.addAttribute("interviews", formattedInterviews);
+        System.out.println("[DIAG] Found " + realInterviews.size() + " interviews for studentId: ");
+        for(Interview inv : realInterviews) {
+            System.out.println("[DIAG] Interview ID: " + inv.getId() + ", StudentID: " + inv.getStudentId() + ", Title: " + inv.getInternshipTitle());
+        }
+
+        model.addAttribute("interviewList", formattedInterviews);
         model.addAttribute("activePage", "interviews");
         
         return "student/interviews";

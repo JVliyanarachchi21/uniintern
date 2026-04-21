@@ -278,6 +278,22 @@ public class AdminController {
             hasError = true;
         }
 
+        // --- NEW: STRICT LOCATION VALIDATION ---
+        String cleanLocation = locationLink == null ? "" : locationLink.trim();
+        if (cleanLocation.length() > 200) {
+            model.addAttribute("locationLinkError", "Location details are too long (Max 200).");
+            hasError = true;
+        } else if (!cleanLocation.isBlank() && !cleanLocation.matches("^[a-zA-Z0-9\\s\\.\\/\\:\\-,\\(\\)]+$")) {
+            model.addAttribute("locationLinkError", "Special characters are blocked for security. Use only letters, numbers, and basic symbols (.,-/:).");
+            hasError = true;
+        }
+
+        // --- NEW: MODE VALIDATION ---
+        if (mode != null && !mode.equals("Online") && !mode.equals("Physical")) {
+            model.addAttribute("modeError", "Please select a valid interview mode.");
+            hasError = true;
+        }
+
         Internship selectedInternship = null;
         if (internshipId == null) {
             model.addAttribute("internshipIdError", "Please select an approved internship.");
@@ -337,6 +353,18 @@ public class AdminController {
         }
 
         Interview interview = new Interview();
+        
+        // --- SYNC INTERVIEW WITH STUDENT ---
+        if (applicationId != null) {
+            com.uniintern.portal.student.model.StudentApplication app = adminSchedulingService.getApplicationById(applicationId);
+            if (app != null) {
+                interview.setStudentId(app.getStudentId());
+                // Update Application Status (Sync across modules)
+                app.setStatus(com.uniintern.portal.student.model.ApplicationStatus.INTERVIEW_SCHEDULED);
+                adminSchedulingService.saveApplication(app);
+            }
+        }
+
         interview.setCandidateName(cleanCandidateName);
         interview.setInternshipTitle(selectedInternship.getTitle());
         interview.setInterviewDateTime(interviewDateTime);
@@ -348,7 +376,15 @@ public class AdminController {
         companyRepository.findById(selectedInternship.getCompanyId())
                 .ifPresent(c -> interview.setCompanyName(c.getCompanyName()));
 
-        interviewRepository.save(interview);
+        // --- FALLBACK: NAME-BASED SYNC ---
+        if (interview.getStudentId() == null) {
+            studentRepository.findAll().stream()
+                .filter(s -> s.getFullName().equalsIgnoreCase(cleanCandidateName))
+                .findFirst()
+                .ifPresent(s -> interview.setStudentId(s.getId()));
+        }
+
+        interviewRepository.saveAndFlush(interview);
 
         // --- ZERO-TOUCH REAL-TIME NOTIFICATIONS ---
         if (applicationId != null) {

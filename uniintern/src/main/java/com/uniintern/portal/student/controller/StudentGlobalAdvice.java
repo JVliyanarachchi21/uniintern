@@ -16,6 +16,9 @@ public class StudentGlobalAdvice {
     @Autowired
     private com.uniintern.portal.student.service.NotificationService notificationService;
 
+    @Autowired
+    private com.uniintern.portal.company.repository.InterviewRepository interviewRepository;
+
     @ModelAttribute("loggedInStudent")
     public Student addLoggedInStudent(HttpSession session) {
         Long studentId = (Long) session.getAttribute("loggedInStudentId");
@@ -36,6 +39,15 @@ public class StudentGlobalAdvice {
         Long studentId = (Long) session.getAttribute("loggedInStudentId");
         if (studentId != null) {
             return notificationService.getUnreadCount(studentId);
+        }
+        return 0;
+    }
+
+    @ModelAttribute("interviewCount")
+    public long addInterviewCount(HttpSession session) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId != null) {
+            return interviewRepository.findByStudentId(studentId).size();
         }
         return 0;
     }

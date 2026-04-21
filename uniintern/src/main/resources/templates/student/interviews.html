@@ -220,7 +220,7 @@
 
         <div class="interview-grid">
             
-            <div class="interview-card" th:each="i : ${interviews}">
+            <div class="interview-card" th:each="i : ${interviewList}">
                 <div class="card-header">
                     <div class="company-info">
                         <div class="company-logo">
@@ -274,7 +274,7 @@
             </div>
 
             <!-- Empty State -->
-            <div th:if="${#lists.isEmpty(interviews)}" style="grid-column: 1 / -1; text-align: center; padding: 80px 0;">
+            <div th:if="${#lists.isEmpty(interviewList)}" style="grid-column: 1 / -1; text-align: center; padding: 80px 0;">
                 <div style="width: 80px; height: 80px; background: var(--uni-soft); border-radius: 24px; display: inline-flex; align-items: center; justify-content: center; color: #94a3b8; margin-bottom: 24px;">
                     <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 </div>
