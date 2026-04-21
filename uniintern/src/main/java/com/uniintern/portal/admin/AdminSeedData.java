@@ -120,7 +120,7 @@ public class AdminSeedData implements CommandLineRunner {
                 Student s = new Student();
                 s.setFullName("Test Student");
                 s.setEmail("student@my.sliit.lk");
-                s.setPassword(passwordEncoder.encode("Student@123")); // Hash this too
+                s.setPassword("Student@123"); // Reverted to plain text for team compatibility
                 s.setUniversity("SLIIT");
                 s.setDegreeProgram("Information Technology");
                 s.setRegistrationNumber("IT23537538");

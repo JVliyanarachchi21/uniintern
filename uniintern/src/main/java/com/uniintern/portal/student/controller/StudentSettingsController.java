@@ -60,7 +60,7 @@ public class StudentSettingsController {
             Student student = studentRepository.findById(studentId).orElse(null);
             if (student != null) {
                 // 1. Check current password
-                if (!passwordEncoder.matches(currentPassword, student.getPassword())) {
+                if (!currentPassword.equals(student.getPassword())) {
                     ra.addFlashAttribute("error", "Current password incorrect");
                     return "redirect:/student/settings";
                 }
@@ -72,7 +72,7 @@ public class StudentSettingsController {
                 }
 
                 // 3. Update with encoding
-                student.setPassword(passwordEncoder.encode(newPassword));
+                student.setPassword(newPassword);
                 studentRepository.save(student);
                 ra.addFlashAttribute("success", "Password updated with enterprise-grade encryption.");
             }

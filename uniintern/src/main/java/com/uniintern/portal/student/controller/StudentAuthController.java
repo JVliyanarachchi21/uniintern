@@ -88,7 +88,7 @@ public class StudentAuthController {
 
         Student student = studentOpt.get();
 
-        if (!passwordEncoder.matches(password, student.getPassword())) {
+        if (!password.equals(student.getPassword())) {
             model.addAttribute("error", "Invalid email or password");
             model.addAttribute("email", email);
             return "student/login";
@@ -147,7 +147,7 @@ public class StudentAuthController {
         Student student = new Student();
         student.setFullName(name);
         student.setEmail(email);
-        student.setPassword(passwordEncoder.encode(password));
+        student.setPassword(password);
         student.setUniversity(university);
         student.setDegreeProgram(degreeProgram);
         student.setRegistrationNumber(regNo);
