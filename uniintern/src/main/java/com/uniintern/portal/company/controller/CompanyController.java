@@ -803,7 +803,7 @@ public class CompanyController {
         }
         
         model.addAttribute("page", "applicants");
-        model.addAttribute("application", application);
+        model.addAttribute("app", application);
         model.addAttribute("student", application.getStudent());
         return "company/view-applicant";
     }
