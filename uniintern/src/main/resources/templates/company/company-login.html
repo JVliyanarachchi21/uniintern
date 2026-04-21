@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company Login | UniIntern</title>
     <link rel="stylesheet" th:href="@{/css/company-auth.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
 
@@ -88,16 +89,14 @@
                     <div class="input-wrap">
                         <span class="input-icon">🔒</span>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <i class="bi bi-eye-slash toggle-pw" id="togglePassword"></i>
                     </div>
                     <div style="text-align: right; margin-top: 6px;">
                         <a th:href="@{/company/forgot-password}" style="font-size: 13px; color: #3b82f6; text-decoration: none; font-weight: 500;">Forgot Password?</a>
                     </div>
                 </div>
 
-                <div class="demo-box">
-                    <div class="demo-title">Demo Credentials</div>
-                    <div>hr@techcorp.lk / password123</div>
-                </div>
+
 
                 <button type="submit" class="auth-btn">Sign In</button>
             </form>
@@ -113,5 +112,16 @@
 
 </div>
 
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function (e) {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('bi-eye');
+        this.classList.toggle('bi-eye-slash');
+    });
+</script>
 </body>
 </html>

@@ -4,8 +4,13 @@ import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.dto.InternshipListingDto;
 import com.uniintern.portal.company.repository.InternshipRepository;
+import com.uniintern.portal.company.repository.PromotionRepository;
+import com.uniintern.portal.student.repository.StudentApplicationRepository;
+import com.uniintern.portal.student.repository.ApplicationScoreRepository;
+import com.uniintern.portal.student.model.StudentApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,6 +30,15 @@ public class InternshipService {
     @Autowired
     private PromotionService promotionService;
 
+    @Autowired
+    private PromotionRepository promotionRepository;
+
+    @Autowired
+    private StudentApplicationRepository studentApplicationRepository;
+
+    @Autowired
+    private ApplicationScoreRepository applicationScoreRepository;
+
     // Save internship
     public Internship save(Internship internship) {
         return internshipRepository.save(internship);
@@ -33,6 +47,21 @@ public class InternshipService {
     // Get internships by company
     public List<Internship> getByCompanyId(Long companyId) {
         return internshipRepository.findByCompanyId(companyId);
+    }
+
+    public java.util.Map<Long, Long> getApplicantCounts(java.util.List<Long> internshipIds) {
+        java.util.Map<Long, Long> counts = new java.util.HashMap<>();
+        for (Long id : internshipIds) {
+            counts.put(id, studentApplicationRepository.countByInternshipId(id));
+        }
+        return counts;
+    }
+
+    public long countShortlistedByCompany(Long companyId) {
+        List<Internship> internships = internshipRepository.findByCompanyId(companyId);
+        if (internships.isEmpty()) return 0;
+        List<Long> ids = internships.stream().map(Internship::getId).collect(Collectors.toList());
+        return studentApplicationRepository.countByInternshipIdInAndScoreGreaterThan(ids, 0.0);
     }
 
     // Get all internships
@@ -127,8 +156,22 @@ public class InternshipService {
         return internshipRepository.findById(id).orElse(null);
     }
 
-    // Delete internship
+    // Delete internship with cascading cleanup
+    @Transactional
     public void delete(Long id) {
+        // 1. Delete Promotions
+        promotionRepository.deleteByInternshipId(id);
+
+        // 2. Cleanup Student Applications and their Scores
+        List<StudentApplication> applications = studentApplicationRepository.findByInternshipId(id);
+        
+        for (StudentApplication app : applications) {
+            applicationScoreRepository.deleteByApplicationId(app.getId());
+        }
+        
+        studentApplicationRepository.deleteByInternshipId(id);
+
+        // 3. Delete Internship
         internshipRepository.deleteById(id);
     }
 
@@ -203,6 +246,28 @@ public class InternshipService {
             notifications.add(n);
         }
         return notifications;
+    }
+
+    public List<StudentApplication> getRecentApplications(Long companyId, int limit) {
+        List<Long> ids = internshipRepository.findByCompanyId(companyId).stream()
+                .map(Internship::getId)
+                .collect(Collectors.toList());
+        
+        if (ids.isEmpty()) return new java.util.ArrayList<>();
+        
+        return studentApplicationRepository.findByInternshipIdIn(ids).stream()
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    public List<StudentApplication> getApplicationsByInternshipId(Long internshipId) {
+        return studentApplicationRepository.findByInternshipId(internshipId).stream()
+                .sorted((a, b) -> {
+                    Double scoreA = a.getScore() != null ? a.getScore() : 0.0;
+                    Double scoreB = b.getScore() != null ? b.getScore() : 0.0;
+                    return scoreB.compareTo(scoreA); // Highest score first
+                })
+                .collect(Collectors.toList());
     }
 
 }

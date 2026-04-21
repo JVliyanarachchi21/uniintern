@@ -7,7 +7,7 @@
             <!-- Header section with Back link -->
             <div class="flex justify-between items-center">
                 <div class="space-y-2">
-                    <a th:href="@{${userRole == 'admin' ? '/admin/cv/results' : '/company/cv/results'}}" class="group flex items-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors mb-2">
+                    <a th:href="@{${userRole == 'admin' ? '/admin/cv/results' : '/company/cv/results'}}" class="group flex items-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#22418c] transition-colors mb-2">
                         <i class="bi bi-arrow-left-short text-xl group-hover:-translate-x-1 transition-transform"></i>
                         Back to All Analysis
                     </a>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 text-center">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Talent Quota (Top N)</span>
-                    <span class="text-3xl font-black text-indigo-600" th:text="${run.topN}">3</span>
+                    <span class="text-3xl font-black text-[#22418c]" th:text="${run.topN}">3</span>
                 </div>
                 <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 text-center">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Minimum Threshold</span>
@@ -60,9 +60,9 @@
                             <tr th:if="${#lists.isEmpty(results)}">
                                 <td colspan="4" class="px-10 py-20 text-center text-slate-400 font-bold italic">No ranking metrics discovered for this run.</td>
                             </tr>
-                            <tr th:each="result : ${results}" th:class="${result.topN} ? 'bg-indigo-50/20' : ''">
+                            <tr th:each="result : ${results}" th:class="${result.topN} ? 'bg-blue-50/20' : ''">
                                 <td class="px-10 py-8">
-                                    <div th:class="${result.rankNumber <= 3} ? 'w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-100' : 'w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center font-black text-xl border border-slate-100'"
+                                    <div th:class="${result.rankNumber <= 3} ? 'w-12 h-12 rounded-2xl bg-[#22418c] text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-100' : 'w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center font-black text-xl border border-slate-100'"
                                          th:text="${result.rankNumber}">1</div>
                                 </td>
                                 <td class="px-10 py-8">
@@ -79,9 +79,9 @@
                                 <td class="px-10 py-8">
                                     <div class="flex items-center justify-center space-x-3">
                                         <!-- Skill -->
-                                        <div class="flex flex-col items-center px-4 py-2 bg-white border border-gray-100 rounded-2xl shadow-sm min-w-[3.5rem] hover:border-indigo-200 transition-colors">
-                                            <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">Skill</span>
-                                            <span class="text-xs font-black text-indigo-700" th:text="${#numbers.formatDecimal(result.skillScore, 1, 0)}">20</span>
+                                        <div class="flex flex-col items-center px-4 py-2 bg-white border border-gray-100 rounded-2xl shadow-sm min-w-[3.5rem] hover:border-blue-200 transition-colors">
+                                            <span class="text-[8px] font-black text-[#5483B3] uppercase tracking-tighter">Skill</span>
+                                            <span class="text-xs font-black text-[#22418c]" th:text="${#numbers.formatDecimal(result.skillScore, 1, 0)}">20</span>
                                         </div>
                                         <i class="bi bi-plus text-slate-200 text-lg"></i>
                                         <!-- GPA -->
@@ -106,7 +106,7 @@
                                 <td class="px-10 py-8 text-right">
                                     <div class="inline-flex flex-col items-end">
                                         <div class="text-3xl font-black text-slate-900 tracking-tighter" th:text="${#numbers.formatDecimal(result.totalScore ?: 0, 1, 1)} + '%'">85.5%</div>
-                                        <span th:if="${result.topN}" class="px-3 py-1 bg-indigo-600 text-white text-[9px] font-black rounded-full uppercase tracking-[0.2em] mt-2 shadow-lg shadow-indigo-200">Top Choice candidate</span>
+                                        <span th:if="${result.topN}" class="px-3 py-1 bg-[#22418c] text-white text-[9px] font-black rounded-full uppercase tracking-[0.2em] mt-2 shadow-lg shadow-blue-200">Top Choice candidate</span>
                                     </div>
                                 </td>
                             </tr>
