@@ -8,46 +8,44 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
-    <link rel="stylesheet" th:href="@{/css/auth.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
 <body class="auth-body">
 
 <div class="auth-shell">
 
     <div class="auth-left">
-        <div class="auth-left-content-wrapper">
-            <div class="brand-row">
-                <div class="brand-logo" style="background:none; color:white;">
-                    <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 54px; height: auto; border-radius: 4px;">
-                </div>
-                <div class="brand-column">
-                    <div class="brand-text" style="font-family: 'Plus Jakarta Sans', sans-serif;">UniIntern</div>
-                    <div class="brand-subtext">LAUNCH YOUR CAREER</div>
-                </div>
+        <div class="brand-row">
+            <div class="brand-logo" style="background:none; color:white;">
+                <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 54px; height: auto; border-radius: 4px;">
             </div>
-
-            <div class="auth-pill" style="margin-top: 50px;">
-                Smarter internships for students
+            <div class="brand-column">
+                <div class="brand-text" style="font-family: 'Plus Jakarta Sans', sans-serif;">UniIntern</div>
+                <div class="brand-subtext" style="font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #A7F3D0; margin-top: -2px;">LAUNCH YOUR CAREER</div>
             </div>
+        </div>
 
-            <div class="auth-copy">
-                <h1 style="font-family: 'Plus Jakarta Sans', sans-serif;">Find the best path for your career</h1>
-                <p>Create your student profile, apply for top internships, and manage your applications — all in one place.</p>
+        <div class="auth-pill" style="margin-top: 50px;">
+            Smarter internships for students
+        </div>
+
+        <div class="auth-copy">
+            <h1 style="font-family: 'Plus Jakarta Sans', sans-serif;">Find the best path for your career</h1>
+            <p>Create your student profile, apply for top internships, and manage your applications — all in one place.</p>
+        </div>
+
+        <div class="auth-features-list">
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Track & manage applications
             </div>
-
-            <div class="auth-features-list">
-                <div class="feature-list-item">
-                    <div class="feature-icon">➔</div>
-                    Track & manage applications
-                </div>
-                <div class="feature-list-item">
-                    <div class="feature-icon">➔</div>
-                    Secure university verification
-                </div>
-                <div class="feature-list-item">
-                    <div class="feature-icon">➔</div>
-                    One central student portal
-                </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Secure university verification
+            </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                One central student portal
             </div>
         </div>
     </div>
@@ -171,7 +169,7 @@
                     <label for="terms">I agree to the Terms & Conditions and Privacy Policy</label>
                 </div>
 
-                <button type="submit" class="auth-btn">Create Account</button>
+                <button type="submit" class="auth-btn" style="background:var(--color-dark); border:none; box-shadow:0 4px 12px rgba(5,38,89,0.2);">Create Account</button>
             </form>
 
             <div class="auth-footer">

@@ -118,12 +118,41 @@ public class StudentApplicationDetailController {
             model.addAttribute("company", company);
         }
 
-        // Timeline (UI phase, but includes the real application date)
-        model.addAttribute("timeline", List.of(
-                Map.of("step", "Applied", "date", app.getAppliedAt() != null ? app.getAppliedAt().toString().substring(0, 10) : "Recent", "done", true),
-                Map.of("step", "Processing", "date", "In Progress", "done", false),
-                Map.of("step", "Shortlisted", "date", "—", "done", false)
-        ));
+        // --- REAL-TIME PROCESS TIMELINE ---
+        com.uniintern.portal.student.model.ApplicationStatus status = app.getStatus();
+        java.util.List<java.util.Map<String, Object>> timeline = new java.util.ArrayList<>();
+        
+        String appliedDate = app.getAppliedAt() != null ? app.getAppliedAt().toString().substring(0, 10) : "Today";
+        
+        timeline.add(Map.of("step", "Applied", "date", appliedDate, "done", true, "active", status == com.uniintern.portal.student.model.ApplicationStatus.APPLIED));
+        
+        boolean isShortlisted = status != com.uniintern.portal.student.model.ApplicationStatus.APPLIED && 
+                               status != com.uniintern.portal.student.model.ApplicationStatus.REJECTED &&
+                               status != com.uniintern.portal.student.model.ApplicationStatus.WITHDRAWN;
+        
+        timeline.add(Map.of("step", "Shortlisted", "date", isShortlisted ? "Reviewed" : "Pending", "done", isShortlisted, "active", status == com.uniintern.portal.student.model.ApplicationStatus.SHORTLISTED));
+        
+        boolean isInterviewing = status == com.uniintern.portal.student.model.ApplicationStatus.INTERVIEW_SCHEDULED ||
+                                status == com.uniintern.portal.student.model.ApplicationStatus.TECHNICAL_ROUND ||
+                                status == com.uniintern.portal.student.model.ApplicationStatus.HR_ROUND ||
+                                status == com.uniintern.portal.student.model.ApplicationStatus.OFFER_EXTENDED ||
+                                status == com.uniintern.portal.student.model.ApplicationStatus.ACCEPTED;
+
+        timeline.add(Map.of("step", "Interviewing", "date", isInterviewing ? "In Progress" : "Pending", "done", isInterviewing, "active", status == com.uniintern.portal.student.model.ApplicationStatus.INTERVIEW_SCHEDULED));
+        
+        boolean isFinalResult = status == com.uniintern.portal.student.model.ApplicationStatus.OFFER_EXTENDED ||
+                               status == com.uniintern.portal.student.model.ApplicationStatus.ACCEPTED ||
+                               status == com.uniintern.portal.student.model.ApplicationStatus.DECLINED;
+
+        timeline.add(Map.of("step", "Final Result", "date", isFinalResult ? "Released" : "Pending", "done", isFinalResult, "active", isFinalResult));
+
+        if (status == com.uniintern.portal.student.model.ApplicationStatus.REJECTED) {
+             timeline.add(Map.of("step", "Rejected", "date", "Result Out", "done", true, "active", true, "error", true));
+        } else if (status == com.uniintern.portal.student.model.ApplicationStatus.WITHDRAWN) {
+             timeline.add(Map.of("step", "Withdrawn", "date", "-", "done", true, "active", true));
+        }
+
+        model.addAttribute("timeline", timeline);
 
         return "student/application-detail";
     }

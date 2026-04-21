@@ -1342,3 +1342,37 @@ select {
     width: 16px;
     height: 16px;
 }
+
+/* Topbar Home Button Styles */
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-left .btn-dashboard.btn-outline {
+  padding: 8px 16px;
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.topbar-left .btn-dashboard.btn-outline:hover {
+  background: #f8fafc;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2,16,36,0.08);
+}
+
+.topbar-left .btn-dashboard.btn-outline svg {
+  color: var(--color-primary);
+}

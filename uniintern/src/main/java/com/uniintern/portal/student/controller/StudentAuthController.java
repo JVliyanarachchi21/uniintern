@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.HashMap;
@@ -32,6 +32,9 @@ public class StudentAuthController {
 
     @Autowired
     private com.uniintern.portal.student.service.NotificationService notificationService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // A simple in-memory cache for OTPs mapped by email (for prototyping purposes)
     private final Map<String, String> otpStorage = new HashMap<>();
@@ -85,7 +88,7 @@ public class StudentAuthController {
 
         Student student = studentOpt.get();
 
-        if (!student.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, student.getPassword())) {
             model.addAttribute("error", "Invalid email or password");
             model.addAttribute("email", email);
             return "student/login";
@@ -97,7 +100,6 @@ public class StudentAuthController {
         // }
 
         session.setAttribute("loggedInStudentId", student.getId());
-        session.setAttribute("studentName", student.getFullName());
         return "redirect:/student/dashboard";
     }
 
@@ -145,7 +147,7 @@ public class StudentAuthController {
         Student student = new Student();
         student.setFullName(name);
         student.setEmail(email);
-        student.setPassword(password);
+        student.setPassword(passwordEncoder.encode(password));
         student.setUniversity(university);
         student.setDegreeProgram(degreeProgram);
         student.setRegistrationNumber(regNo);
@@ -271,7 +273,6 @@ public class StudentAuthController {
             
             // Set student in session
             session.setAttribute("loggedInStudentId", student.getId());
-            session.setAttribute("studentName", student.getFullName());
 
             // Create notification for account verification
             notificationService.createNotification(student.getId(), "Account Verified", "Welcome to UniIntern! Your account has been successfully verified.", "Account");

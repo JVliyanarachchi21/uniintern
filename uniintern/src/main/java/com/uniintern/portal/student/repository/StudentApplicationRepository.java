@@ -27,4 +27,4 @@ public interface StudentApplicationRepository extends JpaRepository<StudentAppli
     void deleteByInternshipId(Long internshipId);
 
     long countByInternshipIdInAndScoreGreaterThan(List<Long> internshipIds, Double score);
-}
+}

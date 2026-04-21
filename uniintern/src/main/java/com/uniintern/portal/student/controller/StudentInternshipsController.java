@@ -66,9 +66,19 @@ public class StudentInternshipsController {
             map.put("title", internship.getTitle());
             map.put("location", internship.getLocation() != null ? internship.getLocation() : "Remote");
             map.put("deadline", internship.getDeadline() != null ? internship.getDeadline().toString().substring(0, 10) : "N/A");
+            map.put("duration", internship.getDuration() != null ? internship.getDuration() : "6 Months");
             
             Company company = (internship.getCompanyId() != null) ? companyService.findById(internship.getCompanyId()) : null;
             map.put("company", company != null ? company.getCompanyName() : "Unknown Company");
+            map.put("logoPath", company != null ? company.getLogoPath() : null);
+            
+            // Description snippet
+            String desc = internship.getDescription();
+            if (desc != null && desc.length() > 120) {
+                map.put("descriptionSnippet", desc.substring(0, 117) + "...");
+            } else {
+                map.put("descriptionSnippet", desc != null ? desc : "No description available.");
+            }
             
             int score = calculateMatchScore(student, internship);
             map.put("match", score);

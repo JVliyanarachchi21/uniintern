@@ -9,5 +9,6 @@ public enum ApplicationStatus {
     HR_ROUND,
     OFFER_EXTENDED,
     ACCEPTED,
-    DECLINED
+    DECLINED,
+    WITHDRAWN
 }

@@ -367,18 +367,11 @@ body {
 .auth-left {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(180deg, #173b9f 0%, #0b225f 100%);
-    padding: 60px;
+    background: #052659; /* Target Color */
+    padding: 60px 80px;
+    justify-content: flex-start;
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth-left-content-wrapper {
-    width: 100%;
-    max-width: 480px;
-    position: relative;
-    z-index: 1;
+    flex-direction: column;
 }
 .auth-left::before, .auth-left::after {
     content: "";
@@ -415,9 +408,8 @@ body {
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: #A7F3D0;
     margin-top: -2px;
-    text-transform: uppercase;
 }
 .brand-logo svg {
     display: block;
@@ -497,12 +489,10 @@ body {
     padding: 14px;
     font-size: 16px;
     margin-top: 10px;
-    background: #041a52; /* Match company theme */
+    background: #1D4ED8;
 }
 .auth-btn:hover {
-    background: #03133d;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(4, 26, 82, 0.2);
+    background: #1E40AF;
 }
 
 .input-with-icon {

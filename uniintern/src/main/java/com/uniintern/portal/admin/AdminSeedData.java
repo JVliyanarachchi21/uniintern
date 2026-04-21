@@ -4,6 +4,8 @@ import com.uniintern.portal.company.entity.Company;
 import com.uniintern.portal.company.repository.CompanyRepository;
 import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.company.repository.InternshipRepository;
+import com.uniintern.portal.company.entity.Interview;
+import com.uniintern.portal.company.repository.InterviewRepository;
 import com.uniintern.portal.student.model.Student;
 import com.uniintern.portal.student.model.StudentStatus;
 import com.uniintern.portal.student.repository.StudentRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -27,6 +30,7 @@ public class AdminSeedData implements CommandLineRunner {
 
     private final CompanyRepository companyRepository;
     private final InternshipRepository internshipRepository;
+    private final InterviewRepository interviewRepository;
     private final StudentRepository studentRepository;
     private final StudentApplicationRepository applicationRepository;
     private final AdminAccountRepository adminAccountRepository;
@@ -34,12 +38,14 @@ public class AdminSeedData implements CommandLineRunner {
 
     public AdminSeedData(CompanyRepository companyRepository, 
                         InternshipRepository internshipRepository,
+                        InterviewRepository interviewRepository,
                         StudentRepository studentRepository,
                         StudentApplicationRepository applicationRepository,
                         AdminAccountRepository adminAccountRepository,
                         PasswordEncoder passwordEncoder) {
         this.companyRepository = companyRepository;
         this.internshipRepository = internshipRepository;
+        this.interviewRepository = interviewRepository;
         this.studentRepository = studentRepository;
         this.applicationRepository = applicationRepository;
         this.adminAccountRepository = adminAccountRepository;
@@ -162,6 +168,22 @@ public class AdminSeedData implements CommandLineRunner {
                     app3.setScore(98.0);
                     app3.setRemarks("Top-tier talent. Official offer letter dispatched.");
                     applicationRepository.save(app3);
+                }
+            }
+
+            // Seed a real match for the User Viva Demo
+            if (interviewRepository.count() == 0) {
+                List<Student> students = studentRepository.findAll();
+                List<Internship> internships = internshipRepository.findAll();
+                if (!students.isEmpty() && !internships.isEmpty()) {
+                    Interview vivaInterview = new Interview();
+                    vivaInterview.setStudentId(students.get(0).getId()); // Link to test student
+                    vivaInterview.setCandidateName(students.get(0).getFullName());
+                    vivaInterview.setInternshipTitle(internships.get(0).getTitle());
+                    vivaInterview.setInterviewDateTime(LocalDateTime.now().plusDays(2).withHour(10).withMinute(0));
+                    vivaInterview.setStatus("SCHEDULED");
+                    interviewRepository.save(vivaInterview);
+                    log.info("Seeded Viva Synchronization Interview for Test Student.");
                 }
             }
 

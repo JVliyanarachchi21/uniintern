@@ -141,4 +141,31 @@ public class StudentProfileController {
         model.addAttribute("activePage", "applications");
         return "student/my-applications";
     }
+
+    @PostMapping("/student/applications/withdraw")
+    public String withdrawApplication(@RequestParam Long id, HttpSession session, RedirectAttributes ra) {
+        Long studentId = (Long) session.getAttribute("loggedInStudentId");
+        if (studentId == null) return "redirect:/student/login";
+
+        Optional<com.uniintern.portal.student.model.StudentApplication> appOpt = studentApplicationRepository.findById(id);
+        if (appOpt.isPresent()) {
+            com.uniintern.portal.student.model.StudentApplication app = appOpt.get();
+            if (app.getStudentId().equals(studentId)) {
+                app.setStatus(com.uniintern.portal.student.model.ApplicationStatus.WITHDRAWN);
+                studentApplicationRepository.save(app);
+                
+                // Notify the student
+                com.uniintern.portal.student.service.NotificationService notificationService = (com.uniintern.portal.student.service.NotificationService) org.springframework.web.context.support.WebApplicationContextUtils
+                        .getWebApplicationContext(session.getServletContext())
+                        .getBean("notificationService");
+                
+                if (notificationService != null) {
+                    notificationService.createNotification(studentId, "Application Withdrawn", "You have successfully withdrawn your application.", "Update");
+                }
+                
+                ra.addFlashAttribute("success", "Application withdrawn successfully.");
+            }
+        }
+        return "redirect:/student/applications";
+    }
 }
