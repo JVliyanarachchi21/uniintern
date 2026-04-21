@@ -104,20 +104,21 @@
     </div>
 
     <!-- Header Fragment - Clean Normal Website Look -->
-    <header th:fragment="header(currentPage)" class="h-20 bg-white z-10 flex items-center justify-between px-10 border-b border-gray-100">
+    <header th:fragment="header(currentPage)" class="h-16 bg-white z-10 flex items-center justify-between px-10 border-b border-gray-100">
         <div class="flex items-center">
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight" th:text="${currentPage}">Dashboard</h1>
+            <h1 class="text-xl font-bold text-slate-800 tracking-tight" th:text="${currentPage}">Dashboard</h1>
         </div>
 
         <div class="flex items-center space-x-6">
-            <div class="flex items-center space-x-4">
-                <div class="text-right hidden sm:block">
-                    <p class="text-sm font-black text-slate-900 leading-none" th:text="${session.companyName != null ? session.companyName : (userRole == 'admin' ? 'Administrator' : 'User')}">User Name</p>
-                    <p class="text-[10px] font-black text-[#5483B3] uppercase tracking-widest mt-1.5" th:text="${userRole}">Role</p>
+            <!-- Profile Trigger - Replicating Dashboard UI -->
+            <div class="flex items-center space-x-3 py-1.5 px-2 hover:bg-slate-50 rounded-xl cursor-pointer transition-all border border-transparent">
+                <div class="w-9 h-9 rounded-full bg-indigo-700 text-white flex items-center justify-center shadow-sm overflow-hidden shrink-0">
+                    <img th:if="${companyLogo != null && companyLogo != ''}" th:src="${companyLogo}" class="w-full h-full object-cover">
+                    <span th:unless="${companyLogo != null && companyLogo != ''}" class="text-xs font-bold" th:text="${companyName != null ? #strings.substring(companyName, 0, 1).toUpperCase() : 'U'}">U</span>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#22418c] font-black shadow-sm">
-
-                    <span th:text="${userRole != null ? #strings.substring(userRole, 0, 1).toUpperCase() : 'U'}">U</span>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-semibold text-slate-700" th:text="${companyName != null ? companyName : (userRole == 'admin' ? 'Administrator' : 'User')}">Company Name</span>
+                    <i class="bi bi-chevron-down text-[10px] text-slate-400"></i>
                 </div>
             </div>
         </div>

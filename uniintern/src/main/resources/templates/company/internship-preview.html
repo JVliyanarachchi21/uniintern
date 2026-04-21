@@ -91,8 +91,13 @@
             </nav>
 
             <div class="nav-actions desktop-actions">
-                <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
-                <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+                <th:block th:if="${!isLoggedInCompany && !isLoggedInStudent}">
+                    <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
+                    <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+                </th:block>
+                <a th:if="${isLoggedInCompany}" class="btn btn-primary" th:href="@{/company/dashboard}">Dashboard</a>
+                <a th:if="${isLoggedInStudent}" class="btn btn-primary" th:href="@{/student/dashboard}">Dashboard</a>
+                <a th:if="${isLoggedInCompany || isLoggedInStudent}" class="btn btn-outline" th:href="@{/logout}" style="margin-left: 10px;">Logout</a>
             </div>
 
             <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -105,8 +110,15 @@
         <div class="mobile-menu" id="mobileMenu">
             <a th:href="@{/}" href="/">Home</a>
             <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
-            <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
-            <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+            
+            <th:block th:if="${!isLoggedInCompany && !isLoggedInStudent}">
+                <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
+                <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+            </th:block>
+
+            <a th:if="${isLoggedInCompany}" class="btn btn-primary" th:href="@{/company/dashboard}">Dashboard</a>
+            <a th:if="${isLoggedInStudent}" class="btn btn-primary" th:href="@{/student/dashboard}">Dashboard</a>
+            <a th:if="${isLoggedInCompany || isLoggedInStudent}" class="btn btn-outline" th:href="@{/logout}">Logout</a>
         </div>
     </header>
 

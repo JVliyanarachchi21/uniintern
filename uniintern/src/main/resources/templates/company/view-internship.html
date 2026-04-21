@@ -33,7 +33,7 @@
 
             <a th:href="@{'/company/internships/view/' + ${internship.id} + '?tab=applicants'}"
                th:class="'view-tab ' + (${activeTab == 'applicants'} ? 'active' : '')">
-                Applicants (4)
+                Applicants (<span th:text="${#lists.size(applicants)}">0</span>)
             </a>
 
             <a th:href="@{'/company/internships/view/' + ${internship.id} + '?tab=marking'}"

@@ -5,6 +5,10 @@ import com.uniintern.portal.company.entity.Internship;
 import com.uniintern.portal.student.model.StudentApplication;
 import com.uniintern.portal.cv_filering.service.DashboardService;
 import com.uniintern.portal.cv_filering.repo.FilteringLogRepository;
+import com.uniintern.portal.company.service.CompanyService;
+import com.uniintern.portal.company.entity.Company;
+import com.uniintern.portal.company.service.InternshipService;
+import com.uniintern.portal.company.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +28,42 @@ public class PageController {
     
     @Autowired
     private FilteringLogRepository filteringLogRepository;
+    
+    @Autowired
+    private CompanyService companyService;
+    
+    @Autowired
+    private InternshipService internshipService;
+    
+    @Autowired
+    private PromotionService promotionService;
+    
+    @ModelAttribute
+    public void addCommonAttributes(Model model, HttpSession session) {
+        if (session != null) {
+            Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+            if (companyId != null) {
+                Company company = companyService.findById(companyId);
+                if (company != null) {
+                    model.addAttribute("companyName", company.getCompanyName());
+                    model.addAttribute("companyLogo", company.getLogoPath() != null ? company.getLogoPath() : "");
+                    
+                    // Add notification icons if same logic as company portal
+                    long pendingCount = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
+                    long promoCount = promotionService.countActivePromotionsForCompany(companyId);
+                    long approvedCount = internshipService.countNewlyApproved(companyId);
+                    long rejectedCount = internshipService.countNewlyRejected(companyId);
+                    
+                    long totalNotifications = 0;
+                    if (pendingCount > 0) totalNotifications++;
+                    if (promoCount > 0) totalNotifications++;
+                    totalNotifications += (approvedCount + rejectedCount);
+                    
+                    model.addAttribute("totalNotifications", totalNotifications);
+                }
+            }
+        }
+    }
     
     @GetMapping("/")
     public String redirectToDashboard() {

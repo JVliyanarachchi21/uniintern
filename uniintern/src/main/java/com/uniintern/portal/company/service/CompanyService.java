@@ -60,7 +60,11 @@ public class CompanyService {
     }
 
     public void updateProfile(Long id, String companyName, String industry, String email, String phone, String website, String address, String description, String logoPath) {
-        Company company = getOrCreateMockCompany(); // Always use our mock company
+        Company company = findById(id);
+        if (company == null) {
+            throw new IllegalArgumentException("Company not found with ID: " + id);
+        }
+        
         company.setCompanyName(companyName);
         company.setIndustry(industry);
         company.setEmail(email);

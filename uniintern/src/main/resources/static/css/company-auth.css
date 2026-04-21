@@ -229,6 +229,7 @@ body {
   background: #f8fafc;
   padding: 0 14px;
   transition: 0.2s ease;
+  position: relative;
 }
 
 .input-wrap:focus-within {
@@ -251,6 +252,27 @@ body {
   background: transparent;
   font-size: 15px;
   color: var(--text-dark);
+}
+
+.input-wrap input[type="password"],
+.input-wrap input[type="text"] {
+    padding-right: 32px;
+}
+
+.toggle-pw {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #64748b;
+    font-size: 18px;
+    z-index: 10;
+    transition: color 0.2s;
+}
+
+.toggle-pw:hover {
+    color: var(--primary);
 }
 
 .demo-box {

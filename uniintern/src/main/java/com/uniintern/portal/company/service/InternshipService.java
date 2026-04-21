@@ -57,6 +57,13 @@ public class InternshipService {
         return counts;
     }
 
+    public long countShortlistedByCompany(Long companyId) {
+        List<Internship> internships = internshipRepository.findByCompanyId(companyId);
+        if (internships.isEmpty()) return 0;
+        List<Long> ids = internships.stream().map(Internship::getId).collect(Collectors.toList());
+        return studentApplicationRepository.countByInternshipIdInAndScoreGreaterThan(ids, 0.0);
+    }
+
     // Get all internships
     public List<Internship> getAll() {
         return internshipRepository.findAll();
@@ -239,6 +246,28 @@ public class InternshipService {
             notifications.add(n);
         }
         return notifications;
+    }
+
+    public List<StudentApplication> getRecentApplications(Long companyId, int limit) {
+        List<Long> ids = internshipRepository.findByCompanyId(companyId).stream()
+                .map(Internship::getId)
+                .collect(Collectors.toList());
+        
+        if (ids.isEmpty()) return new java.util.ArrayList<>();
+        
+        return studentApplicationRepository.findByInternshipIdIn(ids).stream()
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    public List<StudentApplication> getApplicationsByInternshipId(Long internshipId) {
+        return studentApplicationRepository.findByInternshipId(internshipId).stream()
+                .sorted((a, b) -> {
+                    Double scoreA = a.getScore() != null ? a.getScore() : 0.0;
+                    Double scoreB = b.getScore() != null ? b.getScore() : 0.0;
+                    return scoreB.compareTo(scoreA); // Highest score first
+                })
+                .collect(Collectors.toList());
     }
 
 }
