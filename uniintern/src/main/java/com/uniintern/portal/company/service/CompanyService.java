@@ -125,11 +125,10 @@ public class CompanyService {
             throw new IllegalArgumentException("Invalid OTP");
         }
         
-        // OTP matches, mark as verified
+        // OTP matches, mark as verified (Wait for Admin Approval)
         company.setEmailVerified(true);
         company.setVerificationCode(null);
         company.setVerificationCodeExpiresAt(null);
-        company.setStatus("ACTIVE");
         companyRepository.save(company);
         
         return true;

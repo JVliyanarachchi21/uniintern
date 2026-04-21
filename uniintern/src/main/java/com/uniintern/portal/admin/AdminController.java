@@ -119,7 +119,9 @@ public class AdminController {
 
     @GetMapping("/companies")
     public String companyApprovals(Model model) {
-        List<Company> pending = companyRepository.findByStatus("PENDING_VERIFICATION");
+        // Show all companies waiting for verification or final approval
+        List<Company> pending = new java.util.ArrayList<>(companyRepository.findByStatus("PENDING_VERIFICATION"));
+        pending.addAll(companyRepository.findByStatus("PENDING_APPROVAL"));
         model.addAttribute("companies", pending);
         return "admin/company-approvals";
     }
@@ -138,7 +140,7 @@ public class AdminController {
     @GetMapping("/companies/{id}/approve")
     public String approveCompany(@PathVariable Long id) {
         Company c = companyRepository.findById(id).orElseThrow();
-        c.setStatus("VERIFIED");
+        c.setStatus("ACTIVE");
         companyRepository.save(c);
         return "redirect:/admin/companies";
     }
