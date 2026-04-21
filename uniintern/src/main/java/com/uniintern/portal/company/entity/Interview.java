@@ -14,8 +14,17 @@ public class Interview {
     private String candidateName;
     private String internshipTitle;
     private LocalDateTime interviewDateTime;
-    
+    private String mode; // e.g., "Online", "Physical"
+    private String locationLink; // URL or Address
+    private String companyName;
     private String status;
+    
+    public String getMode() { return mode; }
+    public void setMode(String mode) { this.mode = mode; }
+    public String getLocationLink() { return locationLink; }
+    public void setLocationLink(String locationLink) { this.locationLink = locationLink; }
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
 
     public Interview() {
     }

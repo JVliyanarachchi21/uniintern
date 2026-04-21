@@ -19,8 +19,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             Object handler) throws Exception {
 
         String uri = request.getRequestURI();
-
-        if (uri.equals("/admin/login") || uri.equals("/admin/logout")) {
+        if (uri.startsWith("/admin/login") || uri.startsWith("/admin/logout")) {
             return true;
         }
 

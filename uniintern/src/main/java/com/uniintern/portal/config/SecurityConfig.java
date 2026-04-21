@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -24,7 +24,7 @@ public class SecurityConfig {
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
@@ -38,7 +38,12 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/admin/login")
                 .loginProcessingUrl("/admin/login")
-                .defaultSuccessUrl("/admin/dashboard", true)
+                .successHandler((request, response, authentication) -> {
+                    jakarta.servlet.http.HttpSession session = request.getSession();
+                    session.setAttribute("adminLoggedIn", true);
+                    session.setAttribute("serverRunId", com.uniintern.portal.admin.AdminInterceptor.SERVER_RUN_ID);
+                    response.sendRedirect("/admin/dashboard");
+                })
                 .failureUrl("/admin/login?error=true")
                 .usernameParameter("email")
                 .passwordParameter("password")

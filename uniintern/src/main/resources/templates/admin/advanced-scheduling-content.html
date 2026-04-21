@@ -45,7 +45,8 @@
           <tr th:each="dto : ${pendingInterviews}">
             <td>
               <div style="font-weight:800; color: var(--p-navy); font-size: 15px;" th:text="${dto.studentName}">John Doe</div>
-              <div th:text="${dto.university}" style="color: var(--p-slate); font-size: 12px; margin-top: 2px;">SLIIT</div>
+              <div th:text="${dto.university}" style="color: var(--p-slate); font-size: 11px; margin-top: 1px;">SLIIT</div>
+              <div style="color: var(--p-navy); font-size: 10px; font-weight: 700; text-transform: uppercase; margin-top: 4px; display: inline-block; padding: 2px 6px; background: var(--p-gray-light); border-radius: 4px;" th:text="${dto.companyName}">Google</div>
             </td>
             <td>
               <span class="status-pill" 
@@ -62,11 +63,23 @@
                        th:classappend="${dto.matchScore > 80 ? 'bg-high' : (dto.matchScore > 60 ? 'bg-medium' : 'bg-low')}"
                        th:style="'width:' + ${dto.matchScore} + '%;'"></div>
                 </div>
-                <span class="match-score-text" th:text="${#numbers.formatDecimal(dto.matchScore, 1, 0)} + '%'">92%</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                  <span style="font-size: 9px; font-weight: 800; color: var(--p-slate); text-transform: uppercase; letter-spacing: 0.05em;">AI Verified</span>
+                  <span class="match-score-text" th:text="${#numbers.formatDecimal(dto.matchScore, 1, 0)} + '%'">92%</span>
+                </div>
               </div>
             </td>
             <td style="text-align:right;">
-              <a th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" 
+              <!-- Smart Action Button: Adapts based on current recruitment state -->
+              <a th:if="${dto.status == 'INTERVIEW_SCHEDULED'}" 
+                 th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" 
+                 class="action-btn" 
+                 style="background: #10b981; color: white; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                 <i class="bi bi-calendar-check"></i> Manage Schedule
+              </a>
+              
+              <a th:if="${dto.status != 'INTERVIEW_SCHEDULED'}" 
+                 th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" 
                  class="action-btn btn-primary-premium">
                  <i class="bi bi-calendar-plus"></i> Schedule Action
               </a>
@@ -77,4 +90,33 @@
     </div>
 
   </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.querySelector('.table-tools .search');
+      const tableRows = document.querySelectorAll('.table-premium tbody tr');
+      const statsCount = document.querySelector('.table-stats span');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const term = e.target.value.toLowerCase().trim();
+          let visibleCount = 0;
+
+          tableRows.forEach(row => {
+            if (row.cells.length < 2) return; // Skip "No results" row
+            
+            const text = row.innerText.toLowerCase();
+            if (text.includes(term)) {
+              row.style.display = '';
+              visibleCount++;
+            } else {
+              row.style.display = 'none';
+            }
+          });
+
+          if (statsCount) statsCount.textContent = visibleCount;
+        });
+      }
+    });
+  </script>
 </div>

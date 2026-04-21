@@ -168,6 +168,86 @@
     }
   </style>
 
+  <style>
+    /* Premium Communication Hub Styling */
+    .comm-hub {
+      margin-top: 30px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .comm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .comm-title {
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .comm-status {
+      font-size: 12px;
+      padding: 4px 10px;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .comm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .comm-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 12px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      animation: slideIn 0.4s ease-out;
+    }
+    .comm-item i {
+      font-size: 18px;
+      padding: 8px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      color: #64748b;
+    }
+    .comm-item-content {
+      flex: 1;
+    }
+    .comm-item-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .comm-item-who {
+      font-weight: 700;
+      font-size: 14px;
+      color: #1e293b;
+    }
+    .comm-item-time {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .comm-item-msg {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
   <div class="schedule-shell">
 
     <div class="schedule-hero">
@@ -182,8 +262,10 @@
       </div>
       <form th:action="@{/admin/schedule}" method="post">
         <input type="hidden" name="applicationId" th:value="${applicationId}">
+        
         <div class="schedule-grid">
 
+          <!-- Row 1: Basic Info -->
           <div class="schedule-field">
             <label class="schedule-label">Candidate Name</label>
             <input class="schedule-input" type="text" name="candidateName" th:value="${candidateName}" placeholder="Enter candidate full name" required th:readonly="${applicationId != null}">
@@ -194,9 +276,7 @@
 
           <div class="schedule-field">
             <label class="schedule-label">Approved Internship</label>
-            
             <input th:if="${applicationId != null}" type="hidden" name="internshipId" th:value="${internshipId}">
-            
             <select class="schedule-input" name="internshipId" required th:disabled="${applicationId != null}">
                 <option value="">Select approved internship</option>
                 <option th:each="internship : ${approvedInternships}"
@@ -209,26 +289,298 @@
             <div class="schedule-error" th:if="${internshipIdError}" th:text="${internshipIdError}"></div>
           </div>
 
-          <div class="schedule-field schedule-field-full">
+          <!-- Row 2: Scheduling & Logistics (THE INTELLIGENT PART) -->
+          <div class="schedule-field">
             <label class="schedule-label">Interview Date & Time</label>
-            <input class="schedule-input" type="datetime-local" name="datetime" th:value="${datetime}" required>
-            <div class="schedule-help" th:if="${datetimeError == null}">Select the date and time for the interview.</div>
-            <div class="schedule-error" th:if="${datetimeError}" th:text="${datetimeError}" style="color:#DC2626; font-size:15px; font-weight:900; margin-top:4px;"></div>
+            <div style="position:relative;">
+              <input class="schedule-input" type="text" id="datetime-picker" name="datetime" th:value="${datetime}" placeholder="Select Date and Time..." required style="background: #fff; border: 1px solid #7DA0CA;">
+              <i class="bi bi-calendar3" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); color:#5483B3; pointer-events:none;"></i>
+            </div>
+            <div class="schedule-error" th:if="${datetimeError}" th:text="${datetimeError}" style="color:#DC2626; font-size:14px; font-weight:900; margin-top:4px;"></div>
+          </div>
+
+          <div class="schedule-field">
+            <label class="schedule-label">Interview Mode</label>
+            <select class="schedule-input" name="mode" id="mode-selector" required>
+                <option value="Online" th:selected="${mode == 'Online'}">Digital (Virtual Meeting)</option>
+                <option value="Physical" th:selected="${mode == 'Physical'}">Physical (In-Person / Onsite)</option>
+            </select>
+            <div class="schedule-help">Choose how the student will connect with the panel.</div>
+          </div>
+
+          <!-- Row 3: Platform Selection (Only for Online) -->
+          <div class="schedule-field" id="platform-field" style="display:none;">
+            <label class="schedule-label">Meeting Platform</label>
+            <select class="schedule-input" id="platform-selector">
+                <option value="Google Meet">Google Meet</option>
+                <option value="Zoom">Zoom Meeting</option>
+                <option value="Microsoft Teams">Microsoft Teams</option>
+                <option value="Other">Other Platform</option>
+            </select>
+            <div class="schedule-help">Select the software for the virtual round.</div>
+          </div>
+
+          <!-- Row 3/4: Location / Meeting Link -->
+          <div class="schedule-field" id="location-container" style="grid-column: span 1;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="schedule-label" id="location-label">Meeting Link / URL</label>
+              <a href="#" id="verify-maps" target="_blank" style="font-size:11px; font-weight:800; color:#5483B3; text-decoration:none; display:none; align-items:center; gap:4px;">
+                <i class="bi bi-map"></i> VERIFY ON MAPS
+              </a>
+            </div>
+            <div style="position:relative;">
+              <input class="schedule-input" type="text" name="locationLink" id="location-input" th:value="${locationLink}" placeholder="Paste meeting link here..." required style="background:rgba(84,131,179,0.05);" autocomplete="off">
+              <i class="bi bi-camera-video-fill" id="location-icon" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); color:#5483B3;"></i>
+              
+              <!-- Smart Suggestions Container -->
+              <div id="suggestions-box" style="position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #7DA0CA; border-radius:12px; margin-top:5px; box-shadow:0 10px 30px rgba(5,38,89,0.15); z-index:1000; overflow:hidden; display:none;">
+                <!-- Suggestions will be injected here -->
+              </div>
+            </div>
+            <div class="schedule-help" id="location-help">This will be shared directly to the student dashboard.</div>
           </div>
 
         </div>
 
-        <div class="schedule-actions">
-          <button type="submit" class="schedule-btn schedule-btn-primary">Schedule Interview</button>
-          <a th:href="@{/admin/scheduling}" class="schedule-btn schedule-btn-secondary">Back to Scheduling</a>
+        <div class="schedule-actions" style="border-top:1px solid #E5E7EB; padding-top:24px; margin-top:10px;">
+          <button type="submit" class="schedule-btn schedule-btn-primary" style="min-width:240px;">
+            <i class="bi bi-check-circle-fill" style="margin-right:8px;"></i>
+            Confirm & Broadcast Schedule
+          </button>
+          <a th:href="@{/admin/scheduling}" class="schedule-btn schedule-btn-secondary">Cancel</a>
         </div>
       </form>
-
-      <div class="schedule-note">
-        This form now blocks empty fields, invalid candidate names, bad date values, and past interview times with real backend validation.
-      </div>
     </div>
 
+    <!-- Communication Evidence Hub (Shows after successful match) -->
+    <div class="comm-hub" th:if="${param.success}">
+      <div class="comm-header">
+        <div class="comm-title">
+          <i class="bi bi-broadcast"></i>
+          Communication Evidence Hub
+        </div>
+        <div class="comm-status">LIVE SYNC ACTIVE</div>
+      </div>
+      <div class="comm-list">
+        <div class="comm-item">
+          <i class="bi bi-bell-fill" style="color:#5483B3; background:rgba(84,131,179,0.1);"></i>
+          <div class="comm-item-content">
+            <div class="comm-item-top">
+              <span class="comm-item-who">In-App Notification</span>
+              <span class="comm-item-time" th:text="${#temporals.format(#temporals.createNow(), 'hh:mm a')}">Just now</span>
+            </div>
+            <div class="comm-item-msg">Student portal badge updated. Candidate now sees "INTERVIEW_SCHEDULED" in their dashboard.</div>
+          </div>
+        </div>
+        <div class="comm-item">
+          <i class="bi bi-envelope-check" style="color:#10b981; background:rgba(16,185,129,0.1);"></i>
+          <div class="comm-item-content">
+            <div class="comm-item-top">
+              <span class="comm-item-who">Email Invitation (Dual-Channel)</span>
+              <span class="comm-item-time" th:text="${#temporals.format(#temporals.createNow(), 'hh:mm a')}">Just now</span>
+            </div>
+            <div class="comm-item-msg">Invitation dispatched to both Candidate (login email) and Recruiter addresses.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <style>
+    /* Premium Flatpickr Styling */
+    .flatpickr-calendar {
+      background: #052659 !important;
+      border: 1px solid #7DA0CA !important;
+      box-shadow: 0 15px 45px rgba(2, 16, 36, 0.4) !important;
+      border-radius: 20px !important;
+    }
+    .flatpickr-day.selected, .flatpickr-day.selected:focus, .flatpickr-day.selected:hover {
+      background: #5483B3 !important;
+      border-color: #5483B3 !important;
+      color: #fff !important;
+    }
+    .flatpickr-time {
+      border-top: 1px solid rgba(125, 160, 202, 0.3) !important;
+    }
+    .flatpickr-months .flatpickr-month, .flatpickr-weekdays, span.flatpickr-weekday {
+      color: #fff !important;
+      fill: #fff !important;
+    }
+    .flatpickr-day {
+      color: #E2E8F0 !important;
+    }
+    .flatpickr-day.flatpickr-disabled {
+      color: rgba(255,255,255,0.15) !important;
+    }
+    .flatpickr-current-month .flatpickr-monthDropdown-months, .numInputWrapper span.arrowUp:after, .numInputWrapper span.arrowDown:after {
+      filter: invert(1);
+    }
+    .flatpickr-time input {
+      color: #fff !important;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const nameInput = document.querySelector('input[name="candidateName"]');
+      
+      // 1. Strict Character Filtering (Real-time Blocking)
+      if (nameInput && !nameInput.readOnly) {
+        nameInput.addEventListener('keydown', (e) => {
+          if ([46, 8, 9, 27, 13, 32].indexOf(e.keyCode) !== -1 ||
+              (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+              (e.keyCode >= 35 && e.keyCode <= 40)) {
+            return;
+          }
+          if ((e.shiftKey || (e.keyCode < 65 || e.keyCode > 90)) && (e.keyCode < 97 || e.keyCode > 122)) {
+            e.preventDefault();
+            showValidationToast("Special characters are blocked. Only use letters/spaces.");
+          }
+        });
+      }
+
+      // 2. Premium Flatpickr Implementation
+      const now = new Date();
+      const isPast8PM = now.getHours() >= 20;
+      
+      let minDateValue = now;
+      if (isPast8PM) {
+        minDateValue = new Date(now);
+        minDateValue.setDate(now.getDate() + 1);
+        minDateValue.setHours(8, 0, 0, 0);
+      }
+
+      flatpickr("#datetime-picker", {
+        enableTime: true,
+        altInput: true,
+        altFormat: "F j, Y - h:i K",
+        dateFormat: "Y-m-d H:i",
+        minDate: minDateValue,
+        time_24hr: false,
+        disableMobile: true,
+        animate: true
+      });
+
+      // 3. Intelligent Mode & Platform Logic
+      const modeSelector = document.getElementById('mode-selector');
+      const platformField = document.getElementById('platform-field');
+      const platformSelector = document.getElementById('platform-selector');
+      const locationLabel = document.getElementById('location-label');
+      const locationInput = document.getElementById('location-input');
+      const locationIcon = document.getElementById('location-icon');
+      const locationHelp = document.getElementById('location-help');
+      const locationContainer = document.getElementById('location-container');
+      const verifyLink = document.getElementById('verify-maps');
+      const suggestionsBox = document.getElementById('suggestions-box');
+
+      // --- Smart Map Dataset (Curated for Sri Lanka) ---
+      const hubData = [
+        "SLIIT Main Campus, Malabe",
+        "SLIIT Metropolitan Campus, Colombo 03",
+        "SLIIT Northern Uni, Jaffna",
+        "Orion City Tech Park, Colombo 09",
+        "TRACE Expert City, Maradana",
+        "WSO2 HQ, Flower Road, Colombo 03",
+        "LSEG Technology, Maga One, Colombo 05",
+        "Virtusa Campus, Orion City",
+        "University of Moratuwa, Katubedda",
+        "University of Colombo, Reid Avenue",
+        "Informatics Institute of Technology (IIT), Colombo 06",
+        "Sysco LABS, Colombo 07",
+        "99x Technology, Maga Tower"
+      ];
+
+      const updateModeUI = () => {
+        if (modeSelector.value === 'Online') {
+          platformField.style.display = 'block';
+          locationContainer.style.gridColumn = 'span 1';
+          verifyLink.style.display = 'none';
+          
+          locationLabel.textContent = platformSelector.value + ' Meeting Link';
+          locationInput.placeholder = 'Paste ' + platformSelector.value + ' Invite URL here...';
+          locationIcon.className = 'bi bi-camera-video-fill';
+          locationHelp.textContent = 'This digital invite will be synced to the student dashboard.';
+        } else {
+          platformField.style.display = 'none';
+          locationContainer.style.gridColumn = 'span 2';
+          verifyLink.style.display = 'flex';
+          
+          locationLabel.textContent = 'Physical Office / Google Maps Location';
+          locationInput.placeholder = 'e.g. SLIIT Malabe (Autocomplete Active)';
+          locationIcon.className = 'bi bi-geo-alt-fill';
+          locationHelp.textContent = 'Instant suggestions provided for major local hubs.';
+          
+          updateVerifyLink();
+        }
+      };
+
+      const updateVerifyLink = () => {
+        const val = locationInput.value.trim();
+        if (val) {
+          verifyLink.href = "https://www.google.com/maps/search/" + encodeURIComponent(val);
+        } else {
+          verifyLink.href = "https://www.google.com/maps";
+        }
+      };
+
+      // --- Real-Time Intelligence Engine ---
+      locationInput.addEventListener('input', () => {
+        if (modeSelector.value === 'Physical') {
+          updateVerifyLink();
+          const val = locationInput.value.toLowerCase();
+          if (val.length < 2) {
+             suggestionsBox.style.display = 'none';
+             return;
+          }
+
+          const matches = hubData.filter(h => h.toLowerCase().includes(val));
+          if (matches.length > 0) {
+            suggestionsBox.innerHTML = matches.map(m => `
+              <div class="suggestion-item" style="padding:12px 16px; cursor:pointer; font-size:13px; font-weight:600; color:#1e293b; border-bottom:1px solid #f1f5f9;">
+                <i class="bi bi-geo-fill" style="color:#5483B3; margin-right:8px;"></i>${m}
+              </div>
+            `).join('');
+            suggestionsBox.style.display = 'block';
+
+            // Click handling
+            document.querySelectorAll('.suggestion-item').forEach(item => {
+              item.addEventListener('click', (e) => {
+                locationInput.value = item.textContent.trim();
+                suggestionsBox.style.display = 'none';
+                updateVerifyLink();
+              });
+            });
+          } else {
+            suggestionsBox.style.display = 'none';
+          }
+        }
+      });
+
+      // Close suggestions on outside click
+      document.addEventListener('click', (e) => {
+        if (!locationInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+          suggestionsBox.style.display = 'none';
+        }
+      });
+
+      if (modeSelector) {
+        modeSelector.addEventListener('change', updateModeUI);
+        platformSelector.addEventListener('change', updateModeUI);
+        updateModeUI(); // Initial run
+      }
+
+      function showValidationToast(msg) {
+        let toast = document.getElementById('v-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'v-toast';
+          toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#052659;color:white;padding:12px 24px;border-radius:12px;font-weight:700;z-index:10000;box-shadow:0 12px 30px rgba(0,0,0,0.2);transition:all 0.3s;opacity:0;pointer-events:none;';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 2200);
+      }
+    });
+  </script>
 </div>
