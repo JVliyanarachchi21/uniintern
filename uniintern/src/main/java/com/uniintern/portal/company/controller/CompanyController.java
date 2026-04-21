@@ -428,6 +428,7 @@ public class CompanyController {
         internship.setVacancies(vacancies);
         internship.setWorkType(workType);
         internship.setTopNCandidates(topN);
+        // Ensure it is PENDING for admin approval to show the workflow in Viva
         internship.setStatus("DRAFT".equalsIgnoreCase(status) ? "DRAFT" : "PENDING_ADMIN_APPROVAL");
 
         if (minGpa != null && !minGpa.isBlank()) {
