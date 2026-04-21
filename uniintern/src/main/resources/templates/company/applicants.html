@@ -67,16 +67,58 @@
                 <td th:text="${a.score}">79</td>
 
                 <td>
-                    <div class="icon-actions modern-icon-actions">
-                        <a th:href="@{'/company/applicants/view/' + ${a.id}}" class="btn-small-view" style="text-decoration: none; font-size: 13px; color: #3b82f6; border: 1px solid #3b82f6; padding: 4px 10px; border-radius: 4px;">
+                    <div class="icon-actions modern-icon-actions" th:id="'actions-' + ${a.id}">
+                        <a th:href="@{'/company/applicants/view/' + ${a.id}}" class="btn-small-view" style="text-decoration: none; font-size: 12px; color: #3b82f6; border: 1px solid #3b82f6; padding: 4px 8px; border-radius: 4px;">
                             View Profile
                         </a>
+                        
+                        <button th:if="${a.status == 'APPLIED'}" 
+                                th:onclick="'updateStatus(' + ${a.id} + ', \'shortlist\')'"
+                                class="btn-small-view" 
+                                style="background: #10b981; color: white; border: none; font-size: 12px; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">
+                            Shortlist
+                        </button>
+                        
+                        <button th:if="${a.status == 'APPLIED'}" 
+                                th:onclick="'updateStatus(' + ${a.id} + ', \'reject\')'"
+                                class="btn-small-view" 
+                                style="background: #ef4444; color: white; border: none; font-size: 12px; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">
+                            Reject
+                        </button>
+
+                        <span th:if="${a.status == 'SHORTLISTED'}" style="background: #d1fae5; color: #065f46; font-size: 11px; padding: 4px 8px; border-radius: 999px; font-weight: 600; margin-left: 5px;">
+                            Shortlisted
+                        </span>
+                        
+                        <span th:if="${a.status == 'REJECTED'}" style="background: #fee2e2; color: #991b1b; font-size: 11px; padding: 4px 8px; border-radius: 999px; font-weight: 600; margin-left: 5px;">
+                            Rejected
+                        </span>
                     </div>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
+
+    <script>
+        function updateStatus(appId, action) {
+            if(!confirm('Are you sure you want to ' + action + ' this candidate?')) return;
+            
+            fetch('/company/applicants/' + action + '/' + appId, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    location.reload(); // Refresh to show new status
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(err => alert('Failed to update status'));
+        }
+    </script>
 
 </section>
 
