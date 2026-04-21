@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - UniIntern'">UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Sidebar Fragment -->
+    <div th:fragment="sidebar(currentPage)" class="w-64 bg-brand-800 text-white flex flex-col h-full shadow-xl z-20 relative">
+        <div class="p-6 flex items-center space-x-3 border-b border-brand-700/50">
+            <div class="bg-white/10 p-2 rounded-lg">
+                <svg class="w-6 h-6 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                </svg>
+            </div>
+            <span class="font-bold text-xl tracking-tight">UniIntern</span>
+        </div>
+
+        <div class="px-4 py-2 text-xs font-semibold text-brand-300 uppercase tracking-wider mt-4 mb-2">
+            Filtering Engine
+        </div>
+
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a th:href="@{/dashboard}" 
+               th:class="${currentPage == 'Dashboard'} ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 bg-brand-700 text-white shadow-inner' : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-brand-100 hover:bg-brand-700/50 hover:text-white'">
+                <svg th:class="${currentPage == 'Dashboard'} ? 'w-5 h-5 text-accent-500' : 'w-5 h-5 text-brand-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                </svg>
+                <span class="font-medium text-sm">Dashboard</span>
+            </a>
+
+            <a th:href="@{/marking-guides}" 
+               th:class="${currentPage == 'MarkingGuides' || currentPage == 'MarkingGuideDetail'} ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 bg-brand-700 text-white shadow-inner' : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-brand-100 hover:bg-brand-700/50 hover:text-white'">
+                <svg th:class="${currentPage == 'MarkingGuides' || currentPage == 'MarkingGuideDetail'} ? 'w-5 h-5 text-accent-500' : 'w-5 h-5 text-brand-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span class="font-medium text-sm">Marking Guides</span>
+            </a>
+
+            <a th:href="@{/run-filtering}" 
+               th:class="${currentPage == 'RunFiltering' || currentPage == 'ApplicantsPreview'} ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 bg-brand-700 text-white shadow-inner' : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-brand-100 hover:bg-brand-700/50 hover:text-white'">
+                <svg th:class="${currentPage == 'RunFiltering' || currentPage == 'ApplicantsPreview'} ? 'w-5 h-5 text-accent-500' : 'w-5 h-5 text-brand-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="font-medium text-sm">Run Filtering</span>
+            </a>
+
+            <a th:href="@{/results}" 
+               th:class="${currentPage == 'ResultsList' || currentPage == 'RankingDetail'} ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 bg-brand-700 text-white shadow-inner' : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-brand-100 hover:bg-brand-700/50 hover:text-white'">
+                <svg th:class="${currentPage == 'ResultsList' || currentPage == 'RankingDetail'} ? 'w-5 h-5 text-accent-500' : 'w-5 h-5 text-brand-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span class="font-medium text-sm">Results</span>
+            </a>
+
+            <a th:href="@{/rules-weights}" 
+               th:class="${currentPage == 'RulesAndWeights'} ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 bg-brand-700 text-white shadow-inner' : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-brand-100 hover:bg-brand-700/50 hover:text-white'">
+                <svg th:class="${currentPage == 'RulesAndWeights'} ? 'w-5 h-5 text-accent-500' : 'w-5 h-5 text-brand-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+                </svg>
+                <span class="font-medium text-sm">Rules & Weights</span>
+            </a>
+
+            <a th:href="@{/logs}" 
+               th:class="${currentPage == 'LogsHistory'} ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 bg-brand-700 text-white shadow-inner' : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-brand-100 hover:bg-brand-700/50 hover:text-white'">
+                <svg th:class="${currentPage == 'LogsHistory'} ? 'w-5 h-5 text-accent-500' : 'w-5 h-5 text-brand-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="font-medium text-sm">Logs / History</span>
+            </a>
+
+            <a th:href="@{/settings}" 
+               th:class="${currentPage == 'Settings'} ? 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 bg-brand-700 text-white shadow-inner' : 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-brand-100 hover:bg-brand-700/50 hover:text-white'">
+                <svg th:class="${currentPage == 'Settings'} ? 'w-5 h-5 text-accent-500' : 'w-5 h-5 text-brand-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="font-medium text-sm">Settings</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-brand-700/50 text-center">
+            <p class="text-xs text-brand-400 font-medium">v1.0 — Filtering Module</p>
+        </div>
+    </div>
+
+    <!-- Header Fragment -->
+    <header th:fragment="header(currentPage)" class="h-16 bg-white shadow-sm z-10 flex items-center justify-between px-6 border-b border-gray-200">
+        <div class="flex items-center">
+            <h1 class="text-lg font-semibold text-gray-800" th:text="${currentPage}">Dashboard</h1>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <button class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-500 rounded-full border-2 border-white"></span>
+            </button>
+            <div class="h-8 w-px bg-gray-200"></div>
+            <div class="flex items-center space-x-3 cursor-pointer group">
+                <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm group-hover:bg-brand-200 transition-colors">
+                    AD
+                </div>
+                <span class="text-sm font-medium text-gray-700 group-hover:text-brand-700 transition-colors">Admin User</span>
+            </div>
+            <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors ml-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout Wrapper -->
+    <div th:fragment="main(currentPage, content)" class="flex h-screen w-full bg-gray-100 overflow-hidden font-sans">
+        <div th:replace="~{fragments/layout :: sidebar(${currentPage})}"></div>
+        
+        <div class="flex-1 flex flex-col h-full overflow-hidden">
+            <div th:replace="~{fragments/layout :: header(${currentPage})}"></div>
+            
+            <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
+                <div class="max-w-7xl mx-auto" th:insert="${content}"></div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

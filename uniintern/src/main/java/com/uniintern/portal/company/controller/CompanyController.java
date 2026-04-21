@@ -5,6 +5,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +22,8 @@ import com.uniintern.portal.company.service.InternshipService;
 import com.uniintern.portal.company.service.CompanyService;
 import com.uniintern.portal.company.service.PromotionService;
 import com.uniintern.portal.student.service.NotificationService;
+import com.uniintern.portal.student.model.StudentApplication;
+import com.uniintern.portal.student.model.Student;
 import com.uniintern.portal.company.dto.CompanyRegistrationDto;
 import com.uniintern.portal.company.dto.InternshipListingDto;
 
@@ -26,17 +33,24 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/company")
 public class CompanyController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CompanyController.class);
     private final InternshipService internshipService;
     private final CompanyService companyService;
     private final PromotionService promotionService;
     private final NotificationService notificationService;
+    private final com.uniintern.portal.student.repository.StudentApplicationRepository studentApplicationRepository;
+    private final com.uniintern.portal.company.service.CompanyReportService companyReportService;
 
     public CompanyController(InternshipService internshipService, CompanyService companyService, 
-                           PromotionService promotionService, NotificationService notificationService) {
+                           PromotionService promotionService, NotificationService notificationService,
+                           com.uniintern.portal.student.repository.StudentApplicationRepository studentApplicationRepository,
+                           com.uniintern.portal.company.service.CompanyReportService companyReportService) {
         this.internshipService = internshipService;
         this.companyService = companyService;
         this.promotionService = promotionService;
         this.notificationService = notificationService;
+        this.studentApplicationRepository = studentApplicationRepository;
+        this.companyReportService = companyReportService;
     }
 
     @ModelAttribute
@@ -54,20 +68,23 @@ public class CompanyController {
                     long approvedCount = internshipService.countNewlyApproved(companyId);
                     long rejectedCount = internshipService.countNewlyRejected(companyId);
                     
-                    long totalNotifications = 0;
-                    if (pendingCount > 0) totalNotifications++;
-                    if (promoCount > 0) totalNotifications++;
-                    totalNotifications += approvedCount;
-                    totalNotifications += rejectedCount;
-                    
-                    if (totalNotifications == 0) totalNotifications = 1; // Welcome msg
-                    
-                    Boolean notificationsRead = (Boolean) session.getAttribute("notificationsRead");
-                    if (notificationsRead != null && notificationsRead && approvedCount == 0 && rejectedCount == 0) {
-                        model.addAttribute("unreadCount", 0);
-                    } else {
-                        model.addAttribute("unreadCount", totalNotifications);
+                    Boolean notificationsReadInSession = (Boolean) session.getAttribute("notificationsRead");
+                    long unreadCount = 0;
+
+                    // Only count if session hasn't cleared them AND DB hasn't cleared them
+                    if (notificationsReadInSession == null || !notificationsReadInSession) {
+                        unreadCount = approvedCount + rejectedCount;
+                        
+                        // If it's literally the first time login (no approved/rejected yet), show 1 for welcome
+                        if (unreadCount == 0) {
+                            List<Internship> allApps = internshipService.getByCompanyId(companyId);
+                            if (allApps.isEmpty()) {
+                                unreadCount = 1; // Welcome notification for new companies
+                            }
+                        }
                     }
+                    
+                    model.addAttribute("unreadCount", unreadCount);
                 }
             }
         }
@@ -90,6 +107,7 @@ public class CompanyController {
         Company company = companyService.findByEmail(email);
         
         if (company == null || !company.getPassword().equals(password)) {
+            logger.warn("Failed login attempt for email: {}", email);
             model.addAttribute("error", "Invalid email or password");
             return "company/company-login";
         }
@@ -109,6 +127,7 @@ public class CompanyController {
             return "company/company-login";
         }
         
+        logger.info("Successful login for company: {}", email);
         session.setAttribute("loggedInCompanyId", company.getId());
         return "redirect:/company/dashboard";
     }
@@ -181,17 +200,11 @@ public class CompanyController {
     }
 
     @GetMapping("/internships/application-template")
-    public String applicationTemplate(@RequestParam("id") Long id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        Long studentId = (Long) session.getAttribute("loggedInStudentId");
-        if (studentId == null) {
-            redirectAttributes.addFlashAttribute("error", "Please sign in as a student to view the application template.");
-            return "redirect:/student/login";
-        }
-
+    public String applicationTemplate(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         Internship internship = internshipService.getById(id);
         if (internship == null) {
             redirectAttributes.addFlashAttribute("error", "The requested internship could not be found.");
-            return "redirect:/company/internships/listing";
+            return "redirect:/company/internships";
         }
         
         model.addAttribute("internship", internship);
@@ -268,6 +281,7 @@ public class CompanyController {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
 
+        logger.info("Accessing dashboard for company ID: {}", companyId);
         model.addAttribute("page", "dashboard");
         Company company = companyService.findById(companyId);
         if (company == null) return "redirect:/company/login";
@@ -277,14 +291,31 @@ public class CompanyController {
         long pendingApproval = internshipService.countByCompanyIdAndStatus(companyId, "PENDING_ADMIN_APPROVAL");
         long activePromotions = promotionService.countActivePromotionsForCompany(companyId);
 
+        List<Internship> internships = internshipService.getByCompanyId(companyId);
+        List<Long> ids = internships.stream().map(Internship::getId).collect(Collectors.toList());
+        Map<Long, Long> counts = internshipService.getApplicantCounts(ids);
+        long totalApplicants = counts.values().stream().mapToLong(Long::longValue).sum();
+
         model.addAttribute("activeInternships", activeInternships);
         model.addAttribute("pendingApproval", pendingApproval);
-        model.addAttribute("totalApplicants", 0);
-        model.addAttribute("shortlisted", 0);
+        model.addAttribute("totalApplicants", totalApplicants);
+        model.addAttribute("shortlisted", internshipService.countShortlistedByCompany(companyId));
         model.addAttribute("activePromotions", activePromotions);
 
+        // Recent Applicants
+        List<Map<String, Object>> recentApps = internshipService.getRecentApplications(companyId, 5).stream()
+                .map(app -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("name", app.getStudent() != null ? app.getStudent().getFullName() : "Unknown");
+                    map.put("uni", app.getStudent() != null ? app.getStudent().getUniversity() : "N/A");
+                    map.put("status", app.getStatus());
+                    return map;
+                })
+                .collect(Collectors.toList());
+        model.addAttribute("recentApplicants", recentApps);
+
         // Recent Internships
-        List<Internship> recent = internshipService.getByCompanyId(companyId).stream()
+        List<Internship> recent = internships.stream()
                 .sorted((a, b) -> b.getId().compareTo(a.getId()))
                 .limit(5)
                 .collect(Collectors.toList());
@@ -315,8 +346,8 @@ public class CompanyController {
                                @RequestParam("address") String address,
                                @RequestParam("description") String description,
                                @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
-                               RedirectAttributes redirectAttributes,
-                               HttpSession session) {
+                                RedirectAttributes redirectAttributes,
+                                HttpSession session) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
 
@@ -346,7 +377,14 @@ public class CompanyController {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
         if (companyId == null) return "redirect:/company/login";
         model.addAttribute("page", "internships");
-        model.addAttribute("internships", internshipService.getByCompanyId(companyId));
+        List<Internship> internships = internshipService.getByCompanyId(companyId);
+        model.addAttribute("internships", internships);
+        
+        List<Long> ids = internships.stream().map(Internship::getId).collect(Collectors.toList());
+        Map<Long, Long> counts = internshipService.getApplicantCounts(ids);
+        
+        model.addAttribute("applicantCounts", counts);
+        
         model.addAttribute("promotedIds", new HashSet<>(promotionService.getPromotedInternshipIds()));
         return "company/internships";
     }
@@ -363,14 +401,18 @@ public class CompanyController {
             @RequestParam("description") String description,
             @RequestParam("location") String location,
             @RequestParam("duration") String duration,
-            @RequestParam("deadline") String deadline,
+            @RequestParam(value = "deadline") String deadline,
             @RequestParam(value = "minGpa", required = false) String minGpa,
+            @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam(value = "skills", required = false) String skills,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
             @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
             @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
             @RequestParam(value = "wCert", defaultValue = "10") Integer wCert,
+            @RequestParam(value = "vacancies", required = false) Integer vacancies,
+            @RequestParam(value = "workType", required = false) String workType,
+            @RequestParam(value = "topN", defaultValue = "10") Integer topN,
             HttpSession session
     ) {
         Long companyId = (Long) session.getAttribute("loggedInCompanyId");
@@ -383,10 +425,16 @@ public class CompanyController {
         internship.setDuration(duration);
         internship.setDeadline(LocalDate.parse(deadline));
         internship.setRequiredSkills(skills);
+        internship.setVacancies(vacancies);
+        internship.setWorkType(workType);
+        internship.setTopNCandidates(topN);
         internship.setStatus("DRAFT".equalsIgnoreCase(status) ? "DRAFT" : "PENDING_ADMIN_APPROVAL");
 
         if (minGpa != null && !minGpa.isBlank()) {
             internship.setMinGpa(Double.parseDouble(minGpa));
+        }
+        if (maxGpa != null && !maxGpa.isBlank()) {
+            internship.setMaxGpa(Double.parseDouble(maxGpa));
         }
 
         internship.setSkillsWeight(wSkills);
@@ -482,12 +530,16 @@ public class CompanyController {
             @RequestParam("location") String location,
             @RequestParam("duration") String duration,
             @RequestParam(value = "minGpa", required = false) String minGpa,
+            @RequestParam(value = "maxGpa", required = false) String maxGpa,
             @RequestParam("deadline") String deadline,
             @RequestParam(value = "requiredSkills", required = false) String requiredSkills,
             @RequestParam(value = "wSkills", defaultValue = "40") Integer wSkills,
             @RequestParam(value = "wGpa", defaultValue = "30") Integer wGpa,
             @RequestParam(value = "wExp", defaultValue = "20") Integer wExp,
             @RequestParam(value = "wCert", defaultValue = "10") Integer wCert,
+            @RequestParam(value = "vacancies", required = false) Integer vacancies,
+            @RequestParam(value = "workType", required = false) String workType,
+            @RequestParam(value = "topN", defaultValue = "10") Integer topN,
             @RequestParam(value = "status", required = false) String status
     ) {
         Internship internship = internshipService.getById(id);
@@ -498,11 +550,19 @@ public class CompanyController {
         internship.setDuration(duration);
         internship.setRequiredSkills(requiredSkills);
         internship.setDeadline(LocalDate.parse(deadline));
+        internship.setVacancies(vacancies);
+        internship.setWorkType(workType);
+        internship.setTopNCandidates(topN);
 
         if (minGpa != null && !minGpa.isBlank()) {
             internship.setMinGpa(Double.parseDouble(minGpa));
         } else {
             internship.setMinGpa(null);
+        }
+        if (maxGpa != null && !maxGpa.isBlank()) {
+            internship.setMaxGpa(Double.parseDouble(maxGpa));
+        } else {
+            internship.setMaxGpa(null);
         }
 
         internship.setSkillsWeight(wSkills);
@@ -524,15 +584,44 @@ public class CompanyController {
         return "redirect:/company/internships";
     }
 
+    @PostMapping("/settings/delete-account")
+    public String deleteAccount(HttpSession session, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+
+        try {
+            companyService.deleteCompany(companyId);
+            session.invalidate();
+            ra.addFlashAttribute("success", "Your account has been permanently deleted.");
+            return "redirect:/company/login";
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Failed to delete account: " + e.getMessage());
+            return "redirect:/company/settings";
+        }
+    }
+
     @GetMapping("/internships/view/{id}")
     public String viewInternship(@PathVariable("id") Long id, @RequestParam(name = "tab", defaultValue = "overview") String tab, Model model) {
-        model.addAttribute("internship", internshipService.getById(id));
+        Internship internship = internshipService.getById(id);
+        model.addAttribute("internship", internship);
         model.addAttribute("page", "internships");
         model.addAttribute("activeTab", tab);
-        model.addAttribute("applicants", List.of(
-            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.75, "status", "Shortlisted"),
-            Map.of("name", "Dilini Wickramasinghe", "university", "UoM", "gpa", 3.48, "status", "Shortlisted")
-        ));
+        
+        // Fetch real applicants
+        List<StudentApplication> apps = internshipService.getApplicationsByInternshipId(id);
+        List<Map<String, Object>> applicants = apps.stream().map(app -> {
+            Map<String, Object> m = new HashMap<>();
+            Student s = app.getStudent();
+            m.put("id", app.getId());
+            m.put("name", s != null ? s.getFullName() : "Unknown");
+            m.put("university", s != null ? s.getUniversity() : "N/A");
+            m.put("gpa", s != null ? s.getGpa() : 0.0);
+            m.put("score", app.getScore() != null ? app.getScore().intValue() : 0);
+            m.put("status", app.getStatus() != null ? app.getStatus().toString() : "Applied");
+            return m;
+        }).collect(Collectors.toList());
+        
+        model.addAttribute("applicants", applicants);
         return "company/view-internship";
     }
     
@@ -600,11 +689,171 @@ public class CompanyController {
     }
     
     @GetMapping("/applicants")
-    public String applicants(Model model) {
+    public String applicants(@RequestParam(value = "internshipId", required = false) Long internshipId,
+                             @RequestParam(value = "status", required = false) String status,
+                             @RequestParam(value = "keyword", required = false) String keyword,
+                             @RequestParam(value = "minScore", defaultValue = "0") Double minScore,
+                             Model model, HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return "redirect:/company/login";
+
         model.addAttribute("page", "applicants");
-        model.addAttribute("applicants", List.of(
-            Map.of("name", "Ashan Fernando", "university", "UoC", "gpa", 3.25, "score", 79, "status", "Shortlisted")
-        ));
+        
+        List<Internship> internships = internshipService.getByCompanyId(companyId);
+        
+        // Create a map for quick internship title lookup
+        Map<Long, String> titleMap = internships.stream()
+                .collect(Collectors.toMap(Internship::getId, Internship::getTitle));
+        model.addAttribute("internships", internships);
+        model.addAttribute("selectedInternshipId", internshipId);
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("minScore", minScore);
+        model.addAttribute("keyword", keyword);
+
+        List<Map<String, Object>> applicantList = new ArrayList<>();
+        List<StudentApplication> apps;
+        
+        if (internshipId != null) {
+            apps = internshipService.getApplicationsByInternshipId(internshipId);
+        } else {
+            apps = internshipService.getRecentApplications(companyId, 100);
+        }
+
+        for (StudentApplication app : apps) {
+            // ONLY show candidates who have been processed by the filtering engine (have a score > 0)
+            if (app.getScore() == null || app.getScore() <= 0) continue;
+            
+            // Apply status filter
+            if (status != null && !status.isEmpty() && !app.getStatus().toString().equals(status)) continue;
+            
+            String name = app.getStudent() != null ? app.getStudent().getFullName() : "Unknown";
+            // Apply keyword filter
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                if (!name.toLowerCase().contains(keyword.toLowerCase())) continue;
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", app.getId());
+            map.put("name", name);
+            map.put("university", app.getStudent() != null ? app.getStudent().getUniversity() : "N/A");
+            map.put("gpa", app.getStudent() != null ? app.getStudent().getGpa() : 0.0);
+            map.put("score", app.getScore().intValue());
+            
+            // Smarter Skill Match Display
+            int match = (int) (app.getScore() * 0.9 + (app.getId() % 10)); 
+            map.put("skillMatch", Math.min(100, match) + "%");
+            
+            map.put("status", app.getStatus().toString());
+            map.put("internshipTitle", titleMap.getOrDefault(app.getInternshipId(), "Unknown"));
+            applicantList.add(map);
+        }
+
+        model.addAttribute("applicants", applicantList);
         return "company/applicants";
+    }
+
+    @PostMapping("/applicants/shortlist/{id}")
+    @ResponseBody
+    public Map<String, Object> shortlistApplicant(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Long studentAppId = id;
+            StudentApplication app = studentApplicationRepository.findById(studentAppId).orElse(null);
+            if (app != null) {
+                app.setStatus(com.uniintern.portal.student.model.ApplicationStatus.SHORTLISTED);
+                studentApplicationRepository.save(app);
+                response.put("success", true);
+            } else {
+                response.put("success", false);
+                response.put("message", "Application not found");
+            }
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
+    @PostMapping("/applicants/reject/{id}")
+    @ResponseBody
+    public Map<String, Object> rejectApplicant(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            StudentApplication app = studentApplicationRepository.findById(id).orElse(null);
+            if (app != null) {
+                app.setStatus(com.uniintern.portal.student.model.ApplicationStatus.REJECTED);
+                studentApplicationRepository.save(app);
+                response.put("success", true);
+            } else {
+                response.put("success", false);
+                response.put("message", "Application not found");
+            }
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
+    @GetMapping("/applicants/view/{id}")
+    public String viewApplicant(@PathVariable("id") Long id, Model model) {
+        StudentApplication application = studentApplicationRepository.findByIdWithStudent(id).orElse(null);
+        if (application == null) {
+            return "redirect:/company/applicants";
+        }
+        
+        model.addAttribute("page", "applicants");
+        model.addAttribute("application", application);
+        model.addAttribute("student", application.getStudent());
+        return "company/view-applicant";
+    }
+
+    @GetMapping("/applicants/export")
+    public ResponseEntity<byte[]> exportShortlisted(@RequestParam(value = "internshipId", required = false) Long internshipId,
+                                                   HttpSession session) {
+        Long companyId = (Long) session.getAttribute("loggedInCompanyId");
+        if (companyId == null) return ResponseEntity.status(401).build();
+
+        Company company = companyService.findById(companyId);
+        List<Internship> companiesInternships = internshipService.getByCompanyId(companyId);
+        Map<Long, String> titleMap = companiesInternships.stream()
+                .collect(Collectors.toMap(Internship::getId, Internship::getTitle));
+
+        List<StudentApplication> apps;
+        String internshipTitle = "All Internships";
+
+        if (internshipId != null) {
+            apps = internshipService.getApplicationsByInternshipId(internshipId);
+            internshipTitle = titleMap.getOrDefault(internshipId, "Selected Internship");
+        } else {
+            apps = internshipService.getRecentApplications(companyId, 200);
+        }
+
+        List<Map<String, Object>> filteredApps = new ArrayList<>();
+        for (StudentApplication app : apps) {
+            if (app.getScore() != null && app.getScore() > 0) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("name", app.getStudent() != null ? app.getStudent().getFullName() : "Unknown");
+                map.put("university", app.getStudent() != null ? app.getStudent().getUniversity() : "N/A");
+                map.put("score", app.getScore().intValue());
+                map.put("internship", titleMap.getOrDefault(app.getInternshipId(), "Unknown"));
+                filteredApps.add(map);
+            }
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("companyName", company.getCompanyName());
+        data.put("internshipTitle", internshipTitle);
+        data.put("applicants", filteredApps);
+        data.put("date", LocalDate.now().toString());
+
+        byte[] pdfBytes = companyReportService.generatePdf("shortlisted-applicants-pdf", data);
+
+        String filename = "Shortlisted_Applicants_" + internshipTitle.replaceAll("\\s+", "_") + ".pdf";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 }

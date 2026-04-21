@@ -230,20 +230,38 @@ function viewApplicant() {
   alert("View applicant details. (UI only)");
 }
 
-function shortlistApplicant(button) {
-  const row = button.closest("tr");
-  const statusBadge = row.querySelector(".badge-status");
-  statusBadge.textContent = "Shortlisted";
-  statusBadge.className = "badge-status st-approved";
-  alert("Applicant shortlisted successfully.");
+function shortlistApplicant(id, button) {
+  if(!confirm("Shortlist this applicant?")) return;
+  fetch('/company/applicants/shortlist/' + id, {method: 'POST'})
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) {
+        const row = button.closest("tr");
+        const statusBadge = row.querySelector(".badge-status");
+        statusBadge.textContent = "SHORTLISTED";
+        statusBadge.className = "badge-status st-approved";
+        alert("Applicant shortlisted successfully.");
+      } else {
+        alert("Error: " + data.message);
+      }
+    });
 }
 
-function rejectApplicant(button) {
-  const row = button.closest("tr");
-  const statusBadge = row.querySelector(".badge-status");
-  statusBadge.textContent = "Rejected";
-  statusBadge.className = "badge-status st-rejected";
-  alert("Applicant rejected.");
+function rejectApplicant(id, button) {
+  if(!confirm("Reject this applicant?")) return;
+  fetch('/company/applicants/reject/' + id, {method: 'POST'})
+    .then(res => res.json())
+    .then(data => {
+      if(data.success) {
+        const row = button.closest("tr");
+        const statusBadge = row.querySelector(".badge-status");
+        statusBadge.textContent = "REJECTED";
+        statusBadge.className = "badge-status st-rejected";
+        alert("Applicant rejected.");
+      } else {
+        alert("Error: " + data.message);
+      }
+    });
 }
 
 

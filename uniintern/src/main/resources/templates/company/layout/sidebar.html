@@ -8,6 +8,13 @@
     <ul class="sidebar-menu">
 
         <li>
+            <a th:href="@{/}">
+                <i class="bi bi-house"></i>
+                <span>View Website</span>
+            </a>
+        </li>
+
+        <li>
             <a th:href="@{/company/dashboard}" th:classappend="${page=='dashboard'} ? 'active' : ''">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
@@ -38,7 +45,14 @@
         <li>
             <a th:href="@{/company/applicants}" th:classappend="${page=='applicants'} ? 'active' : ''">
                 <i class="bi bi-people"></i>
-                <span>Applicants</span>
+                <span>Talent Pool</span>
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/company/cv/dashboard}" th:classappend="${page=='cv_filtering'} ? 'active' : ''">
+                <i class="bi bi-funnel"></i>
+                <span>CV Filtering</span>
             </a>
         </li>
 
@@ -66,7 +80,7 @@
     </ul>
 
     <div class="sidebar-footer">
-        <a th:href="@{/company/login}">
+        <a th:href="@{/logout}">
             <i class="bi bi-box-arrow-right"></i>
             <span>Logout</span>
         </a>

@@ -39,8 +39,12 @@ public class Internship {
     private Integer experienceWeight;
     private Integer certificatesWeight;
     private Integer topNCandidates;
+    private Integer vacancies;
+    private String workType;
+    private Double minimumThreshold;
     private boolean approvedNotificationSeen = false;
     private boolean rejectedNotificationSeen = false;
+
 
     public Internship() {
     }
@@ -181,6 +185,30 @@ public class Internship {
         this.topNCandidates = topNCandidates;
     }
 
+    public Integer getVacancies() {
+        return vacancies;
+    }
+
+    public void setVacancies(Integer vacancies) {
+        this.vacancies = vacancies;
+    }
+
+    public String getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(String workType) {
+        this.workType = workType;
+    }
+
+    public Double getMinimumThreshold() {
+        return minimumThreshold;
+    }
+
+    public void setMinimumThreshold(Double minimumThreshold) {
+        this.minimumThreshold = minimumThreshold;
+    }
+
     public boolean isApprovedNotificationSeen() {
         return approvedNotificationSeen;
     }
@@ -196,4 +224,5 @@ public class Internship {
     public void setRejectedNotificationSeen(boolean rejectedNotificationSeen) {
         this.rejectedNotificationSeen = rejectedNotificationSeen;
     }
+
 }

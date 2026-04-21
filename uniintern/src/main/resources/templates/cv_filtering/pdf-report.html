@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        @page {
+            margin: 1cm;
+            size: A4;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: Arial, sans-serif;
+                font-size: 8pt;
+                color: #64748b;
+            }
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #1e293b;
+            background-color: #ffffff;
+        }
+        .header {
+            background-color: #1e1b4b; /* Dark Blue */
+            color: #ffffff;
+            padding: 40px;
+            margin-bottom: 30px;
+            border-bottom: 5px solid #4f46e5; /* Indigo Accent */
+        }
+        .header-title {
+            font-size: 28pt;
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+        .header-subtitle {
+            font-size: 10pt;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .info-grid {
+            padding: 0 40px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        .info-item {
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-size: 8pt;
+            font-weight: bold;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+        .info-value {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .table-container {
+            padding: 0 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+        }
+        thead {
+            background-color: #f8fafc;
+        }
+        th {
+            padding: 15px;
+            font-size: 8pt;
+            text-align: left;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: bold;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        td {
+            padding: 15px;
+            font-size: 9pt;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .rank {
+            font-weight: bold;
+            color: #4f46e5;
+        }
+        .name {
+            font-weight: bold;
+            color: #0f172a;
+        }
+        .score-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            font-size: 8pt;
+            font-weight: bold;
+            color: #475569;
+        }
+        .total-score {
+            font-weight: bold;
+            color: #059669;
+        }
+        .footer {
+            margin-top: 50px;
+            padding: 20px 40px;
+            font-size: 8pt;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="header-title">UniIntern</h1>
+        <div class="header-subtitle">Candidate Talent Report</div>
+    </div>
+
+    <table class="info-grid">
+        <tr>
+            <td style="width: 50%; border: none; padding: 0;">
+                <div class="info-item">
+                    <div class="info-label">Internship Title</div>
+                    <div class="info-value" th:text="${run.internshipTitle}">Frontend Developer Intern</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Organization</div>
+                    <div class="info-value" th:text="${run.company}">TechVentures Inc.</div>
+                </div>
+            </td>
+            <td style="width: 50%; border: none; padding: 0; text-align: right;">
+                <div class="info-item">
+                    <div class="info-label">Analysis Date</div>
+                    <div class="info-value" th:text="${#temporals.format(run.finishedAt, 'MMMM dd, yyyy')}">April 07, 2026</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Applicants</div>
+                    <div class="info-value text-indigo-600" th:text="${run.applicantsProcessed}">45 Candidates</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">Rank</th>
+                    <th style="width: 30%;">Candidate</th>
+                    <th style="width: 40%;">University</th>
+                    <th style="width: 15%; text-align: right;">Talent Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="res : ${results}">
+                    <td class="rank" th:text="'#' + ${res.rankNumber}">#1</td>
+                    <td>
+                        <div class="name" th:text="${res.studentName}">John Doe</div>
+                    </td>
+                    <td th:text="${res.university}">University of Colombo</td>
+                    <td class="total-score" style="text-align: right;" th:text="${#numbers.formatDecimal(res.totalScore, 1, 2)}">95.50</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Generated by UniIntern CV Filtering Engine. &#169; 2026 UniIntern. All rights reserved.
+    </div>
+</body>
+</html>

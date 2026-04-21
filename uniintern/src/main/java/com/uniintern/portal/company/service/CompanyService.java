@@ -14,6 +14,18 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final EmailService emailService;
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.company.repository.InternshipRepository internshipRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.company.repository.PromotionRepository promotionRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.student.repository.StudentApplicationRepository studentApplicationRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.student.repository.ApplicationScoreRepository applicationScoreRepository;
+
     public CompanyService(CompanyRepository companyRepository, @org.springframework.beans.factory.annotation.Qualifier("companyEmailService") EmailService emailService) {
         this.companyRepository = companyRepository;
         this.emailService = emailService;
@@ -23,12 +35,12 @@ public class CompanyService {
         return companyRepository.findById(id).orElse(null);
     }
 
-    public Company findByEmail(String email) {
-        return companyRepository.findByEmail(email).orElse(null);
-    }
-
     public java.util.List<Company> getAllCompanies() {
         return companyRepository.findAll();
+    }
+
+    public Company findByEmail(String email) {
+        return companyRepository.findByEmail(email).orElse(null);
     }
 
     public Company getOrCreateMockCompany() {
@@ -50,8 +62,9 @@ public class CompanyService {
     public void updateProfile(Long id, String companyName, String industry, String email, String phone, String website, String address, String description, String logoPath) {
         Company company = findById(id);
         if (company == null) {
-            throw new IllegalArgumentException("Company not found");
+            throw new IllegalArgumentException("Company not found with ID: " + id);
         }
+        
         company.setCompanyName(companyName);
         company.setIndustry(industry);
         company.setEmail(email);
@@ -72,13 +85,7 @@ public class CompanyService {
             throw new IllegalArgumentException("Passwords do not match");
         }
         if (companyRepository.existsByEmail(dto.getEmail())) {
-            Company existing = companyRepository.findByEmail(dto.getEmail()).orElse(null);
-            if (existing != null && !"APPROVED".equals(existing.getStatus()) && !"ACTIVE".equals(existing.getStatus())) {
-                companyRepository.delete(existing);
-                companyRepository.flush();
-            } else {
-                throw new IllegalArgumentException("Email already registered and approved. Please log in.");
-            }
+            throw new IllegalArgumentException("Email already registered");
         }
 
         Company company = new Company();
@@ -118,11 +125,11 @@ public class CompanyService {
             throw new IllegalArgumentException("Invalid OTP");
         }
         
-        // OTP matches, mark as verified and pending approval from admin
+        // OTP matches, mark as verified
         company.setEmailVerified(true);
         company.setVerificationCode(null);
         company.setVerificationCodeExpiresAt(null);
-        company.setStatus("PENDING_APPROVAL");
+        company.setStatus("ACTIVE");
         companyRepository.save(company);
         
         return true;
@@ -178,5 +185,31 @@ public class CompanyService {
         
         company.setPassword(newPassword);
         companyRepository.save(company);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteCompany(Long companyId) {
+        // 1. Find all internships for the company
+        java.util.List<com.uniintern.portal.company.entity.Internship> internships = internshipRepository.findByCompanyId(companyId);
+        
+        for (com.uniintern.portal.company.entity.Internship internship : internships) {
+            Long internshipId = internship.getId();
+            
+            // a. Delete Promotions
+            promotionRepository.deleteByInternshipId(internshipId);
+            
+            // b. Cleanup Student Applications and their Scores
+            java.util.List<com.uniintern.portal.student.model.StudentApplication> applications = studentApplicationRepository.findByInternshipId(internshipId);
+            for (com.uniintern.portal.student.model.StudentApplication app : applications) {
+                applicationScoreRepository.deleteByApplicationId(app.getId());
+            }
+            studentApplicationRepository.deleteByInternshipId(internshipId);
+            
+            // c. Delete Internship
+            internshipRepository.deleteById(internshipId);
+        }
+        
+        // 2. Finally delete the company
+        companyRepository.deleteById(companyId);
     }
 }

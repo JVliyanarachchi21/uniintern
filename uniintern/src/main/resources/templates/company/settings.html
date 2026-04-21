@@ -142,7 +142,8 @@
                 <div class="danger-title">Delete Company Account</div>
                 <div class="danger-desc">Once you delete your account, there is no going back. All internships and applicant data will be lost.</div>
             </div>
-            <button class="btn danger" onclick="confirm('Are you absolutely sure? This action cannot be undone.')">Delete Account</button>
+            <form id="deleteAccountForm" th:action="@{/company/settings/delete-account}" method="post" style="display: none;"></form>
+            <button class="btn danger" onclick="if(confirm('Are you absolutely sure? This action cannot be undone and all your data will be permanently lost.')) document.getElementById('deleteAccountForm').submit();">Delete Account</button>
         </div>
     </div>
 

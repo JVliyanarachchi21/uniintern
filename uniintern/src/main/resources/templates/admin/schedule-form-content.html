@@ -135,9 +135,9 @@
     }
 
     .schedule-btn-primary{
-      background:linear-gradient(135deg, #10B981, #059669);
+      background:linear-gradient(135deg, #5483B3, #052659);
       color:#fff;
-      box-shadow:0 14px 30px rgba(16,185,129,0.20);
+      box-shadow:0 14px 30px rgba(5,38,89,0.20);
     }
 
     .schedule-btn-secondary{
@@ -148,9 +148,9 @@
 
     .schedule-note{
       margin-top:22px;
-      background:#EFF6FF;
-      border:1px solid #BFDBFE;
-      color:#1E3A8A;
+      background:#C1E8FF;
+      border:1px solid #7DA0CA;
+      color:#052659;
       border-radius:18px;
       padding:16px 18px;
       font-size:14px;
@@ -177,28 +177,43 @@
     </div>
 
     <div class="schedule-card">
+      <div class="schedule-error" th:if="${formError}" th:text="${formError}" 
+           style="background:#FEE2E2; color:#B91C1C; padding:16px; border-radius:12px; margin-bottom:20px; font-weight:700; border:1px solid #FCA5A5;">
+      </div>
       <form th:action="@{/admin/schedule}" method="post">
+        <input type="hidden" name="applicationId" th:value="${applicationId}">
         <div class="schedule-grid">
 
           <div class="schedule-field">
             <label class="schedule-label">Candidate Name</label>
-            <input class="schedule-input" type="text" name="candidateName" th:value="${candidateName}" placeholder="Enter candidate full name" required>
-            <div class="schedule-help">Only letters and spaces are allowed.</div>
+            <input class="schedule-input" type="text" name="candidateName" th:value="${candidateName}" placeholder="Enter candidate full name" required th:readonly="${applicationId != null}">
+            <div class="schedule-help" th:if="${applicationId == null}">Only letters and spaces are allowed.</div>
+            <div class="schedule-help" th:if="${applicationId != null}">Name locked from application.</div>
             <div class="schedule-error" th:if="${candidateNameError}" th:text="${candidateNameError}"></div>
           </div>
 
           <div class="schedule-field">
-            <label class="schedule-label">Internship Title</label>
-            <input class="schedule-input" type="text" name="internshipTitle" th:value="${internshipTitle}" placeholder="Enter internship title" required>
-            <div class="schedule-help">Example: Frontend Developer Intern, Data Analyst Intern.</div>
-            <div class="schedule-error" th:if="${internshipTitleError}" th:text="${internshipTitleError}"></div>
+            <label class="schedule-label">Approved Internship</label>
+            
+            <input th:if="${applicationId != null}" type="hidden" name="internshipId" th:value="${internshipId}">
+            
+            <select class="schedule-input" name="internshipId" required th:disabled="${applicationId != null}">
+                <option value="">Select approved internship</option>
+                <option th:each="internship : ${approvedInternships}"
+                        th:value="${internship.id}"
+                        th:text="${internship.title}"
+                        th:selected="${internship.id == internshipId}">
+                </option>
+            </select>
+            <div class="schedule-help">Select the pre-approved role for the candidate.</div>
+            <div class="schedule-error" th:if="${internshipIdError}" th:text="${internshipIdError}"></div>
           </div>
 
           <div class="schedule-field schedule-field-full">
             <label class="schedule-label">Interview Date & Time</label>
             <input class="schedule-input" type="datetime-local" name="datetime" th:value="${datetime}" required>
-            <div class="schedule-help">The interview must be scheduled at least 5 minutes in the future.</div>
-            <div class="schedule-error" th:if="${datetimeError}" th:text="${datetimeError}"></div>
+            <div class="schedule-help" th:if="${datetimeError == null}">Select the date and time for the interview.</div>
+            <div class="schedule-error" th:if="${datetimeError}" th:text="${datetimeError}" style="color:#DC2626; font-size:15px; font-weight:900; margin-top:4px;"></div>
           </div>
 
         </div>

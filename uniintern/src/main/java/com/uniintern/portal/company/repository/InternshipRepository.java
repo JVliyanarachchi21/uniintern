@@ -11,6 +11,10 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
     
     List<Internship> findByStatus(String status);
     
+    List<Internship> findByCompanyIdAndSkillsWeightIsNotNull(Long companyId);
+    
+    List<Internship> findBySkillsWeightIsNotNull();
+    
     long countByCompanyIdAndStatus(Long companyId, String status);
     
     long countByCompanyIdAndStatusAndApprovedNotificationSeenFalse(Long companyId, String status);
@@ -20,6 +24,9 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
     long countByCompanyIdAndStatusAndRejectedNotificationSeenFalse(Long companyId, String status);
     
     List<Internship> findByCompanyIdAndStatusAndRejectedNotificationSeenFalse(Long companyId, String status);
+    
+    List<Internship> findByCompanyIdAndStatus(Long companyId, String status);
+
 
     List<Internship> findByCompanyIdAndStatusInOrderByIdDesc(Long companyId, List<String> statuses);
 }
