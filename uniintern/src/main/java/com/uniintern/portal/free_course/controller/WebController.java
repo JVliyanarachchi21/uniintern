@@ -1,7 +1,9 @@
 package com.uniintern.portal.free_course.controller;
 
+import com.uniintern.portal.free_course.entity.FreeCourseEnrollment;
 import com.uniintern.portal.free_course.model.CourseInfo;
 import com.uniintern.portal.free_course.model.Question;
+import com.uniintern.portal.free_course.repository.FreeCourseEnrollmentRepository;
 import com.uniintern.portal.free_course.service.CourseDataService;
 import com.uniintern.portal.free_course.service.QuizDataService;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/student/courses")
@@ -21,6 +24,9 @@ public class WebController {
 
     @Autowired
     private QuizDataService quizDataService;
+
+    @Autowired
+    private FreeCourseEnrollmentRepository enrollmentRepository;
 
     // Landing page - redirect to student dashboard
     @GetMapping("/")
@@ -64,6 +70,14 @@ public class WebController {
         CourseInfo course = courseDataService.getCourse(courseId);
         if (course == null) {
             return "redirect:/student/courses/dashboard";
+        }
+
+        // Record enrollment if not already enrolled
+        if (!enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
+            FreeCourseEnrollment enrollment = new FreeCourseEnrollment();
+            enrollment.setStudentId(studentId);
+            enrollment.setCourseId(courseId);
+            enrollmentRepository.save(enrollment);
         }
 
         model.addAttribute("courseId", courseId);
@@ -146,6 +160,16 @@ public class WebController {
         session.setAttribute("lastScore", score);
         session.setAttribute("lastGrade", grade);
         session.setAttribute("lastPassed", passed);
+
+        // Update enrollment record with completion
+        Optional<FreeCourseEnrollment> enrollmentOpt = enrollmentRepository.findByStudentIdAndCourseId(studentId, courseId);
+        if (enrollmentOpt.isPresent()) {
+            FreeCourseEnrollment enrollment = enrollmentOpt.get();
+            enrollment.setCompletedAt(java.time.LocalDateTime.now());
+            enrollment.setGrade(grade);
+            enrollment.setPassed(passed);
+            enrollmentRepository.save(enrollment);
+        }
 
         return "free_course/results";
     }
