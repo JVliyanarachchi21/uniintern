@@ -4,6 +4,26 @@
   - Implements smooth transitions, soft shadows, and modern card styling
 */
 
+:root {
+    --color-primary: #5483B3; /* Matching her Company colors */
+    --color-darkest: #021024;
+    --uni-secondary: #5483B3;
+}
+
+.student-page-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #021024 0%, #5483B3 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    display: inline-block;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
 .dashboard-page-container {
     padding: 32px 40px;
     font-family: 'Inter', Roboto, sans-serif;

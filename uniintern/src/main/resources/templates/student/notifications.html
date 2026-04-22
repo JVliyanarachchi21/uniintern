@@ -18,11 +18,7 @@
     }
     
     .notif-header-text h1 {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--text-dark);
       margin: 0 0 8px 0;
-      letter-spacing: -0.5px;
     }
     
     .notif-header-text p {
@@ -178,6 +174,7 @@
   </style>
 
   <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
 </head>
 
 <body class="app">
@@ -193,7 +190,7 @@
     <!-- Premium Header -->
     <div class="notif-header-section">
       <div class="notif-header-text">
-        <h1>Notifications</h1>
+        <h1 class="student-page-title">Notifications</h1>
         <p>Stay updated with your applications and internship alerts.</p>
       </div>
       <form th:action="@{/student/notifications/mark-all-read}" method="post">

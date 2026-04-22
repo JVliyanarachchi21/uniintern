@@ -8,16 +8,6 @@
     <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --uni-primary: #052659;
-            --uni-secondary: #0D8ABC;
-            --uni-accent: #C1E8FF;
-            --uni-soft: #F0F4F8;
-            --uni-white: #FFFFFF;
-            --uni-text: #1E293B;
-            --uni-mid: #64748B;
-            --border-soft: #E2E8F0;
-        }
 
         .apps-container {
             background: white;
@@ -94,6 +84,7 @@
         .status-reviewing { background: #fef3c7; color: #b45309; }
         .status-accepted { background: #dcfce7; color: #15803d; }
         .status-rejected { background: #fee2e2; color: #b91c1c; }
+        .status-withdrawn { background: #f1f5f9; color: #475569; }
         
         .status-dot {
             width: 6px;
@@ -136,6 +127,22 @@
             border-color: #cbd5e1;
             color: #0f172a;
         }
+        
+        .btn-withdraw {
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-withdraw:hover {
+            color: #ef4444;
+            background: #fef2f2;
+        }
     </style>
 </head>
 
@@ -150,7 +157,7 @@
         
         <div class="dashboard-heading-row" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
             <div>
-                <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">My Applications</h1>
+                <h1 class="student-page-title">My Applications</h1>
                 <p style="color: #64748b; margin-top: 6px; font-size: 15px; font-weight: 500;">Track your internship applications and interview progress.</p>
             </div>
             <a th:href="@{/student/internships}" class="btn-dashboard" style="background: #052659; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(5,38,89,0.15);">
@@ -193,8 +200,17 @@
                                 <span th:text="${app.status}">APPLIED</span>
                             </span>
                         </td>
-                        <td style="text-align: right;">
-                            <a th:href="@{'/student/applications/' + ${app.id}}" class="btn-view" style="text-decoration: none;">View Details</a>
+                        <td style="text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+                            <a th:href="@{'/student/applications/' + ${app.id}}" class="btn-view" style="text-decoration: none;">View Status</a>
+                            
+                            <!-- Withdraw Form -->
+                            <form th:if="${app.status != T(com.uniintern.portal.student.model.ApplicationStatus).WITHDRAWN}" 
+                                  th:action="@{/student/applications/withdraw}" method="post" 
+                                  onsubmit="return confirm('Are you sure you want to withdraw this application? This action cannot be undone.');"
+                                  style="display: inline;">
+                                <input type="hidden" name="id" th:value="${app.id}">
+                                <button type="submit" class="btn-withdraw">Withdraw</button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>

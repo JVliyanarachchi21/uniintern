@@ -33,6 +33,8 @@ public class StudentApplication {
     @JoinColumn(name = "student_id", insertable = false, updatable = false)
     private Student student;
 
+    private String cvFilePath;
+
     public StudentApplication() {
     }
 
@@ -116,5 +118,13 @@ public class StudentApplication {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getCvFilePath() {
+        return cvFilePath;
+    }
+
+    public void setCvFilePath(String cvFilePath) {
+        this.cvFilePath = cvFilePath;
     }
 }

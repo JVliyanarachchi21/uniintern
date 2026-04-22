@@ -54,7 +54,7 @@
                 <td th:text="${internship.deadline}">2026-03-05</td>
 
                 <td>
-                    <span class="count-pill">0</span>
+                    <span class="count-pill" th:text="${applicantCounts != null ? applicantCounts[internship.id] : 0}">0</span>
                 </td>
 
                 <td>

@@ -1,198 +1,362 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Browse Internships | UniIntern</title>
-  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
-  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-        --uni-primary: #052659;
-        --uni-secondary: #0D8ABC;
-        --uni-accent: #C1E8FF;
-        --uni-soft: #F0F4F8;
-    }
-    .internship-card {
-        background: white; 
-        border: 1px solid #e2e8f0; 
-        border-radius: 16px; 
-        padding: 24px; 
-        display: flex; 
-        flex-direction: column; 
-        gap: 16px; 
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .internship-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    }
-    .btn-action {
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 14px;
-        cursor: pointer;
-        transition: 0.2s;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .btn-apply { background: var(--uni-primary); color: white; border: none; }
-    .btn-details { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-    .btn-applied { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; cursor: not-allowed; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Internships | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+
+        .internship-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .internship-card {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .internship-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--uni-secondary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .company-info {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .company-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-soft);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .company-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .company-logo span {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--uni-secondary);
+        }
+
+        .match-badge {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(21, 128, 61, 0.05);
+        }
+
+        .role-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .company-name {
+            font-size: 15px;
+            color: var(--uni-mid);
+            margin: 4px 0 0;
+            font-weight: 600;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 14px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .description-snippet {
+            font-size: 14.5px;
+            color: #64748b;
+            line-height: 1.6;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .skills-tag-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .skill-tag {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 8px;
+        }
+
+        .btn-card {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--uni-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 38, 89, 0.15);
+        }
+
+        .btn-primary:hover {
+            background: #0a3675;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(5, 38, 89, 0.2);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #475569;
+            border: 1.5px solid var(--border-soft);
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+
+        .btn-disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border: 1px solid var(--border-soft);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Search Header */
+        .search-section {
+            background: white;
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            padding: 32px;
+            margin-top: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr auto;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--uni-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .uni-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #f1f5f9;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .uni-input:focus {
+            outline: none;
+            border-color: var(--uni-secondary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(13, 138, 188, 0.1);
+        }
+    </style>
 </head>
 
 <body class="app">
 
 <div th:replace="fragments/student-sidebar :: studentSidebar('internships')"></div>
 
-<main class="main">
-  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+<main class="main dashboard-main-content">
+    <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
 
-  <section class="dashboard-page-container" style="padding: 40px;">
-    
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px;">
-      <div>
-        <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.02em;">Find Your Path</h1>
-        <p style="color: #64748b; margin-top: 8px; font-size: 16px; font-weight: 500;">Explore filtered opportunities matched to your student profile.</p>
-      </div>
-    </div>
-
-    <!-- Filters -->
-    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 32px; display: grid; grid-template-columns: 1fr 1fr 1.5fr 1fr; gap: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <label style="font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Location</label>
-        <select style="width: 100%; padding: 12px; border: 1.5px solid #f1f5f9; border-radius: 10px; font-weight: 600;">
-          <option>All Locations</option>
-          <option>Colombo</option>
-          <option>Kandy</option>
-        </select>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <label style="font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Role Type</label>
-        <select style="width: 100%; padding: 12px; border: 1.5px solid #f1f5f9; border-radius: 10px; font-weight: 600;">
-          <option>All Roles</option>
-          <option>Software</option>
-          <option>Data Science</option>
-        </select>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <label style="font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Search Keyword</label>
-        <input type="text" placeholder="e.g. Java, Python..." style="width: 100%; padding: 12px; border: 1.5px solid #f1f5f9; border-radius: 10px; font-weight: 600;">
-      </div>
-      <div style="display: flex; align-items: flex-end;">
-        <button style="width: 100%; height: 48px; background: #0f172a; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">Search</button>
-      </div>
-    </div>
-
-    <!-- Results -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px;">
-      
-      <!-- Dynamic Internship Card -->
-      <div class="internship-card" th:each="job : ${internships}">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div style="display: flex; gap: 16px; align-items: center;">
-            <div style="width: 48px; height: 48px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #f1f5f9; font-weight: 800; color: #cbd5e1;">Logo</div>
-            <div>
-              <h3 th:text="${job.title}" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">Frontend Intern</h3>
-              <p th:text="${job.company}" style="font-size: 14px; color: #64748b; margin: 4px 0 0; font-weight: 600;">Company Name</p>
-            </div>
-          </div>
-          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            <span th:text="${job.match} + '% Match'">85% Match</span>
-          </div>
-        </div>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; color: #64748b; font-weight: 600;">
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span th:text="${job.location}">Colombo</span></span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Deadline: <span th:text="${job.deadline}">2026-04-15</span></span>
-        </div>
-
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <span th:each="skill : ${job.skills}" th:text="${skill}" style="background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 50px;">Skill</span>
-        </div>
-
-        <div style="display: flex; gap: 12px; margin-top: 8px;">
-          <a th:href="@{'/student/apply/' + ${job.id}}" class="btn-action btn-apply" th:if="${!job.isApplied}" style="flex: 1;">Apply Now</a>
-          <button class="btn-action btn-applied" th:if="${job.isApplied}" style="flex: 1;">Applied</button>
-          
-          <!-- NEW: View Details Button -->
-          <a th:href="@{'/student/internships/' + ${job.id}}" class="btn-action btn-details" style="flex: 1;">View Details</a>
-    <!-- Internship Cards Grid -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-
-      <!-- Card Template for Real Data -->
-      <div th:each="internship : ${internships}" 
-           th:classappend="${internship.isPromoted ? 'featured-highlight' : ''}"
-           style="background: var(--bg-white); border: 1px solid var(--border-soft); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02); transition: 0.3s; position: relative; overflow: hidden;">
+    <section class="dashboard-page-container">
         
-        <!-- Featured Badge -->
-        <div th:if="${internship.isPromoted}" 
-             style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 4px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom-left-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 4px;">
-            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-            Featured
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div style="display: flex; gap: 14px; align-items: center;">
-            <div style="width: 48px; height: 48px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border-soft);">
-                <img th:if="${internship.logoPath}" th:src="${internship.logoPath}" style="width: 100%; height: 100%; object-fit: cover;">
-                <span th:unless="${internship.logoPath}" th:text="${#strings.substring(internship.companyName, 0, 1)}" style="font-weight: 700; color: var(--text-muted); font-size: 20px;">T</span>
-            </div>
+        <div class="dashboard-heading-row">
             <div>
-              <h3 style="font-size: 17px; font-weight: 700; color: var(--text-dark); margin: 0 0 4px 0;" th:text="${internship.title}">Frontend Developer Intern</h3>
-              <p style="font-size: 14px; color: var(--text-muted); margin: 0; font-weight: 500;" th:text="${internship.companyName}">TechCorp Solutions</p>
+                <h1 class="student-page-title">Explore Opportunities</h1>
+                <p style="color: #64748b; margin-top: 8px; font-size: 16px; font-weight: 500;">Find internships that match your skills and career goals.</p>
             </div>
-          </div>
-          <div style="border: 1px solid #f59e0b; color: #d97706; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            <span th:text="${#numbers.formatInteger(T(java.lang.Math).random() * 40 + 60, 0) + '% match'}">67% match</span>
-          </div>
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span th:text="${internship.location}">Colombo</span></span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <span th:text="${internship.duration}">6 months</span></span>
-          <span style="display: flex; align-items: center; gap: 4px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> <span th:text="${internship.postedAgo}">Posted Today</span></span>
+        <!-- Search & Filter -->
+        <div class="search-section">
+            <div class="search-grid">
+                <div class="input-group">
+                    <label>Location</label>
+                    <select class="uni-input">
+                        <option>All Locations</option>
+                        <option>Colombo</option>
+                        <option>Kandy</option>
+                        <option>Remote</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Role Category</label>
+                    <select class="uni-input">
+                        <option>All Roles</option>
+                        <option>Software Engineering</option>
+                        <option>Data Science</option>
+                        <option>UI/UX Design</option>
+                        <option>Marketing</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Keywords</label>
+                    <input type="text" placeholder="e.g. Java, React, Python..." class="uni-input">
+                </div>
+                <button class="btn-card btn-primary" style="height: 48px; padding: 0 32px; font-size: 16px;">Search</button>
+            </div>
         </div>
 
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0;" th:text="${internship.descriptionSnippet}">Snippet of description here...</p>
+        <!-- Internship Grid -->
+        <div class="internship-grid">
+            
+            <div class="internship-card" th:each="job : ${internships}">
+                <div class="card-header">
+                    <div class="company-info">
+                        <div class="company-logo">
+                            <img th:if="${job.logoPath}" th:src="${job.logoPath}" alt="Logo">
+                            <span th:unless="${job.logoPath}" th:text="${#strings.substring(job.company, 0, 1)}">C</span>
+                        </div>
+                        <div>
+                            <h3 class="role-title" th:text="${job.title}">Internship Title</h3>
+                            <p class="company-name" th:text="${job.company}">Company Name</p>
+                        </div>
+                    </div>
+                    <div class="match-badge">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        <span th:text="${job.match} + '% Match'">85% Match</span>
+                    </div>
+                </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px;">
-          <div style="font-size: 13.5px; color: var(--text-muted); font-weight: 500;">
-              Apply by: <span th:text="${internship.id == 2 ? 'Mar 30 (Passed)' : 'Apr 15'}">Apr 15</span>
-          </div>
-          <a th:href="@{/student/internships}" style="background: var(--color-dark); color: #FFFFFF; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(5, 38, 89, 0.15);">View Details</a>
+                <div class="meta-info">
+                    <div class="meta-item">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <span th:text="${job.location}">Location</span>
+                    </div>
+                    <div class="meta-item">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span th:text="${job.duration}">6 Months</span>
+                    </div>
+                    <div class="meta-item">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        Deadline: <span th:text="${job.deadline}">2026-04-15</span>
+                    </div>
+                </div>
+
+                <p class="description-snippet" th:text="${job.descriptionSnippet}">Short description of the role...</p>
+
+                <div class="skills-tag-group">
+                    <span class="skill-tag" th:each="skill : ${job.skills}" th:text="${skill}">Skill</span>
+                    <span class="skill-tag" th:if="${#lists.isEmpty(job.skills)}">General</span>
+                </div>
+
+                <div class="card-actions">
+                    <a th:href="@{'/student/internships/' + ${job.id}}" class="btn-card btn-outline">View Details</a>
+                    
+                    <a th:href="@{'/student/apply/' + ${job.id}}" class="btn-card btn-primary" th:if="${!job.isApplied}">Apply Now</a>
+                    <button class="btn-card btn-disabled" th:if="${job.isApplied}">Applied</button>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(internships)}" style="grid-column: 1 / -1; text-align: center; padding: 80px 0;">
+                <div style="width: 80px; height: 80px; background: var(--uni-soft); border-radius: 24px; display: inline-flex; align-items: center; justify-content: center; color: #94a3b8; margin-bottom: 24px;">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <h3 style="font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 12px; font-family: 'Plus Jakarta Sans', sans-serif;">No Internships Found</h3>
+                <p style="color: #64748b; font-size: 16px; font-weight: 500; max-width: 400px; margin: 0 auto;">We couldn't find any internships matching your criteria. Try adjusting your filters or checking back later.</p>
+            </div>
+
         </div>
-      </div>
-      
-      <style>
-        .featured-highlight {
-            border: 2px solid #f59e0b !important;
-            background: linear-gradient(135deg, #fffdf5 0%, #ffffff 100%) !important;
-            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.15) !important;
-            transform: translateY(-4px);
-            z-index: 10;
-        }
-        .featured-highlight::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: #f59e0b;
-        }
-      </style>
 
-    </div>
-
-  </section>
+    </section>
 </main>
 
 </body>

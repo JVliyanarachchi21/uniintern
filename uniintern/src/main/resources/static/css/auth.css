@@ -45,12 +45,12 @@ body {
 }
 
 .auth-left {
-    background: linear-gradient(160deg, #1E3A8A 0%, #16357f 52%, #10265d 100%);
+    background: linear-gradient(160deg, #052659 0%, #031b40 100%);
     color: white;
-    padding: 52px 56px;
+    padding: 60px 80px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center; /* Centered Vertically */
 }
 
 .brand-row {
@@ -367,11 +367,11 @@ body {
 .auth-left {
     position: relative;
     overflow: hidden;
-    background: #052659; /* Target Color */
+    background: #052659; /* Consistent Dark Navy */
     padding: 60px 80px;
-    justify-content: flex-start;
     display: flex;
     flex-direction: column;
+    justify-content: center; /* Centered Vertically */
 }
 .auth-left::before, .auth-left::after {
     content: "";

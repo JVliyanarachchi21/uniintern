@@ -42,4 +42,11 @@ public class NotificationService {
         unread.forEach(n -> n.setRead(true));
         notificationRepository.saveAll(unread);
     }
+
+    public boolean notificationExists(Long studentId, String status) {
+        // Basic check: see if any notification contains the status string for this student
+        return notificationRepository.findByStudentIdOrderByCreatedAtDesc(studentId)
+                .stream()
+                .anyMatch(n -> n.getMessage().contains(status));
+    }
 }

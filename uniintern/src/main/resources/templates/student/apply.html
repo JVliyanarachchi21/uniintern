@@ -1,268 +1,237 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Apply for Internship | UniIntern</title>
-  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
-  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --uni-primary: #052659;
-      --uni-secondary: #0D8ABC;
-      --uni-orange: #f59e0b;
-      --uni-white: #FFFFFF;
-      --uni-text: #0f172a;
-      --border-soft: #e2e8f0;
-      --bg-light: #f8fafc;
-    }
-
-    body {
-        background-color: #f1f5f9;
-        color: var(--uni-text);
-        margin: 0;
-    }
-
-    .apply-shell {
-        max-width: 900px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-
-    .apply-card {
-        background: white;
-        border-radius: 24px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.04);
-        border: 1px solid var(--border-soft);
-        overflow: hidden;
-    }
-
-    .apply-header {
-        background: var(--bg-light);
-        padding: 40px;
-        border-bottom: 1px solid var(--border-soft);
-    }
-
-    .apply-header h1 {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 32px;
-        font-weight: 800;
-        margin: 0 0 10px;
-        color: var(--uni-primary);
-        letter-spacing: -0.02em;
-    }
-
-    .apply-header .meta {
-        font-size: 16px;
-        color: #64748b;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .apply-body {
-        padding: 40px;
-    }
-
-    .form-section-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 14px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #94a3b8;
-        margin-bottom: 30px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .form-section-title::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: #f1f5f9;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        margin-bottom: 32px;
-    }
-
-    .form-group {
-        margin-bottom: 24px;
-    }
-
-    .form-group label {
-        display: block;
-        font-weight: 700;
-        color: #334155;
-        margin-bottom: 10px;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.02em;
-    }
-
-    .form-group input, .form-group textarea {
-        width: 100%;
-        padding: 14px 18px;
-        border-radius: 14px;
-        border: 2px solid #f1f5f9;
-        font-family: 'Inter', sans-serif;
-        font-size: 15px;
-        color: var(--uni-text);
-        background: #fcfdfe;
-        transition: all 0.2s ease;
-    }
-
-    .form-group input:focus, .form-group textarea:focus {
-        outline: none;
-        border-color: var(--uni-secondary);
-        background: white;
-        box-shadow: 0 0 0 4px rgba(13, 138, 188, 0.06);
-    }
-
-    .form-group textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
-
-    .form-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 20px;
-        padding-top: 32px;
-        border-top: 1px solid #f1f5f9;
-    }
-
-    .btn-apply {
-        padding: 14px 32px;
-        border-radius: 14px;
-        font-weight: 800;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-apply.secondary {
-        background: #f1f5f9;
-        color: #64748b;
-        border: none;
-    }
-
-    .btn-apply.secondary:hover {
-        background: #e2e8f0;
-        color: #475569;
-    }
-
-    .btn-apply.primary {
-        background: var(--uni-orange);
-        color: white;
-        border: none;
-        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
-    }
-
-    .btn-apply.primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 24px rgba(245, 158, 11, 0.3);
-        filter: brightness(1.05);
-    }
-
-    /* Style for match mini-card if we want it */
-    .match-preview {
-        background: #f0fdf4;
-        border: 1px solid #dcfce7;
-        padding: 16px 20px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 32px;
-    }
-    .match-val {
-        font-weight: 800;
-        color: #166534;
-        font-size: 20px;
-    }
-    .match-text {
-        font-size: 13px;
-        color: #15803d;
-        font-weight: 600;
-        line-height: 1.3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Internship | UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/home.css(v=6)}">
+    <link rel="stylesheet" th:href="@{/css/company.css(v=6)}">
+    <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+    <style>
+        .pub-form-control:disabled {
+            background-color: #f1f5f9;
+            cursor: not-allowed;
+            color: #64748b;
+        }
+        .internship-id-badge {
+            background: rgba(84, 131, 179, 0.1);
+            color: var(--uni-primary);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
+<body class="public-portal-page">
+<div>
+    <header class="site-header" id="siteHeader">
+        <div class="container nav-wrap">
+            <a class="brand" th:href="@{/student/dashboard}">
+                <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                    <img th:src="@{/images/logo.png}" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
+                </span>
+                <span class="brand-text">
+                    <span class="brand-name">UniIntern</span>
+                    <span class="brand-tag">Launch Your Career</span>
+                </span>
+            </a>
 
-<body class="app">
+            <nav class="desktop-nav">
+                <a th:href="@{/student/dashboard}">Dashboard</a>
+                <a th:href="@{/student/internships}">Browse Internships</a>
+                <a th:href="@{/student/internships}" style="color: var(--uni-mid);">← Back to Listings</a>
+            </nav>
 
-<div th:replace="fragments/student-sidebar :: studentSidebar('internships')"></div>
-
-<main class="main">
-
-  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
-
-  <div class="apply-shell">
-    <div class="apply-card">
-      <div class="apply-header">
-        <h1>Submit Application</h1>
-        <div class="meta">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"></path></svg>
-          <span th:text="${internship.title}">Data Science Intern</span>
-          <span style="color: #cbd5e1;">•</span>
-          <span th:text="${company != null ? company.companyName : 'Partner'}">TechLanka</span>
+            <div class="nav-actions desktop-actions">
+                <span style="font-weight: 700; color: var(--uni-primary); margin-right: 1rem;" th:text="${fullName}">Student Name</span>
+                <a class="btn btn-outline" th:href="@{/student/profile}">My Profile</a>
+            </div>
         </div>
-      </div>
+    </header>
 
-      <div class="apply-body">
-        
-        <form th:action="@{'/student/apply/' + ${internship.id}}" method="POST">
-          
-          <div class="form-section-title">Academic & Skills</div>
+    <main class="container preview-showcase" style="padding-top: 120px; padding-bottom: 100px;">
+        <div class="pub-form-container reveal" style="opacity: 1; transform: translateY(0);">
+            
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <span class="card-top-badge" style="margin-bottom: 1.2rem; display: inline-block;">Internship Application</span>
+                <h2 class="student-page-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;" th:text="${internship.title}">Software Engineering Intern</h2>
+                <div class="internship-id-badge" th:text="'Ref ID: #' + ${internship.id}">#14</div>
+                <p style="color: rgba(17,24,39,0.6); font-size: 1.05rem; font-weight: 500;">Applying for <span th:text="${internship.title}" style="color: var(--uni-primary);">Internship</span> at <span th:text="${company?.companyName}" style="color: var(--uni-primary);">Company</span></p>
+            </div>
 
-          <div class="form-grid">
-              <div class="form-group">
-                <label>GPA (Current or Final)</label>
-                <input type="number" step="0.01" min="0" max="4" name="gpa" th:value="${student?.gpa}" placeholder="e.g., 3.25 / 4.0" required>
-              </div>
-              <div class="form-group">
-                <label>Programming & Soft Skills</label>
-                <input type="text" name="skills" th:value="${student?.skills}" placeholder="e.g., Java, SQL, Python, Agile" required>
-              </div>
-          </div>
+            <div class="pub-form-card">
+                <form th:action="@{'/student/apply/' + ${internship.id}}" method="POST" id="internshipApplicationForm" enctype="multipart/form-data">
+                    
+                    <!-- Section 1: Personal Details -->
+                    <div class="pub-form-section">
+                        <h3>Personal Details</h3>
+                        <p class="sub">Pre-filled from your student profile.</p>
+                        
+                        <div class="pub-form-grid">
+                            <div class="pub-form-group full">
+                                <label class="pub-form-label">Full Name</label>
+                                <input type="text" class="pub-form-control" th:value="${student.fullName}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Email Address</label>
+                                <input type="email" class="pub-form-control" th:value="${student.email}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Phone Number</label>
+                                <input type="tel" class="pub-form-control" th:value="${student.registrationNumber}" readonly disabled>
+                            </div>
+                        </div>
+                    </div>
 
-          <div class="form-section-title">Career Background</div>
+                    <div class="pub-divider"></div>
 
-          <div class="form-group">
-            <label>EXPERIENCE / PROJECTS</label>
-            <textarea name="experience" th:text="${student?.experience}" placeholder="Briefly highlight 1-2 major projects or past roles..." required></textarea>
-          </div>
+                    <!-- Section 2: Academic Background -->
+                    <div class="pub-form-section">
+                        <h3>Academic Background</h3>
+                        <p class="sub">Verify your academic criteria for this role.</p>
+                        
+                        <div class="pub-form-grid">
+                            <div class="pub-form-group full">
+                                <label class="pub-form-label">University / Institute</label>
+                                <input type="text" class="pub-form-control" th:value="${student.university}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Degree Program</label>
+                                <input type="text" class="pub-form-control" th:value="${student.degreeProgram}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Current GPA <span style="color: #ef4444;">*</span></label>
+                                <input type="number" step="0.01" min="0.00" max="4.00" class="pub-form-control" name="gpa" th:value="${student.gpa}" required>
+                                <span class="form-hint">Value between 0.00 and 4.00</span>
+                            </div>
+                        </div>
+                    </div>
 
-          <div class="form-section-title">Submission Profile</div>
+                    <div class="pub-divider"></div>
 
-          <div class="form-group">
-            <label>COVER LETTER / MOTIVATION STATEMENT</label>
-            <textarea name="coverLetter" placeholder="Why are you the perfect match for this specific role? (2-3 sentences)" required></textarea>
-          </div>
+                    <!-- Section 3: Resume / CV -->
+                    <div class="pub-form-section">
+                        <h3>Resume / CV</h3>
+                        <p class="sub">Please upload your latest resume for the recruiter. (PDF only)</p>
+                        
+                        <div class="pub-form-group full">
+                            <label for="cvFile" class="file-upload-zone" id="dropZone" style="background: rgba(84, 131, 179, 0.05); border-color: var(--uni-primary); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem; border: 2px dashed var(--uni-primary); border-radius: 18px; transition: all 0.3s ease;">
+                                <input type="file" name="cvFile" id="cvFile" accept=".pdf" style="display: none;" onchange="handleFileSelect(this)">
+                                <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--uni-primary); width: 48px; height: 48px; margin-bottom: 1rem;">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                                    <polyline points="9 15 12 12 15 15"></polyline>
+                                </svg>
+                                <div class="file-upload-text" id="fileStatus"><strong>Click or drag file to this area to upload</strong></div>
+                                <div class="file-upload-hint">Supported formats: PDF (Max. 5MB)</div>
+                            </label>
+                            <script>
+                                function handleFileSelect(input) {
+                                    const status = document.getElementById('fileStatus');
+                                    const zone = document.getElementById('dropZone');
+                                    if (input.files.length > 0) {
+                                        const file = input.files[0];
+                                        if (file.type !== 'application/pdf') {
+                                            alert('Please upload a PDF file.');
+                                            input.value = '';
+                                            return;
+                                        }
+                                        status.innerHTML = `<strong style="color: #16a34a;">✓ ${file.name} selected</strong>`;
+                                        zone.style.background = 'rgba(22, 163, 74, 0.05)';
+                                        zone.style.borderColor = '#16a34a';
+                                    }
+                                }
+                                
+                                // Basic Drag & Drop
+                                const dropZone = document.getElementById('dropZone');
+                                ['dragover', 'dragleave', 'drop'].forEach(evt => {
+                                    dropZone.addEventListener(evt, e => {
+                                        e.preventDefault();
+                                        if (evt === 'dragover') dropZone.style.background = 'rgba(84, 131, 179, 0.1)';
+                                        else dropZone.style.background = 'rgba(84, 131, 179, 0.05)';
+                                    });
+                                });
+                                dropZone.addEventListener('drop', e => {
+                                    const input = document.getElementById('cvFile');
+                                    input.files = e.dataTransfer.files;
+                                    handleFileSelect(input);
+                                });
+                            </script>
+                        </div>
+                    </div>
 
-          <div class="form-footer">
-            <a th:href="@{/student/internships}" class="btn-apply secondary">Cancel</a>
-            <button type="submit" class="btn-apply primary">Submit Application</button>
-          </div>
+                    <div class="pub-divider"></div>
 
-        </form>
-      </div>
-    </div>
-  </div>
+                    <!-- Section 4: Experience & Skills -->
+                    <div class="pub-form-section">
+                        <h3>Experience & Skills</h3>
+                        <p class="sub">Highlight your technical proficiencies for this specific role.</p>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Top Skills (Match specific requirements) <span style="color: #ef4444;">*</span></label>
+                            <input type="text" class="pub-form-control" name="skills" th:value="${student.skills}" placeholder="e.g. Java, Spring Boot, React" required>
+                            <span class="form-hint">List skills that match the internship requirements.</span>
+                        </div>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Previous Experience or Projects <span style="color: #ef4444;">*</span></label>
+                            <textarea class="pub-form-control" name="experience" th:text="${student.experience}" placeholder="Describe your relevant projects or past internships..." required style="min-height: 120px;"></textarea>
+                        </div>
+                    </div>
 
-</main>
+                    <div class="pub-divider"></div>
 
+                    <!-- Section 5: Motivation -->
+                    <div class="pub-form-section">
+                        <h3>Motivation</h3>
+                        <p class="sub">Why are you the best fit for this role?</p>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Cover Letter / Motivation Statement <span style="color: #ef4444;">*</span></label>
+                            <textarea class="pub-form-control" name="coverLetter" placeholder="Write a brief cover letter (2-3 sentences)..." style="min-height: 160px;" required minlength="50" maxlength="2000"></textarea>
+                            <span class="form-hint">Minimum 50 characters.</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Actions -->
+                    <div class="pub-form-actions">
+                        <a th:href="@{/student/internships}" class="btn btn-outline" style="padding: 0.9rem 2rem; border-radius: 999px;">Cancel</a>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.9rem 2.5rem; border-radius: 999px; border: none; cursor: pointer;">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </main>
+    
+    <footer class="site-footer" id="contact">
+        <div class="container footer-top" style="display: flex; justify-content: space-between; align-items: center; padding: 40px 0;">
+            <div class="footer-brand">
+                <div class="brand">
+                    <span class="brand-name">UniIntern</span>
+                    <span class="brand-tag">Launch Your Career</span>
+                </div>
+            </div>
+            <p style="color: rgba(2, 16, 36, 0.5); font-size: 0.9rem;">© 2026 UniIntern. Building the future of early careers.</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const reveal = document.querySelector('.reveal');
+        setTimeout(() => {
+            reveal.style.opacity = '1';
+            reveal.style.transform = 'translateY(0)';
+        }, 100);
+    });
+</script>
 </body>
 </html>
