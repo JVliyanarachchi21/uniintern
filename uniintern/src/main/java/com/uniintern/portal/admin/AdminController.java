@@ -21,13 +21,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+
+import com.uniintern.portal.student.model.Student;
+import com.uniintern.portal.student.model.StudentApplication;
+import com.uniintern.portal.student.model.ApplicationStatus;
 
 @Controller
 @RequestMapping("/admin")
@@ -42,7 +48,7 @@ public class AdminController {
     private final SystemMessageRepository systemMessageRepository;
     private final AdminReportService adminReportService;
     private final AdminAccountRepository adminAccountRepository;
-    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     // --- INTELLIGENT SENTRY SERVICES ---
     private final AdminAlertService adminAlertService;
@@ -56,7 +62,6 @@ public class AdminController {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-
     public AdminController(CompanyRepository companyRepository,
             InternshipRepository internshipRepository,
             InterviewRepository interviewRepository,
@@ -66,7 +71,7 @@ public class AdminController {
             SystemMessageRepository systemMessageRepository,
             AdminReportService adminReportService,
             AdminAccountRepository adminAccountRepository,
-            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder,
+            PasswordEncoder passwordEncoder,
             StudentRepository studentRepository,
             StudentApplicationRepository studentApplicationRepository,
             NotificationService notificationService,
@@ -214,22 +219,24 @@ public class AdminController {
 
     @GetMapping("/schedule")
     public String scheduleForm(@RequestParam(required = false) Long applicationId,
-                               @RequestParam(required = false) String candidateName,
-                               @RequestParam(required = false) Long internshipId,
-                               Model model) {
+            @RequestParam(required = false) String candidateName,
+            @RequestParam(required = false) Long internshipId,
+            Model model) {
         List<Internship> approvedInternships = internshipRepository.findByStatus("APPROVED");
         model.addAttribute("approvedInternships", approvedInternships);
-        
+
         String prefilledCandidateName = candidateName == null ? "" : candidateName;
         Long prefilledInternshipId = internshipId;
 
         // Auto-fetch if applicationId is provided
         if (applicationId != null) {
-            com.uniintern.portal.student.model.StudentApplication app = 
-                adminSchedulingService.getApplicationById(applicationId);
+            com.uniintern.portal.student.model.StudentApplication app = adminSchedulingService
+                    .getApplicationById(applicationId);
             if (app != null) {
-                com.uniintern.portal.student.model.Student s = adminSchedulingService.getStudentById(app.getStudentId());
-                if (s != null) prefilledCandidateName = s.getFullName();
+                com.uniintern.portal.student.model.Student s = adminSchedulingService
+                        .getStudentById(app.getStudentId());
+                if (s != null)
+                    prefilledCandidateName = s.getFullName();
                 prefilledInternshipId = app.getInternshipId();
             }
         }
@@ -237,7 +244,7 @@ public class AdminController {
         model.addAttribute("applicationId", applicationId);
         model.addAttribute("candidateName", prefilledCandidateName);
         model.addAttribute("internshipId", prefilledInternshipId);
-        
+
         model.addAttribute("datetime", "");
         model.addAttribute("showPopup", false);
         return "admin/schedule-form";
@@ -310,7 +317,8 @@ public class AdminController {
                     // --- BUSINESS RULE: No same-day bookings after 8 PM ---
                     LocalDateTime now = LocalDateTime.now();
                     if (now.getHour() >= 20 && interviewDateTime.toLocalDate().equals(now.toLocalDate())) {
-                        model.addAttribute("datetimeError", "It is past 8:00 PM. Same-day interview scheduling is now closed. Please select a future date.");
+                        model.addAttribute("datetimeError",
+                                "It is past 8:00 PM. Same-day interview scheduling is now closed. Please select a future date.");
                         hasError = true;
                     }
                 }
@@ -328,10 +336,12 @@ public class AdminController {
 
         // --- INTELLIGENT CONFLICT DETECTION ---
         if (applicationId != null && interviewDateTime != null) {
-            com.uniintern.portal.student.model.StudentApplication app = adminSchedulingService.getApplicationById(applicationId);
+            com.uniintern.portal.student.model.StudentApplication app = adminSchedulingService
+                    .getApplicationById(applicationId);
             if (app != null && adminSchedulingService.hasTimeConflict(app.getStudentId(), interviewDateTime)) {
                 model.addAttribute("showPopup", true);
-                model.addAttribute("formError", "CRITICAL CONFLICT: This student already has an interview scheduled within 30 minutes of this time slot.");
+                model.addAttribute("formError",
+                        "CRITICAL CONFLICT: This student already has an interview scheduled within 30 minutes of this time slot.");
                 return "admin/schedule-form";
             }
         }
@@ -343,54 +353,60 @@ public class AdminController {
         interview.setMode(mode != null ? mode : "Online");
         interview.setLocationLink(locationLink != null ? locationLink : "TBD");
         interview.setStatus("SCHEDULED");
-        
+
         // Resolve Company Name for sync
         companyRepository.findById(selectedInternship.getCompanyId())
                 .ifPresent(c -> interview.setCompanyName(c.getCompanyName()));
 
+        // --- ZERO-TOUCH ATOMIC INTEGRATION ---
+        StudentApplication app = null;
+        if (applicationId != null) {
+            app = adminSchedulingService.getApplicationById(applicationId);
+            if (app != null) {
+                interview.setStudentId(app.getStudentId());
+            }
+        }
+
+        // Save Interview with all metadata attached
         interviewRepository.save(interview);
 
-        // --- ZERO-TOUCH REAL-TIME NOTIFICATIONS ---
-        if (applicationId != null) {
-            com.uniintern.portal.student.model.StudentApplication app = 
-                adminSchedulingService.getApplicationById(applicationId);
-            if (app != null) {
-                // 1. Update Application Status (Sync across modules)
-                app.setStatus(com.uniintern.portal.student.model.ApplicationStatus.INTERVIEW_SCHEDULED);
-                adminSchedulingService.saveApplication(app);
+        // --- REAL-TIME NOTIFICATIONS ---
+        if (app != null) {
+            // 1. Update Application Status (Sync across modules)
+            app.setStatus(ApplicationStatus.INTERVIEW_SCHEDULED);
+            adminSchedulingService.saveApplication(app);
 
-                // 2. Fetch Entities for Communications (Direct repo access)
-                com.uniintern.portal.student.model.Student student = studentRepository.findById(app.getStudentId()).orElse(null);
-                Company company = companyRepository.findById(selectedInternship.getCompanyId()).orElse(null);
+            // 2. Fetch Entities for Communications (Direct repo access)
+            Student student = studentRepository.findById(app.getStudentId()).orElse(null);
+            Company company = companyRepository.findById(selectedInternship.getCompanyId()).orElse(null);
 
-                if (student != null) {
-                    // 3. Trigger In-App Notification (For Student Dashboard)
-                    String msg = "Congratulations! Your " + interview.getMode() + " interview for " + selectedInternship.getTitle() + " has been scheduled.";
-                    notificationService.createNotification(student.getId(), "Interview Scheduled", msg, "INTERVIEW");
+            if (student != null) {
+                // 3. Trigger In-App Notification (For Student Dashboard)
+                String msg = "Congratulations! Your " + interview.getMode() + " interview for " + selectedInternship.getTitle() + " has been scheduled.";
+                notificationService.createNotification(student.getId(), "Interview Scheduled", msg, "INTERVIEW");
 
-                    // 4. Send Email to Student (Detailed Invitation)
-                    sendAdminEmail(student.getEmail(), "UniIntern Interview Invitation", 
-                        "Dear " + student.getFullName() + ",\n\n" +
-                        "Your interview for the '" + selectedInternship.getTitle() + "' role at " + 
-                        (interview.getCompanyName() != null ? interview.getCompanyName() : "the designated company") + 
-                        " has been scheduled.\n\n" +
-                        "Details:\n" +
-                        "Date & Time: " + interviewDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")) + "\n" +
-                        "Mode: " + interview.getMode() + "\n" +
-                        "Location/Link: " + interview.getLocationLink() + "\n\n" +
-                        "Please check your student dashboard to confirm.\n\n" +
-                        "Best regards,\nUniIntern Administration");
-                }
+                // 4. Send Email to Student (Detailed Invitation)
+                sendAdminEmail(student.getEmail(), "UniIntern Interview Invitation", 
+                    "Dear " + student.getFullName() + ",\n\n" +
+                    "Your interview for the '" + selectedInternship.getTitle() + "' role at " + 
+                    (interview.getCompanyName() != null ? interview.getCompanyName() : "the designated company") + 
+                    " has been scheduled.\n\n" +
+                    "Details:\n" +
+                    "Date & Time: " + interviewDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")) + "\n" +
+                    "Mode: " + interview.getMode() + "\n" +
+                    "Location/Link: " + interview.getLocationLink() + "\n\n" +
+                    "Please check your student dashboard to confirm.\n\n" +
+                    "Best regards,\nUniIntern Administration");
+            }
 
-                if (company != null) {
-                    // 5. Send Email to Company Recruiter (Company Email)
-                    sendAdminEmail(company.getEmail(), "New Interview Scheduled - UniIntern", 
-                        "Hello " + company.getCompanyName() + ",\n\n" +
-                        "An interview has been scheduled for candidate " + cleanCandidateName + 
-                        " for your internship position: " + selectedInternship.getTitle() + ".\n\n" +
-                        "Scheduled Time: " + interviewDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")) + "\n\n" +
-                        "Best regards,\nUniIntern Administration");
-                }
+            if (company != null) {
+                // 5. Send Email to Company Recruiter (Company Email)
+                sendAdminEmail(company.getEmail(), "New Interview Scheduled - UniIntern", 
+                    "Hello " + company.getCompanyName() + ",\n\n" +
+                    "An interview has been scheduled for candidate " + cleanCandidateName + 
+                    " for your internship position: " + selectedInternship.getTitle() + ".\n\n" +
+                    "Scheduled Time: " + interviewDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")) + "\n\n" +
+                    "Best regards,\nUniIntern Administration");
             }
         }
 
@@ -529,6 +545,7 @@ public class AdminController {
         msg.setRecipientEmail(email);
         systemMessageRepository.save(msg);
         model.addAttribute("message", "Invitation link sent to " + email);
+                
         return "admin/settings";
     }
 
@@ -536,7 +553,7 @@ public class AdminController {
     public String changePassword(@RequestParam String currentPassword,
                                 @RequestParam String newPassword,
                                 @RequestParam String confirmPassword,
-                                org.springframework.security.core.Authentication auth,
+                                Authentication auth,
                                 Model model) {
         
         AdminAccount admin = adminAccountRepository.findByEmail(auth.getName()).orElseThrow();
