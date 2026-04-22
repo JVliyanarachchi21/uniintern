@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Free Courses | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('mycourses')"></div>
+
+<main class="main dashboard-main-content">
+  <div th:replace="fragments/student-topbar :: studentTopbar(${userName})"></div>
+
+  <section class="dashboard-page-container">
+    
+    <div class="dashboard-greeting">
+      <h1>My Free Courses</h1>
+      <p>Track your progress and continue learning.</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="dashboard-stats-row" style="margin-bottom: 2rem;">
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-title">Enrolled</div>
+          <div class="stat-value" th:text="${totalEnrolled}">0</div>
+        </div>
+        <div class="stat-icon" style="background: #dbeafe; color: #2563eb;">
+          <i data-lucide="book-open" style="width: 24px; height: 24px;"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-title">Completed</div>
+          <div class="stat-value" th:text="${totalCompleted}">0</div>
+        </div>
+        <div class="stat-icon" style="background: #d1fae5; color: #059669;">
+          <i data-lucide="check-circle" style="width: 24px; height: 24px;"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-title">Passed</div>
+          <div class="stat-value" th:text="${totalPassed}">0</div>
+        </div>
+        <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
+          <i data-lucide="award" style="width: 24px; height: 24px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Courses List -->
+    <div class="content-grid-row" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+      
+      <div th:if="${#lists.isEmpty(myCourses)}" style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+        <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <i data-lucide="book-open" style="width: 40px; height: 40px; color: #94a3b8;"></i>
+        </div>
+        <h3 style="color: #0f172a; margin-bottom: 0.5rem;">No Courses Yet</h3>
+        <p style="color: #64748b; margin-bottom: 1.5rem;">You haven't enrolled in any courses yet. Browse our free courses to get started!</p>
+        <a th:href="@{/student/courses/dashboard}" class="btn-dashboard btn-primary" style="display: inline-flex;">
+          <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+          Browse Courses
+        </a>
+      </div>
+
+      <div th:each="course : ${myCourses}" class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <svg class="panel-icon" style="color: #3b82f6;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.905 59.905 0 0 1 12 3.493a59.902 59.902 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 1 6.75 15.75v-1.5" />
+          </svg>
+          <h2 th:text="${course.title}">Course Title</h2>
+        </div>
+        <div style="padding: 1.5rem; flex: 1;">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;" th:text="${course.description}">Course description</p>
+          
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+            <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+            <span th:text="${course.duration}">Duration</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+            <span>Enrolled: </span>
+            <span th:text="${#temporals.format(course.enrolledAt, 'MMM dd, yyyy')}">Date</span>
+          </div>
+
+          <!-- Status Badge -->
+          <div style="margin-bottom: 1.5rem;">
+            <span th:if="${course.completed}" style="display: inline-block; padding: 0.375rem 0.75rem; background: #d1fae5; color: #065f46; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">
+              <i data-lucide="check-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle; margin-right: 4px;"></i>
+              Completed
+            </span>
+            <span th:unless="${course.completed}" style="display: inline-block; padding: 0.375rem 0.75rem; background: #dbeafe; color: #1e40af; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">
+              <i data-lucide="play-circle" style="width: 14px; height: 14px; display: inline; vertical-align: middle; margin-right: 4px;"></i>
+              In Progress
+            </span>
+            <span th:if="${course.passed}" style="display: inline-block; padding: 0.375rem 0.75rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">
+              <i data-lucide="award" style="width: 14px; height: 14px; display: inline; vertical-align: middle; margin-right: 4px;"></i>
+              Grade: <span th:text="${course.grade}">A</span>
+            </span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{/student/courses/view/{courseId}(courseId=${course.courseId})}" class="btn-dashboard btn-primary" style="flex: 1; justify-content: center;">
+              <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+              <span th:text="${course.completed ? 'Review' : 'Continue'}">Continue</span>
+            </a>
+            <a th:if="${course.completed}" th:href="@{/student/courses/certificate(courseId=${course.courseId})}" class="btn-dashboard btn-outline" style="flex: 1; justify-content: center;" th:if="${course.passed}">
+              <i data-lucide="award" style="width: 18px; height: 18px;"></i>
+              Certificate
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</main>
+
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>
