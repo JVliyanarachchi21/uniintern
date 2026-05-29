@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/company-auth.css}">
+</head>
+<body>
+
+<div class="auth-page">
+
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+        <div class="auth-left-content-wrapper">
+
+            <div class="brand-wrap">
+                <img th:src="@{/images/logo.png}" src="/images/logo.png" class="brand-logo" alt="UniIntern Logo">
+
+                <div class="brand-text-wrap">
+                    <h1 class="brand-name">UniIntern</h1>
+                    <p class="brand-tag">LAUNCH YOUR CAREER</p>
+                </div>
+            </div>
+
+            <div class="hero-badge">
+                Secure your account
+            </div>
+
+            <div class="auth-left-content">
+                <h2>Verify your email address</h2>
+
+                <p>
+                    We have sent a One-Time Password (OTP) to your email.
+                    Enter it below to activate your company account.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Email verification ensures security</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Prevents fake company accounts</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-dot">➜</span>
+                        <span>Quick and easy verification process</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
+        <div class="auth-card verify-card">
+
+            <div class="mini-logo-wrap">
+                <img th:src="@{/images/logo.png}" src="/images/logo.png" class="mini-logo-img" alt="UniIntern Logo">
+            </div>
+
+            <h2>Email Verification</h2>
+            
+            <!-- Success Display (Premium & Creative Edition) -->
+            <div th:if="${verified}" class="verify-success-premium">
+                <div class="success-icon-container">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                      <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+                
+                <div class="success-text-content">
+                    <h3>Verified Successfully!</h3>
+                    <p class="congrats-text">Congratulations, <span class="highlight-company" th:text="${companyName}">TechCorp</span>!</p>
+                    
+                    <div class="status-badge-wrap">
+                        <span class="status-badge">PENDING ADMIN APPROVAL</span>
+                    </div>
+
+                    <p class="final-info">
+                        Your account is ready! Please wait for our admin team to finalize your access. 
+                        <span>You'll get an email notification within 24 hours.</span>
+                    </p>
+                </div>
+                
+                <div class="success-actions">
+                    <a th:href="@{/company/login}" class="auth-btn btn-primary-glow">Go to Dashboard</a>
+                    <a th:href="@{/}" class="btn-secondary-flat">← Back to Home</a>
+                </div>
+            </div>
+
+            <!-- Verification Form (Hidden when verified) -->
+            <div th:unless="${verified}">
+                <p class="auth-sub">Enter the OTP sent to your email</p>
+            
+            <div th:if="${error}" class="alert alert-danger" style="color: red; margin-bottom: 20px;">
+                <p th:text="${error}"></p>
+            </div>
+
+            <form th:action="@{/company/verify}" method="post">
+
+                <div class="field">
+                    <label for="email">Email</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">✉</span>
+                        <input type="email" id="email" name="email" placeholder="hr@company.com" th:value="${email}" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="otp">OTP Code</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🔑</span>
+                        <input type="text" id="otp" name="otp" placeholder="Enter 6-digit OTP" maxlength="6" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn">Verify Account</button>
+            </form>
+
+            </div> <!-- End Verification Form Wrap -->
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

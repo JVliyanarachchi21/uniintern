@@ -1,0 +1,43 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Company Approvals</h1>
+  <p class="subtitle">Approve or reject newly registered companies.</p>
+
+  <div class="panel">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Company Name</th>
+          <th>Email</th>
+          <th>Industry</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TechVentures Inc.</td>
+          <td>hr@techventures.com</td>
+          <td>Software</td>
+          <td>Pending</td>
+          <td>
+            <button class="btn btn-approve">Approve</button>
+            <button class="btn btn-reject">Reject</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>DataStream Analytics</td>
+          <td>contact@datastream.com</td>
+          <td>Data Science</td>
+          <td>Pending</td>
+          <td>
+            <button class="btn btn-approve">Approve</button>
+            <button class="btn btn-reject">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

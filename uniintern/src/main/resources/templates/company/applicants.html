@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Applicants',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+    <div class="applicants-header">
+        <div>
+            <h1 class="page-title">Talent Pool</h1>
+            <p class="page-sub">Review and manage candidate applications after CV filtering</p>
+        </div>
+
+        <a th:href="@{/company/applicants/export(internshipId=${selectedInternshipId})}" class="btn export-btn" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            ⭳ Export Shortlisted
+        </a>
+    </div>
+
+    <div class="filter-card" style="padding: 15px;">
+        <form id="filterForm" th:action="@{/company/applicants}" method="get">
+            <div class="filter-grid" style="grid-template-columns: 1fr; gap: 15px;">
+                <div class="field">
+                    <label for="internshipFilter">Filter by Internship</label>
+                    <select id="internshipFilter" name="internshipId" onchange="this.form.submit()" style="max-width: 400px;">
+                        <option value="">Choose an internship to see filtered candidates...</option>
+                        <option th:each="i : ${internships}" 
+                                th:value="${i.id}" 
+                                th:text="${i.title}"
+                                th:selected="${i.id == selectedInternshipId}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-card applicants-table-card">
+        <table class="table applicants-table">
+            <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Internship</th>
+                <th>University</th>
+                <th>GPA</th>
+                <th>Skill Match</th>
+                <th>Score</th>
+                <th class="actions-col">Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${#lists.isEmpty(applicants)}">
+                <td colspan="8" style="text-align: center; padding: 40px; color: #64748b;">
+                    No qualified candidates found. Please run individual CV filtering first.
+                </td>
+            </tr>
+            <tr th:each="a, iterStat : ${applicants}">
+                <td th:text="${iterStat.count}" style="font-weight: 600; color: #3b82f6;">1</td>
+                <td class="internship-title" th:text="${a.name}">Ashan Fernando</td>
+                <td th:text="${a.internshipTitle}" style="font-size: 0.85em; color: #64748b;">Title</td>
+                <td th:text="${a.university}">University of Colombo</td>
+                <td th:text="${a.gpa}">3.25</td>
+                <td th:text="${a.skillMatch}">71%</td>
+                <td th:text="${a.score}">79</td>
+
+                <td>
+                    <div class="icon-actions modern-icon-actions" th:id="'actions-' + ${a.id}">
+                        <a th:href="@{'/company/applicants/view/' + ${a.id}}" class="btn-small-view" style="text-decoration: none; font-size: 12px; color: #3b82f6; border: 1px solid #3b82f6; padding: 4px 8px; border-radius: 4px;">
+                            View Profile
+                        </a>
+                        
+                        <button th:if="${a.status == 'APPLIED'}" 
+                                th:onclick="'updateStatus(' + ${a.id} + ', \'shortlist\')'"
+                                class="btn-small-view" 
+                                style="background: #10b981; color: white; border: none; font-size: 12px; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">
+                            Shortlist
+                        </button>
+                        
+                        <button th:if="${a.status == 'APPLIED'}" 
+                                th:onclick="'updateStatus(' + ${a.id} + ', \'reject\')'"
+                                class="btn-small-view" 
+                                style="background: #ef4444; color: white; border: none; font-size: 12px; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">
+                            Reject
+                        </button>
+
+                        <span th:if="${a.status == 'SHORTLISTED'}" style="background: #d1fae5; color: #065f46; font-size: 11px; padding: 4px 8px; border-radius: 999px; font-weight: 600; margin-left: 5px;">
+                            Shortlisted
+                        </span>
+                        
+                        <span th:if="${a.status == 'REJECTED'}" style="background: #fee2e2; color: #991b1b; font-size: 11px; padding: 4px 8px; border-radius: 999px; font-weight: 600; margin-left: 5px;">
+                            Rejected
+                        </span>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function updateStatus(appId, action) {
+            if(!confirm('Are you sure you want to ' + action + ' this candidate?')) return;
+            
+            fetch('/company/applicants/' + action + '/' + appId, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    location.reload(); // Refresh to show new status
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(err => alert('Failed to update status'));
+        }
+    </script>
+
+</section>
+
+<script src="/js/company.js"></script>
+</body>
+</html>

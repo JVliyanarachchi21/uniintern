@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Details | UniIntern</title>
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 32px;
+            margin-top: 24px;
+        }
+
+        .preview-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border-soft);
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .comparison-table th {
+            background: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .comparison-table td {
+            padding: 16px;
+            border-top: 1px solid var(--border-soft);
+            font-size: 13px;
+        }
+        .match-positive { color: #15803d; font-weight: 700; }
+
+        .btn-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            transition: 0.3s;
+            text-decoration: none;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-prime {
+            background: var(--uni-primary);
+            color: white;
+            box-shadow: 0 10px 20px rgba(5,38,89,0.2);
+        }
+    </style>
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('internships')"></div>
+
+<main class="main">
+    <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+
+    <section class="dashboard-page-container" style="padding: 40px;">
+        
+        <a th:href="@{/student/internships}" style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; text-decoration: none; font-weight: 600; margin-bottom: 24px;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Back to Browse
+        </a>
+
+        <div class="preview-grid">
+            
+            <div class="preview-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
+                    <div>
+                        <span style="background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; text-transform: uppercase;">Internship Opening</span>
+                        <h1 th:text="${internship.title}" class="student-page-title" style="font-size: 36px; margin: 12px 0 8px;">Software Engineering Intern</h1>
+                        <p th:text="${company != null ? company.companyName : 'Tech Partner'}" style="font-size: 18px; color: #64748b; font-weight: 600;">DataMinds Analytics</p>
+                    </div>
+                    <div style="background: #f0f7ff; border: 1.5px solid var(--uni-primary); border-radius: 16px; padding: 16px; text-align: center; min-width: 100px;">
+                        <div style="font-size: 28px; font-weight: 800; color: var(--uni-primary);" th:text="${totalMatch} + '%'">85%</div>
+                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Match Score</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 40px;">
+                    <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 16px;">Description</h3>
+                    <p th:text="${internship.description}" style="color: #334155; line-height: 1.8; font-size: 15px;">Detailed description of the internship role goes here.</p>
+                </div>
+
+                <div style="margin-bottom: 40px;">
+                    <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 20px;">Matching Analysis & Transparency</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Weight (%)</th>
+                                <th>Criteria</th>
+                                <th>Yours Profile</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Skills</strong></td>
+                                <td th:text="${internship.skillsWeight ?: 40} + '%'">40%</td>
+                                <td th:text="${internship.requiredSkills ?: 'Any'}">Java, SQL</td>
+                                <td th:text="${student.skills ?: 'Not Update'}">Java, Python</td>
+                                <td class="match-positive" th:text="${skillsMatch} + '/' + ${internship.skillsWeight ?: 40}">30</td>
+                            </tr>
+                            <tr>
+                                <td><strong>GPA</strong></td>
+                                <td th:text="${internship.gpaWeight ?: 30} + '%'">30%</td>
+                                <td th:text="'Min ' + ${internship.minGpa ?: '0.0'}">3.2</td>
+                                <td th:text="${student.gpa ?: '0.0'}">3.5</td>
+                                <td class="match-positive" th:text="${gpaMatch} + '/' + ${internship.gpaWeight ?: 30}">30</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Experience</strong></td>
+                                <td th:text="${internship.experienceWeight ?: 20} + '%'">20%</td>
+                                <td>Relevant Projects</td>
+                                <td th:text="${(student.experience != null && !student.experience.isEmpty()) ? 'Provided' : 'Not Provided'}">Details</td>
+                                <td class="match-positive" th:text="${expMatch} + '/' + ${internship.experienceWeight ?: 20}">20</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Certificates</strong></td>
+                                <td th:text="${internship.certificatesWeight ?: 10} + '%'">10%</td>
+                                <td>Recognized Certs</td>
+                                <td th:text="${(student.certifications != null && !student.certifications.isEmpty()) ? 'Provided' : 'Not Provided'}">Details</td>
+                                <td class="match-positive" th:text="${certMatch} + '/' + ${internship.certificatesWeight ?: 10}">10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="preview-card" style="align-self: start;">
+                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 24px;">Opportunity Details</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px; border: 1px solid #f1f5f9;">
+                        <span style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Location</span>
+                        <div style="font-weight: 700; color: #334155; margin-top: 4px;" th:text="${internship.location}">Colombo</div>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px; border: 1px solid #f1f5f9;">
+                        <span style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Application Deadline</span>
+                        <div style="font-weight: 700; color: #334155; margin-top: 4px;" th:text="${internship.deadline}">2026-04-15</div>
+                    </div>
+                </div>
+
+                <a th:href="@{'/student/apply/' + ${internship.id}}" th:if="${!isApplied}" class="btn-large btn-prime">Confirm & Apply Now</a>
+                <div th:if="${isApplied}" class="btn-large" style="background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; cursor: not-allowed;">Already Applied</div>
+                
+                <p style="font-size: 13px; color: #64748b; line-height: 1.6; text-align: center; margin-top: 20px;">Applying will submit yours profile criteria to the company for evaluation.</p>
+            </div>
+
+        </div>
+
+    </section>
+</main>
+
+</body>
+</html>

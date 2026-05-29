@@ -1,0 +1,401 @@
+/* 
+  Advanced Student Dashboard CSS 
+  - Fully mapped to global app.css variables
+  - Implements smooth transitions, soft shadows, and modern card styling
+*/
+
+:root {
+    --color-primary: #5483B3; /* Matching her Company colors */
+    --color-darkest: #021024;
+    --uni-secondary: #5483B3;
+}
+
+.student-page-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #021024 0%, #5483B3 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    display: inline-block;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.dashboard-page-container {
+    padding: 32px 40px;
+    font-family: 'Inter', Roboto, sans-serif;
+    color: var(--text-dark);
+}
+
+.dashboard-main-content {
+    background-color: var(--bg-main);
+    min-height: 100vh;
+}
+
+/* Greeting Section */
+.dashboard-greeting {
+    margin-bottom: 32px;
+}
+
+.dashboard-greeting h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+}
+
+.dashboard-greeting p {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Stats Row */
+.dashboard-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft);
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.stat-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.stat-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Specific Stat Icon Colors matching Legacy Values */
+.icon-profile {
+    background: var(--color-light); /* C1E8FF */
+    color: var(--color-dark);       /* 052659 */
+}
+
+.icon-apps {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.icon-interviews {
+    background: #fef3c7; /* Keeping yellow for interviews */
+    color: #d97706;
+}
+
+.icon-notifications {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* Progress bar for profile */
+.stat-progress {
+    margin-top: 14px;
+    width: 100%;
+}
+
+.stat-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--border-soft);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.stat-progress-fill {
+    height: 100%;
+    /* Gradient from secondary to primary */
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--success-text) 100%);
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Action Buttons Row */
+.action-buttons-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 32px;
+}
+
+.btn-dashboard {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-dashboard svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-outline {
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    color: var(--text-dark);
+}
+
+.btn-outline:hover {
+    background: var(--border-soft);
+    color: var(--color-dark);
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: var(--color-dark);
+    border: 1px solid var(--color-dark);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(5, 38, 89, 0.2);
+}
+
+.btn-primary:hover {
+    background: var(--color-darkest);
+    border-color: var(--color-darkest);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 38, 89, 0.3);
+}
+
+/* Content Grid */
+.content-grid-row {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 24px;
+}
+
+/* Advanced Panels */
+.panel-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(2, 16, 36, 0.02);
+    /* Subtle hover on entire card frame */
+    transition: box-shadow 0.3s ease;
+}
+
+.panel-card:hover {
+    box-shadow: var(--shadow-soft);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.panel-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.panel-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.icon-bell {
+    color: var(--color-primary);
+}
+
+.icon-trend {
+    color: var(--success-text);
+}
+
+/* Notification List */
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.notif-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+}
+
+.dot-green {
+    background: var(--success-text);
+}
+
+.dot-blue {
+    background: var(--color-primary);
+}
+
+.notif-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.notif-text {
+    font-size: 14.5px;
+    color: var(--text-dark);
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.notif-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Internships List */
+.internships-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.internship-item {
+    background: var(--bg-main);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.internship-item:hover {
+    background: var(--bg-white);
+    border-color: var(--border-soft);
+    box-shadow: 0 4px 12px rgba(2, 16, 36, 0.04);
+    transform: translateY(-2px);
+}
+
+.internship-info h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 6px 0;
+}
+
+.internship-info p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin: 0;
+    font-weight: 500;
+}
+
+.internship-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.internship-date svg {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1400px) {
+    .content-grid-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1200px) {
+    .dashboard-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-stats-row {
+        grid-template-columns: 1fr;
+    }
+    .action-buttons-row {
+        flex-direction: column;
+    }
+    .dashboard-page-container {
+        padding: 24px 20px;
+    }
+}

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Details | UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/home.css(v=7)}" href="/css/home.css?v=7">
+    <link rel="stylesheet" th:href="@{/css/company.css(v=7)}" href="/css/company.css?v=7">
+    <style>
+        .preview-showcase {
+            padding-top: 110px !important;
+        }
+        .preview-content::before {
+            height: 4px !important;
+            z-index: 9999 !important;
+            background: linear-gradient(90deg, var(--color-primary), var(--uni-secondary)) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        .preview-logo img {
+            width: 80px !important;
+            height: 80px !important;
+            object-fit: contain !important;
+            padding: 10px !important;
+        }
+        .preview-action {
+            display: flex !important;
+            justify-content: flex-end !important;
+            gap: 16px !important;
+            margin-top: 30px !important;
+        }
+        .back-link-btn {
+            padding: 12px 24px !important;
+            border-radius: 12px !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+        }
+        .back-link-btn:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-2px) !important;
+        }
+        .skill-tag {
+            background: rgba(84, 131, 179, 0.15) !important;
+            color: #000000 !important;
+            border: 1px solid rgba(84, 131, 179, 0.3) !important;
+            padding: 6px 16px !important;
+            border-radius: 99px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+        }
+        .btn-preview-apply {
+            background: #F07A12 !important;
+            color: white !important;
+            padding: 12px 32px !important;
+            border-radius: 12px !important;
+            font-weight: 700 !important;
+            transition: all 0.3s !important;
+            box-shadow: 0 8px 20px rgba(240, 122, 18, 0.2) !important;
+        }
+        .btn-preview-apply:hover {
+            background: #d96d0f !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 12px 25px rgba(240, 122, 18, 0.3) !important;
+        }
+    </style>
+</head>
+<body class="public-portal-page">
+<div>
+    <header class="site-header" id="siteHeader">
+        <div class="container nav-wrap">
+            <a class="brand" th:href="@{/}" href="/">
+                <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                    <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
+                </span>
+                <span class="brand-text">
+                    <span class="brand-name">UniIntern</span>
+                    <span class="brand-tag">Launch Your Career</span>
+                </span>
+            </a>
+
+            <nav class="desktop-nav">
+                <a th:href="@{/}" href="/">Home</a>
+                <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
+                <a th:href="@{/company/internships/listing}" href="/company/internships/listing" style="color: var(--uni-mid);">← Back to Listings</a>
+            </nav>
+
+            <div class="nav-actions desktop-actions">
+                <th:block th:if="${!isLoggedInCompany && !isLoggedInStudent}">
+                    <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
+                    <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+                </th:block>
+                <a th:if="${isLoggedInCompany}" class="btn btn-primary" th:href="@{/company/dashboard}">Dashboard</a>
+                <a th:if="${isLoggedInStudent}" class="btn btn-primary" th:href="@{/student/dashboard}">Dashboard</a>
+                <a th:if="${isLoggedInCompany || isLoggedInStudent}" class="btn btn-outline" th:href="@{/logout}" style="margin-left: 10px;">Logout</a>
+            </div>
+
+            <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a th:href="@{/}" href="/">Home</a>
+            <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
+            
+            <th:block th:if="${!isLoggedInCompany && !isLoggedInStudent}">
+                <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
+                <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+            </th:block>
+
+            <a th:if="${isLoggedInCompany}" class="btn btn-primary" th:href="@{/company/dashboard}">Dashboard</a>
+            <a th:if="${isLoggedInStudent}" class="btn btn-primary" th:href="@{/student/dashboard}">Dashboard</a>
+            <a th:if="${isLoggedInCompany || isLoggedInStudent}" class="btn btn-outline" th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <main class="container preview-showcase">
+        <div class="preview-content reveal">
+            <div class="preview-top">
+                <div class="preview-top-left">
+                    <div class="preview-logo">
+                        <img th:if="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" 
+                             th:src="${company.logoPath}" th:alt="${company.companyName} + ' Logo'">
+                        <img th:unless="${company != null and company.logoPath != null and !company.logoPath.isEmpty()}" 
+                             th:src="'https://ui-avatars.com/api/?name=' + (${company != null ? company.companyName : 'C'}) + '&background=0D8ABC&color=fff&size=256'" 
+                             th:alt="${company != null ? company.companyName : 'Company'} + ' Logo'">
+                    </div>
+                    <div>
+                        <h2 class="preview-title" th:text="${internship.title}">Software Engineering Intern</h2>
+                        <div class="preview-company-name" th:text="${company != null ? company.companyName : 'UniIntern Partner'}">TechCorp Lanka</div>
+                    </div>
+                </div>
+                <div class="preview-badges">
+                    <span class="preview-badge-status">
+                        <svg style="width: 1.2rem; height: 1.2rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Open for Applications
+                    </span>
+                </div>
+            </div>
+
+            <div class="preview-details-grid">
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Location</span>
+                        <strong th:text="${internship.location != null ? internship.location : 'Flexible'}">Colombo / Hybrid</strong>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Duration</span>
+                        <strong th:text="${internship.duration != null ? internship.duration : 'N/A'}">6 Months</strong>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Deadline</span>
+                        <strong th:text="${internship.deadline != null ? internship.deadline : 'Open'}">2026-05-30</strong>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div class="detail-content">
+                        <span>Minimum GPA</span>
+                        <strong th:text="${internship.minGpa != null ? internship.minGpa : 'No minimum'}">3.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-body">
+                <h3>About this Internship</h3>
+                <p th:text="${internship.description != null ? internship.description : 'No description provided.'}">We are looking for a motivated Software Engineering Intern to join our team.</p>
+                
+                <div th:if="${internship.requiredSkills != null and !internship.requiredSkills.isEmpty()}">
+                    <h3>Required Skills</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag" th:each="skill : ${#strings.arraySplit(internship.requiredSkills, ',')}" th:text="${#strings.trim(skill)}">Java</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-action reveal">
+                <a th:href="@{/company/internships/listing}" class="back-link-btn">← Back to Listings</a>
+                <a th:href="@{/company/internships/application-template(id=${internship.id})}" class="btn btn-primary btn-large">Apply Now</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer" id="contact">
+        <div class="container footer-top">
+            <div class="footer-brand">
+                <div class="brand footer-brand-inner">
+                    <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                        <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
+                    </span>
+                    <span class="brand-text">
+                        <span class="brand-name">UniIntern</span>
+                        <span class="brand-tag">Launch Your Career</span>
+                    </span>
+                </div>
+                <p>Smarter internships for students and recruiters. Building the future of early careers.</p>
+            </div>
+
+            <nav class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#contact">Contact Us</a>
+    <a href="/admin/login">Admin Portal</a>
+</nav>
+
+            <div class="social-links">
+                <a href="#" aria-label="Twitter">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c.1.8.1 1.6.1 2.4 0 7.3-5.6 15.7-15.7 15.7A15.6 15.6 0 0 1 2 20.4a11 11 0 0 0 8-2.2 5.5 5.5 0 0 1-5.1-3.8 5.7 5.7 0 0 0 2.5-.1A5.5 5.5 0 0 1 3 9v-.1a5.5 5.5 0 0 0 2.5.7A5.5 5.5 0 0 1 3.8 2.8a15.6 15.6 0 0 0 11.3 5.7 5.5 5.5 0 0 1 9.3-5A11 11 0 0 0 22 4Z"></path></svg>
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6Z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="#" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-7A5.4 5.4 0 0 0 20 4.8 5 5 0 0 0 19.9 1S18.7.7 16 2.5a13.4 13.4 0 0 0-7 0C6.3.7 5.1 1 5.1 1A5 5 0 0 0 5 4.8 5.4 5.4 0 0 0 3.8 8.5c0 5.5 3.1 6.7 6.1 7a3.4 3.4 0 0 0-.9 2.6V22"></path></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p>© 2026 UniIntern. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+<script th:src="@{/admin/js/home.js}" src="/admin/js/home.js"></script>
+</body>
+</html>

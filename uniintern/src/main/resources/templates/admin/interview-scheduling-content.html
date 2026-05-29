@@ -1,0 +1,263 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <style>
+    .schedule-dashboard{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .schedule-top{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+
+    .schedule-top h1{
+      margin:0;
+      font-size:48px;
+      line-height:1.05;
+      color:#111827;
+    }
+
+    .schedule-top p{
+      margin:10px 0 0;
+      color:#6B7280;
+      font-size:16px;
+      max-width:760px;
+      line-height:1.7;
+    }
+
+    .schedule-create-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px 22px;
+      border-radius:16px;
+      background:linear-gradient(135deg, #5483B3, #052659);
+      color:#fff;
+      font-weight:800;
+      text-decoration:none;
+      box-shadow:0 14px 30px rgba(5,38,89,0.18);
+      white-space:nowrap;
+    }
+
+    .schedule-stat-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+
+    .schedule-stat{
+      background:#fff;
+      border:1px solid #E5E7EB;
+      border-radius:22px;
+      padding:22px;
+      box-shadow:0 14px 40px rgba(2,16,36,0.06);
+    }
+
+    .schedule-stat-label{
+      color:#6B7280;
+      font-size:14px;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+
+    .schedule-stat-value{
+      font-size:42px;
+      font-weight:900;
+      color:#111827;
+      line-height:1;
+    }
+
+    .schedule-table-card{
+      background:#fff;
+      border:1px solid #E5E7EB;
+      border-radius:24px;
+      box-shadow:0 16px 40px rgba(2,16,36,0.06);
+      overflow:hidden;
+    }
+
+    .schedule-table-head{
+      padding:22px 24px 10px;
+    }
+
+    .schedule-table-head h3{
+      margin:0;
+      font-size:24px;
+      color:#111827;
+    }
+
+    .schedule-table-head p{
+      margin:8px 0 0;
+      color:#6B7280;
+      font-size:14px;
+    }
+
+    .schedule-table-wrap{
+      padding:0 16px 16px;
+    }
+
+    .schedule-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0 12px;
+    }
+
+    .schedule-table th{
+      text-align:left;
+      padding:0 16px 6px;
+      color:#6B7280;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+    }
+
+    .schedule-table td{
+      background:#F9FAFB;
+      padding:18px 16px;
+      font-size:15px;
+      color:#111827;
+      border-top:1px solid #EEF2F7;
+      border-bottom:1px solid #EEF2F7;
+    }
+
+    .schedule-table td:first-child{
+      border-left:1px solid #EEF2F7;
+      border-top-left-radius:16px;
+      border-bottom-left-radius:16px;
+    }
+
+    .schedule-table td:last-child{
+      border-right:1px solid #EEF2F7;
+      border-top-right-radius:16px;
+      border-bottom-right-radius:16px;
+    }
+
+    .schedule-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .schedule-badge-scheduled{
+      background:#C1E8FF;
+      color:#052659;
+    }
+
+    .schedule-badge-completed{
+      background:#7DA0CA;
+      color:#021024;
+    }
+
+    .schedule-badge-cancelled{
+      background:#021024;
+      color:#C1E8FF;
+    }
+
+    .schedule-empty{
+      margin:10px 16px 16px;
+      border:1px dashed #CBD5E1;
+      border-radius:18px;
+      padding:28px;
+      text-align:center;
+      background:#F8FAFC;
+      color:#64748B;
+    }
+
+    .schedule-empty strong{
+      display:block;
+      color:#0F172A;
+      font-size:18px;
+      margin-bottom:8px;
+    }
+
+    @media (max-width: 900px){
+      .schedule-stat-grid{
+        grid-template-columns:1fr;
+      }
+
+      .schedule-top h1{
+        font-size:38px;
+      }
+    }
+  </style>
+
+  <div class="schedule-dashboard">
+
+    <div class="schedule-top">
+      <div>
+        <h1>Interview Scheduling</h1>
+        <p>Track scheduled interviews, monitor status changes, and keep the recruitment workflow organized through a cleaner admin scheduling experience.</p>
+      </div>
+
+      <div style="display:flex; gap:12px;">
+          <a th:href="@{/admin/scheduling/advanced}" class="schedule-create-btn" style="background:#fff; color:#052659; border:2px solid #052659; box-shadow:none;">Advanced Hub</a>
+          <a th:href="@{/admin/schedule}" class="schedule-create-btn">+ Manual Schedule</a>
+      </div>
+    </div>
+
+    <div class="schedule-stat-grid">
+      <div class="schedule-stat">
+        <div class="schedule-stat-label">Scheduled Interviews</div>
+        <div class="schedule-stat-value" th:text="${scheduledCount}">0</div>
+      </div>
+
+      <div class="schedule-stat">
+        <div class="schedule-stat-label">Completed Interviews</div>
+        <div class="schedule-stat-value" th:text="${completedCount}">0</div>
+      </div>
+
+      <div class="schedule-stat">
+        <div class="schedule-stat-label">Cancelled Interviews</div>
+        <div class="schedule-stat-value" th:text="${cancelledCount}">0</div>
+      </div>
+    </div>
+
+    <div class="schedule-table-card">
+      <div class="schedule-table-head">
+        <h3>Interview Records</h3>
+        <p>All interviews created through the scheduling workflow are listed below.</p>
+      </div>
+
+      <div class="schedule-table-wrap" th:if="${!#lists.isEmpty(interviews)}">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Internship</th>
+              <th>Date & Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr th:each="i : ${interviews}">
+              <td th:text="${i.candidateName}">Candidate Name</td>
+              <td th:text="${i.internshipTitle}">Internship Title</td>
+              <td th:text="${i.interviewDateTime}">2026-03-01T10:00</td>
+              <td>
+                <span th:if="${i.status == 'SCHEDULED'}" class="schedule-badge schedule-badge-scheduled">Scheduled</span>
+                <span th:if="${i.status == 'COMPLETED'}" class="schedule-badge schedule-badge-completed">Completed</span>
+                <span th:if="${i.status == 'CANCELLED'}" class="schedule-badge schedule-badge-cancelled">Cancelled</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="schedule-empty" th:if="${#lists.isEmpty(interviews)}">
+        <strong>No interviews scheduled yet</strong>
+        Start by creating the first interview record using the schedule button above.
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,45 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">Internship History</h1>
+<p class="subtitle">View all internship records and filter by approval status.</p>
+
+  <div class="panel" style="margin-bottom:16px; display:flex; gap:10px; flex-wrap:wrap;">
+    <a th:href="@{/admin/internships/all}" class="btn">All</a>
+    <a th:href="@{/admin/internships/all(status='PENDING_ADMIN_APPROVAL')}" class="btn">Pending</a>
+    <a th:href="@{/admin/internships/all(status='APPROVED')}" class="btn">Approved</a>
+    <a th:href="@{/admin/internships/all(status='REJECTED')}" class="btn">Rejected</a>
+  </div>
+
+  <div class="panel">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Location</th>
+          <th>Min GPA</th>
+          <th>Deadline</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:if="${#lists.isEmpty(internships)}">
+          <td colspan="5" style="color:#6B7280;">No internships found.</td>
+        </tr>
+
+        <tr th:each="i : ${internships}">
+          <td th:text="${i.title}">Title</td>
+          <td th:text="${i.location}">Location</td>
+          <td th:text="${i.minGpa}">Min GPA</td>
+          <td th:text="${i.deadline}">Deadline</td>
+          <td>
+            <span th:if="${i.status == 'PENDING_ADMIN_APPROVAL'}" class="badge badge-pending">Pending</span>
+            <span th:if="${i.status == 'APPROVED'}" class="badge badge-approved">Approved</span>
+            <span th:if="${i.status == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

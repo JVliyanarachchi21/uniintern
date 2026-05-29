@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="content">
+    <div class="page-header">
+        <div class="header-info">
+            <h1>Intelligence Hub</h1>
+            <p>Unified feed of all system events and security alerts.</p>
+        </div>
+        <div class="header-actions">
+            <form th:action="@{/admin/notifications/mark-all-read}" method="post">
+                <button type="submit" class="action-btn btn-primary-premium">
+                    <i class="bi bi-check2-all"></i>
+                    Mark All as Read
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-tools">
+            <div class="intelligence-stats">
+                <span class="status-pill pill-medium" th:text="${alertCount + ' Unread Alerts'}">0 Unread Alerts</span>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(newAlerts)}" class="empty-state" style="padding: 80px; text-align: center; color: #64748b;">
+            <i class="bi bi-shield-check" style="font-size: 64px; display: block; margin-bottom: 20px; opacity: 0.5;"></i>
+            <h3>No Unread Notifications</h3>
+            <p>You're all caught up! No recent system intelligence alerts detected.</p>
+        </div>
+
+        <table class="table-premium" th:if="${not #lists.isEmpty(newAlerts)}">
+            <thead>
+                <tr>
+                    <th>Event Source</th>
+                    <th>Intelligence Message</th>
+                    <th>Timestamp</th>
+                    <th>Priority</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="alert : ${newAlerts}">
+                    <td>
+                        <span class="role-badge" th:text="${alert.type}">TYPE</span>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: #1e293b;" th:text="${alert.message}">The message content goes here.</div>
+                    </td>
+                    <td class="sentry-timestamp" th:text="${#temporals.format(alert.createdAt, 'MMM dd, HH:mm')}">
+                        Jan 01, 12:00
+                    </td>
+                    <td>
+                        <span class="status-pill" 
+                              th:classappend="${alert.priority == 'HIGH'} ? 'bg-high' : (${alert.priority == 'MEDIUM'} ? 'bg-medium' : 'bg-low')"
+                              th:text="${alert.priority}">PRIORITY</span>
+                    </td>
+                    <td>
+                        <a th:href="@{${alert.targetUrl}}" class="action-btn" style="background: #f1f5f9; color: #0f172a; padding: 6px 12px; font-size: 11px;">
+                            <i class="bi bi-arrow-right-short"></i> Check
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <style>
+        .intelligence-stats { display: flex; gap: 10px; }
+        .bg-high { background: #fee2e2 !important; color: #ef4444 !important; }
+        .bg-medium { background: #fffbeb !important; color: #f59e0b !important; }
+        .bg-low { background: #eff6ff !important; color: #3b82f6 !important; }
+    </style>
+</div>
+</html>

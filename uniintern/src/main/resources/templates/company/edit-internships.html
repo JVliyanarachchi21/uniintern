@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+      pageTitle='Edit Internship',
+      content=~{::body/content()})">
+
+<body>
+<section class="page-shell">
+
+    <div class="internships-header">
+        <div>
+            <h1 class="page-title">Edit Internship</h1>
+            <p class="page-sub">Update internship details</p>
+        </div>
+    </div>
+
+    <div class="form-card internship-form-card">
+        <form th:action="@{/company/internships/update}" method="post">
+            <input type="hidden" name="id" th:value="${internship.id}">
+
+            <div class="form-section">
+                <div class="section-title">Internship Details</div>
+
+                <div class="field">
+                    <label for="title">Internship Title <span class="required">*</span></label>
+                    <select id="title" name="title" required>
+                        <option value="Software Engineering Intern" th:selected="${internship.title == 'Software Engineering Intern'}">Software Engineering Intern</option>
+                        <option value="Data Science Intern" th:selected="${internship.title == 'Data Science Intern'}">Data Science Intern</option>
+                        <option value="Quality Assurance (QA) Intern" th:selected="${internship.title == 'Quality Assurance (QA) Intern'}">Quality Assurance (QA) Intern</option>
+                        <option value="UI/UX Design Intern" th:selected="${internship.title == 'UI/UX Design Intern'}">UI/UX Design Intern</option>
+                        <option value="Product Management Intern" th:selected="${internship.title == 'Product Management Intern'}">Product Management Intern</option>
+                        <option value="Business Analyst Intern" th:selected="${internship.title == 'Business Analyst Intern'}">Business Analyst Intern</option>
+                        <option value="Marketing & General Intern" th:selected="${internship.title == 'Marketing & General Intern'}">Marketing & General Intern</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="description">Description <span class="required">*</span></label>
+                    <textarea id="description" name="description" required th:text="${internship.description}"></textarea>
+                </div>
+
+                <div class="grid-3 compact-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                    <div class="field">
+                        <label for="location">Location <span class="required">*</span></label>
+                        <select id="location" name="location" required>
+                            <option value="Colombo 01 (Fort)" th:selected="${internship.location == 'Colombo 01 (Fort)'}">Colombo 01 (Fort)</option>
+                            <option value="Colombo 02 (Slave Island)" th:selected="${internship.location == 'Colombo 02 (Slave Island)'}">Colombo 02 (Slave Island)</option>
+                            <option value="Colombo 03 (Kollupitiya)" th:selected="${internship.location == 'Colombo 03 (Kollupitiya)'}">Colombo 03 (Kollupitiya)</option>
+                            <option value="Colombo 04 (Bambalapitiya)" th:selected="${internship.location == 'Colombo 04 (Bambalapitiya)'}">Colombo 04 (Bambalapitiya)</option>
+                            <option value="Colombo 05 (Havelock Town)" th:selected="${internship.location == 'Colombo 05 (Havelock Town)'}">Colombo 05 (Havelock Town)</option>
+                            <option value="Colombo 07 (Cinnamon Gardens)" th:selected="${internship.location == 'Colombo 07 (Cinnamon Gardens)'}">Colombo 07 (Cinnamon Gardens)</option>
+                            <option value="Nawala" th:selected="${internship.location == 'Nawala'}">Nawala</option>
+                            <option value="Rajagiriya" th:selected="${internship.location == 'Rajagiriya'}">Rajagiriya</option>
+                            <option value="Battaramulla" th:selected="${internship.location == 'Battaramulla'}">Battaramulla</option>
+                            <option value="Dehiwala" th:selected="${internship.location == 'Dehiwala'}">Dehiwala</option>
+                            <option value="Mount Lavinia" th:selected="${internship.location == 'Mount Lavinia'}">Mount Lavinia</option>
+                            <option value="Moratuwa" th:selected="${internship.location == 'Moratuwa'}">Moratuwa</option>
+                            <option value="Malabe" th:selected="${internship.location == 'Malabe'}">Malabe</option>
+                            <option value="Nugegoda" th:selected="${internship.location == 'Nugegoda'}">Nugegoda</option>
+                            <option value="Kelaniya" th:selected="${internship.location == 'Kelaniya'}">Kelaniya</option>
+                            <option value="Wattala" th:selected="${internship.location == 'Wattala'}">Wattala</option>
+                            <option value="Remote" th:selected="${internship.location == 'Remote'}">Remote</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="duration">Duration <span class="required">*</span></label>
+                        <select id="duration" name="duration" required>
+                            <option value="3 Months" th:selected="${internship.duration == '3 Months'}">3 Months</option>
+                            <option value="6 Months" th:selected="${internship.duration == '6 Months'}">6 Months</option>
+                            <option value="12 Months" th:selected="${internship.duration == '12 Months'}">12 Months</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="deadline">Application Deadline <span class="required">*</span></label>
+                        <input id="deadline" type="date" name="deadline" th:value="${internship.deadline}" required>
+                    </div>
+                </div>
+
+                <div class="grid-3 compact-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px;">
+                    <div class="field">
+                        <label>GPA Requirement <span class="required">*</span></label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <input id="minGpa" type="number" name="minGpa" step="0.01" min="0" max="4" th:value="${internship.minGpa}" placeholder="Min" required>
+                            <input id="maxGpa" type="number" name="maxGpa" step="0.01" min="0" max="4" th:value="${internship.maxGpa}" placeholder="Max" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="vacancies">Number of Vacancies <span class="required">*</span></label>
+                        <input id="vacancies" type="number" name="vacancies" min="1" th:value="${internship.vacancies}" placeholder="e.g. 2" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="workType">Work Type</label>
+                        <select id="workType" name="workType">
+                            <option value="On-site" th:selected="${internship.workType == 'On-site'}">On-site</option>
+                            <option value="Remote" th:selected="${internship.workType == 'Remote'}">Remote</option>
+                            <option value="Hybrid" th:selected="${internship.workType == 'Hybrid'}">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hr" style="margin: 24px 0; border-top: 1px solid #e2e8f0;"></div>
+
+            <div class="form-section">
+                <div class="section-title">Required Skills</div>
+                <div class="field">
+                    <label for="requiredSkills">Skills (comma separated)</label>
+                    <input id="requiredSkills" type="text" name="requiredSkills" th:value="${internship.requiredSkills}" placeholder="Java, Spring Boot, etc.">
+                </div>
+            </div>
+
+            <div class="hr" style="margin: 24px 0; border-top: 1px solid #e2e8f0;"></div>
+
+            <div class="form-section">
+                <div class="section-title">Ranking Settings</div>
+                <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Adjust the evaluation weights. Total should equal 100%.</p>
+
+                <div class="weight-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                    <div class="field">
+                        <label for="wSkills">Skills (%)</label>
+                        <input id="wSkills" type="number" name="wSkills" th:value="${internship.skillsWeight ?: 40}" min="0" max="100" required>
+                    </div>
+                    <div class="field">
+                        <label for="wGpa">GPA (%)</label>
+                        <input id="wGpa" type="number" name="wGpa" th:value="${internship.gpaWeight ?: 30}" min="0" max="100" required>
+                    </div>
+                    <div class="field">
+                        <label for="wExp">Experience (%)</label>
+                        <input id="wExp" type="number" name="wExp" th:value="${internship.experienceWeight ?: 20}" min="0" max="100" required>
+                    </div>
+                    <div class="field">
+                        <label for="wCert">Certificates (%)</label>
+                        <input id="wCert" type="number" name="wCert" th:value="${internship.certificatesWeight ?: 10}" min="0" max="100" required>
+                    </div>
+                </div>
+
+                <div class="grid-2 compact-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <div class="field">
+                        <label for="topN">Top N Candidates</label>
+                        <input id="topN" type="number" name="topN" min="1" th:value="${internship.topNCandidates ?: 10}">
+                        <div class="hint" style="font-size: 12px; color: #64748b;">Number of candidates to shortlist automatically.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 32px; display: flex; gap: 12px; justify-content: flex-end;">
+                <a th:href="@{'/company/internships/view/' + ${internship.id}}" class="btn" style="padding: 10px 20px; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #475569;">Cancel</a>
+                
+                <th:block th:if="${internship.status == 'DRAFT'}">
+                    <button type="submit" name="status" value="DRAFT" class="btn" style="padding: 10px 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; color: #475569; cursor: pointer;">Update Draft</button>
+                    <button type="submit" name="status" value="submit" class="btn primary" style="padding: 10px 20px; border-radius: 8px; background: #16a34a; color: white; border: none; cursor: pointer; font-weight: 600;">Submit for Approval</button>
+                </th:block>
+                
+                <th:block th:unless="${internship.status == 'DRAFT'}">
+                    <button type="submit" name="status" value="update" class="btn primary" style="padding: 10px 20px; border-radius: 8px; background: var(--uni-primary, #021024); color: white; border: none; cursor: pointer; font-weight: 600;">Update Internship</button>
+                </th:block>
+            </div>
+        </form>
+    </div>
+
+</section>
+</body>
+</html>

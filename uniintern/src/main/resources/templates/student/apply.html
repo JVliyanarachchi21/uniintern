@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Internship | UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/home.css(v=6)}">
+    <link rel="stylesheet" th:href="@{/css/company.css(v=6)}">
+    <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+    <style>
+        .pub-form-control:disabled {
+            background-color: #f1f5f9;
+            cursor: not-allowed;
+            color: #64748b;
+        }
+        .internship-id-badge {
+            background: rgba(84, 131, 179, 0.1);
+            color: var(--uni-primary);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="public-portal-page">
+<div>
+    <header class="site-header" id="siteHeader">
+        <div class="container nav-wrap">
+            <a class="brand" th:href="@{/student/dashboard}">
+                <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                    <img th:src="@{/images/logo.png}" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
+                </span>
+                <span class="brand-text">
+                    <span class="brand-name">UniIntern</span>
+                    <span class="brand-tag">Launch Your Career</span>
+                </span>
+            </a>
+
+            <nav class="desktop-nav">
+                <a th:href="@{/student/dashboard}">Dashboard</a>
+                <a th:href="@{/student/internships}">Browse Internships</a>
+                <a th:href="@{/student/internships}" style="color: var(--uni-mid);">← Back to Listings</a>
+            </nav>
+
+            <div class="nav-actions desktop-actions">
+                <span style="font-weight: 700; color: var(--uni-primary); margin-right: 1rem;" th:text="${fullName}">Student Name</span>
+                <a class="btn btn-outline" th:href="@{/student/profile}">My Profile</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container preview-showcase" style="padding-top: 120px; padding-bottom: 100px;">
+        <div class="pub-form-container reveal" style="opacity: 1; transform: translateY(0);">
+            
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <span class="card-top-badge" style="margin-bottom: 1.2rem; display: inline-block;">Internship Application</span>
+                <h2 class="student-page-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;" th:text="${internship.title}">Software Engineering Intern</h2>
+                <div class="internship-id-badge" th:text="'Ref ID: #' + ${internship.id}">#14</div>
+                <p style="color: rgba(17,24,39,0.6); font-size: 1.05rem; font-weight: 500;">Applying for <span th:text="${internship.title}" style="color: var(--uni-primary);">Internship</span> at <span th:text="${company?.companyName}" style="color: var(--uni-primary);">Company</span></p>
+            </div>
+
+            <div class="pub-form-card">
+                <form th:action="@{'/student/apply/' + ${internship.id}}" method="POST" id="internshipApplicationForm" enctype="multipart/form-data">
+                    
+                    <!-- Section 1: Personal Details -->
+                    <div class="pub-form-section">
+                        <h3>Personal Details</h3>
+                        <p class="sub">Pre-filled from your student profile.</p>
+                        
+                        <div class="pub-form-grid">
+                            <div class="pub-form-group full">
+                                <label class="pub-form-label">Full Name</label>
+                                <input type="text" class="pub-form-control" th:value="${student.fullName}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Email Address</label>
+                                <input type="email" class="pub-form-control" th:value="${student.email}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Phone Number</label>
+                                <input type="tel" class="pub-form-control" th:value="${student.registrationNumber}" readonly disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 2: Academic Background -->
+                    <div class="pub-form-section">
+                        <h3>Academic Background</h3>
+                        <p class="sub">Verify your academic criteria for this role.</p>
+                        
+                        <div class="pub-form-grid">
+                            <div class="pub-form-group full">
+                                <label class="pub-form-label">University / Institute</label>
+                                <input type="text" class="pub-form-control" th:value="${student.university}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Degree Program</label>
+                                <input type="text" class="pub-form-control" th:value="${student.degreeProgram}" readonly disabled>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Current GPA <span style="color: #ef4444;">*</span></label>
+                                <input type="number" step="0.01" min="0.00" max="4.00" class="pub-form-control" name="gpa" th:value="${student.gpa}" required>
+                                <span class="form-hint">Value between 0.00 and 4.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 3: Resume / CV -->
+                    <div class="pub-form-section">
+                        <h3>Resume / CV</h3>
+                        <p class="sub">Please upload your latest resume for the recruiter. (PDF only)</p>
+                        
+                        <div class="pub-form-group full">
+                            <label for="cvFile" class="file-upload-zone" id="dropZone" style="background: rgba(84, 131, 179, 0.05); border-color: var(--uni-primary); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem; border: 2px dashed var(--uni-primary); border-radius: 18px; transition: all 0.3s ease;">
+                                <input type="file" name="cvFile" id="cvFile" accept=".pdf" style="display: none;" onchange="handleFileSelect(this)">
+                                <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--uni-primary); width: 48px; height: 48px; margin-bottom: 1rem;">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                                    <polyline points="9 15 12 12 15 15"></polyline>
+                                </svg>
+                                <div class="file-upload-text" id="fileStatus"><strong>Click or drag file to this area to upload</strong></div>
+                                <div class="file-upload-hint">Supported formats: PDF (Max. 5MB)</div>
+                            </label>
+                            <script>
+                                function handleFileSelect(input) {
+                                    const status = document.getElementById('fileStatus');
+                                    const zone = document.getElementById('dropZone');
+                                    if (input.files.length > 0) {
+                                        const file = input.files[0];
+                                        if (file.type !== 'application/pdf') {
+                                            alert('Please upload a PDF file.');
+                                            input.value = '';
+                                            return;
+                                        }
+                                        status.innerHTML = `<strong style="color: #16a34a;">✓ ${file.name} selected</strong>`;
+                                        zone.style.background = 'rgba(22, 163, 74, 0.05)';
+                                        zone.style.borderColor = '#16a34a';
+                                    }
+                                }
+                                
+                                // Basic Drag & Drop
+                                const dropZone = document.getElementById('dropZone');
+                                ['dragover', 'dragleave', 'drop'].forEach(evt => {
+                                    dropZone.addEventListener(evt, e => {
+                                        e.preventDefault();
+                                        if (evt === 'dragover') dropZone.style.background = 'rgba(84, 131, 179, 0.1)';
+                                        else dropZone.style.background = 'rgba(84, 131, 179, 0.05)';
+                                    });
+                                });
+                                dropZone.addEventListener('drop', e => {
+                                    const input = document.getElementById('cvFile');
+                                    input.files = e.dataTransfer.files;
+                                    handleFileSelect(input);
+                                });
+                            </script>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 4: Experience & Skills -->
+                    <div class="pub-form-section">
+                        <h3>Experience & Skills</h3>
+                        <p class="sub">Highlight your technical proficiencies for this specific role.</p>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Top Skills (Match specific requirements) <span style="color: #ef4444;">*</span></label>
+                            <input type="text" class="pub-form-control" name="skills" th:value="${student.skills}" placeholder="e.g. Java, Spring Boot, React" required>
+                            <span class="form-hint">List skills that match the internship requirements.</span>
+                        </div>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Previous Experience or Projects <span style="color: #ef4444;">*</span></label>
+                            <textarea class="pub-form-control" name="experience" th:text="${student.experience}" placeholder="Describe your relevant projects or past internships..." required style="min-height: 120px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 5: Motivation -->
+                    <div class="pub-form-section">
+                        <h3>Motivation</h3>
+                        <p class="sub">Why are you the best fit for this role?</p>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Cover Letter / Motivation Statement <span style="color: #ef4444;">*</span></label>
+                            <textarea class="pub-form-control" name="coverLetter" placeholder="Write a brief cover letter (2-3 sentences)..." style="min-height: 160px;" required minlength="50" maxlength="2000"></textarea>
+                            <span class="form-hint">Minimum 50 characters.</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Actions -->
+                    <div class="pub-form-actions">
+                        <a th:href="@{/student/internships}" class="btn btn-outline" style="padding: 0.9rem 2rem; border-radius: 999px;">Cancel</a>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.9rem 2.5rem; border-radius: 999px; border: none; cursor: pointer;">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </main>
+    
+    <footer class="site-footer" id="contact">
+        <div class="container footer-top" style="display: flex; justify-content: space-between; align-items: center; padding: 40px 0;">
+            <div class="footer-brand">
+                <div class="brand">
+                    <span class="brand-name">UniIntern</span>
+                    <span class="brand-tag">Launch Your Career</span>
+                </div>
+            </div>
+            <p style="color: rgba(2, 16, 36, 0.5); font-size: 0.9rem;">© 2026 UniIntern. Building the future of early careers.</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const reveal = document.querySelector('.reveal');
+        setTimeout(() => {
+            reveal.style.opacity = '1';
+            reveal.style.transform = 'translateY(0)';
+        }, 100);
+    });
+</script>
+</body>
+</html>

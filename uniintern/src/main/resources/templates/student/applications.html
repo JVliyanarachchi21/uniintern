@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Applications | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('applications')"></div>
+
+<main class="main">
+
+  <div th:replace="fragments/student-topbar :: studentTopbar(${fullName})"></div>
+
+  <section class="content">
+    <div class="page-title">
+      <h1 class="student-page-title">My Applications</h1>
+      <p>Track your internship applications and statuses.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Applications</div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Internship</th>
+              <th>Company</th>
+              <th>Applied</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr th:each="a : ${applications}">
+              <td th:text="${a.title}">Title</td>
+              <td th:text="${a.company}">Company</td>
+              <td th:text="${a.appliedDate}">Date</td>
+
+              <td>
+                <span th:if="${a.score > 0}" th:text="${a.score}">82</span>
+                <span th:if="${a.score == 0}" class="muted">—</span>
+              </td>
+
+              <td>
+                <span class="badge"
+                      th:classappend="${a.status == 'APPLIED'} ? ' badge-gray' :
+                                      (${a.status == 'SCORED'} ? ' badge-blue' :
+                                      (${a.status == 'SHORTLISTED'} ? ' badge-green' :
+                                      (${a.status == 'REJECTED'} ? ' badge-red' : ' badge-gray')))"
+                      th:text="${a.status}">
+                  APPLIED
+                </span>
+              </td>
+
+              <td style="text-align:right;">
+                <a class="btn" th:href="@{'/student/applications/' + ${a.id}}">
+                  View
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

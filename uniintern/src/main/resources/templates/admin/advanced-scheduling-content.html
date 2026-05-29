@@ -1,0 +1,122 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <div class="page-shell">
+    <div class="internships-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <div>
+        <h1 class="title">Advanced Scheduling Hub</h1>
+        <p class="subtitle">Quickly schedule interviews for applicants pre-approved by companies.</p>
+      </div>
+      <div>
+        <a th:href="@{/admin/scheduling}" class="btn btn-secondary">
+          <i class="bi bi-arrow-left"></i> Back to Calendar
+        </a>
+      </div>
+    </div>
+
+    <!-- Premium Table Card -->
+    <div class="table-card">
+      <div class="table-tools">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="bi bi-search" style="color: var(--p-slate);"></i>
+          <input type="text" class="search" placeholder="Search approved applicants...">
+        </div>
+        <div class="table-stats" style="font-size: 13px; font-weight: 600; color: var(--p-slate);">
+          Showing <span th:text="${pendingInterviews.size()}" style="color: var(--p-navy);">0</span> Pending
+        </div>
+      </div>
+
+      <table class="table-premium">
+        <thead>
+          <tr>
+            <th>Candidate Details</th>
+            <th>Recruitment Round</th>
+            <th>Approved Role</th>
+            <th>Smart Match Score</th>
+            <th style="width:180px; text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${pendingInterviews.empty}">
+            <td colspan="5" style="text-align:center; padding:60px; color: var(--p-slate);">
+              <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"><i class="bi bi-clipboard-x"></i></div>
+              No approved applications pending interview scheduling.
+            </td>
+          </tr>
+          <tr th:each="dto : ${pendingInterviews}">
+            <td>
+              <div style="font-weight:800; color: var(--p-navy); font-size: 15px;" th:text="${dto.studentName}">John Doe</div>
+              <div th:text="${dto.university}" style="color: var(--p-slate); font-size: 11px; margin-top: 1px;">SLIIT</div>
+              <div style="color: var(--p-navy); font-size: 10px; font-weight: 700; text-transform: uppercase; margin-top: 4px; display: inline-block; padding: 2px 6px; background: var(--p-gray-light); border-radius: 4px;" th:text="${dto.companyName}">Google</div>
+            </td>
+            <td>
+              <span class="status-pill" 
+                    th:classappend="${dto.status == 'TECHNICAL_ROUND' ? 'pill-low' : (dto.status == 'HR_ROUND' ? 'pill-medium' : 'pill-high')}"
+                    th:text="${dto.status}">SHORTLISTED</span>
+            </td>
+            <td>
+              <span class="role-badge" th:text="${dto.internshipTitle}">Software Eng Intern</span>
+            </td>
+            <td>
+              <div class="smart-match-container">
+                <div class="smart-progress-track">
+                  <div class="smart-progress-bar" 
+                       th:classappend="${dto.matchScore > 80 ? 'bg-high' : (dto.matchScore > 60 ? 'bg-medium' : 'bg-low')}"
+                       th:style="'width:' + ${dto.matchScore} + '%;'"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                  <span style="font-size: 9px; font-weight: 800; color: var(--p-slate); text-transform: uppercase; letter-spacing: 0.05em;">AI Verified</span>
+                  <span class="match-score-text" th:text="${#numbers.formatDecimal(dto.matchScore, 1, 0)} + '%'">92%</span>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:right;">
+              <!-- Smart Action Button: Adapts based on current recruitment state -->
+              <a th:if="${dto.status == 'INTERVIEW_SCHEDULED'}" 
+                 th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" 
+                 class="action-btn" 
+                 style="background: #10b981; color: white; border: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                 <i class="bi bi-calendar-check"></i> Manage Schedule
+              </a>
+              
+              <a th:if="${dto.status != 'INTERVIEW_SCHEDULED'}" 
+                 th:href="@{/admin/schedule(applicationId=${dto.applicationId}, candidateName=${dto.studentName}, internshipId=${dto.internshipId})}" 
+                 class="action-btn btn-primary-premium">
+                 <i class="bi bi-calendar-plus"></i> Schedule Action
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.querySelector('.table-tools .search');
+      const tableRows = document.querySelectorAll('.table-premium tbody tr');
+      const statsCount = document.querySelector('.table-stats span');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const term = e.target.value.toLowerCase().trim();
+          let visibleCount = 0;
+
+          tableRows.forEach(row => {
+            if (row.cells.length < 2) return; // Skip "No results" row
+            
+            const text = row.innerText.toLowerCase();
+            if (text.includes(term)) {
+              row.style.display = '';
+              visibleCount++;
+            } else {
+              row.style.display = 'none';
+            }
+          });
+
+          if (statsCount) statsCount.textContent = visibleCount;
+        });
+      }
+    });
+  </script>
+</div>

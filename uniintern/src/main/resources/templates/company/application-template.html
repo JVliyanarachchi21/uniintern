@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Internship | UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/home.css(v=6)}" href="/css/home.css?v=6">
+    <link rel="stylesheet" th:href="@{/css/company.css(v=6)}" href="/css/company.css?v=6">
+</head>
+<body class="public-portal-page">
+<div>
+    <header class="site-header" id="siteHeader">
+        <div class="container nav-wrap">
+            <a class="brand" th:href="@{/}" href="/">
+                <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                    <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
+                </span>
+                <span class="brand-text">
+                    <span class="brand-name">UniIntern</span>
+                    <span class="brand-tag">Launch Your Career</span>
+                </span>
+            </a>
+
+            <nav class="desktop-nav">
+                <a th:href="@{/}" href="/">Home</a>
+                <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
+                <a th:href="@{/company/internships/listing}" href="/company/internships/listing" style="color: var(--uni-mid);">← Back to Listings</a>
+            </nav>
+
+            <div class="nav-actions desktop-actions">
+                <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
+                <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+            </div>
+
+            <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a th:href="@{/}" href="/">Home</a>
+            <a th:href="@{/company/internships/listing}" href="/company/internships/listing">Browse Internships</a>
+            <a class="btn btn-outline" th:href="@{/student/login}" href="/student/login">I&apos;m a Student</a>
+            <a class="btn btn-primary" th:href="@{/company/login}" href="/company/login">I&apos;m a Company</a>
+        </div>
+    </header>
+
+    <main class="container preview-showcase">
+        <div class="pub-form-container reveal">
+            
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <span class="card-top-badge" style="margin-bottom: 1.2rem; display: inline-block;">Application Form</span>
+                <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: var(--uni-primary); margin-bottom: 0.5rem; font-weight: 800; letter-spacing: -0.02em;" th:text="${internship.title}">Software Engineering Intern</h2>
+                <p style="color: rgba(17,24,39,0.6); font-size: 1.05rem; font-weight: 500;">Please fill out the details below to complete your application for <span th:text="${internship.title}" style="color: var(--uni-primary);">Software Engineering Intern</span>.</p>
+            </div>
+
+            <div class="pub-form-card">
+                <form th:action="@{/student/register}" method="get" id="internshipApplicationForm">
+                    <input type="hidden" name="internshipId" th:value="${internship.id}">
+                    
+                    <!-- Section 1: Personal Details -->
+                    <div class="pub-form-section">
+                        <h3>Personal Details</h3>
+                        <p class="sub">Your basic contact information.</p>
+                        
+                        <div class="pub-form-grid">
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">First Name <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="pub-form-control" name="firstName" placeholder="e.g. John" required minlength="2" maxlength="50">
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Last Name <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="pub-form-control" name="lastName" placeholder="e.g. Doe" required minlength="2" maxlength="50">
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Email Address <span style="color: #ef4444;">*</span></label>
+                                <input type="email" class="pub-form-control" name="email" placeholder="john.doe@example.com" required>
+                                <span class="form-hint">Must be a valid email address.</span>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Phone Number <span style="color: #ef4444;">*</span></label>
+                                <input type="tel" class="pub-form-control" name="phone" placeholder="+94 77 123 4567" required pattern="[\+]?[0-9\s\-]+">
+                                <span class="form-hint">E.g. +94 7X XXX XXXX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 2: Academic Background -->
+                    <div class="pub-form-section">
+                        <h3>Academic Background</h3>
+                        <p class="sub">Details about your university education.</p>
+                        
+                        <div class="pub-form-grid">
+                            <div class="pub-form-group full">
+                                <label class="pub-form-label">University / Institute <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="pub-form-control" name="university" placeholder="e.g. University of Colombo" required>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Degree Program <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="pub-form-control" name="degree" placeholder="e.g. BSc in Computer Science" required>
+                            </div>
+                            <div class="pub-form-group">
+                                <label class="pub-form-label">Current GPA</label>
+                                <input type="number" step="0.01" min="0.00" max="4.00" class="pub-form-control" name="gpa" placeholder="e.g. 3.5">
+                                <span class="form-hint">Optional. Value between 0.00 and 4.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 3: CV / Resume (NEW ZONE) -->
+                    <div class="pub-form-section">
+                        <h3>Resume / CV</h3>
+                        <p class="sub">Upload your latest resume in PDF format.</p>
+                        
+                        <div class="pub-form-group full">
+                            <div class="file-upload-zone" id="cvUploadZone">
+                                <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                                </svg>
+                                <div class="file-upload-text" id="uploadText">Click or drag file to this area to upload</div>
+                                <div class="file-upload-hint">Supported formats: PDF (Max. 5MB)</div>
+                                <input type="file" id="resumeFile" accept="application/pdf">
+                                <input type="hidden" name="resumeFileName" id="resumeFileName">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 4: Experience & Skills -->
+                    <div class="pub-form-section">
+                        <h3>Experience & Skills</h3>
+                        <p class="sub">Highlight your technical proficiencies and past work.</p>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Top Skills (Comma separated) <span style="color: #ef4444;">*</span></label>
+                            <input type="text" class="pub-form-control" name="skills" placeholder="Java, Spring Boot, React, SQL" required>
+                            <span class="form-hint">List your 3-5 strongest skills.</span>
+                        </div>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Previous Experience or Projects</label>
+                            <textarea class="pub-form-control" name="experience" placeholder="Describe your relevant projects, hackathons, or past internships..."></textarea>
+                            <span class="form-hint">Optional, but highly recommended.</span>
+                        </div>
+                        
+                        <div class="pub-form-group full">
+                            <label class="pub-form-label">Portfolio / GitHub / LinkedIn URL</label>
+                            <input type="url" class="pub-form-control" name="portfolioUrl" placeholder="https://github.com/username" pattern="https?://.+">
+                            <span class="form-hint">Must start with http:// or https://</span>
+                        </div>
+                    </div>
+
+                    <div class="pub-divider"></div>
+
+                    <!-- Section 5: Motivation -->
+                    <div class="pub-form-section">
+                        <h3>Motivation</h3>
+                        <p class="sub">Why are you the best fit for this role?</p>
+                        
+                        <div class="pub-form-group">
+                            <label class="pub-form-label">Cover Letter / Motivation Statement <span style="color: #ef4444;">*</span></label>
+                            <textarea class="pub-form-control" name="coverLetter" placeholder="Write a brief cover letter..." style="min-height: 160px;" required minlength="50" maxlength="2000"></textarea>
+                            <span class="form-hint">Minimum 50 characters.</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Actions -->
+                    <div class="pub-form-actions">
+                        <a th:href="@{/company/internships/preview(id=${internship.id})}" class="btn btn-card-view">Cancel</a>
+                        <button type="submit" class="btn btn-card-apply" style="border:none; cursor:pointer;" id="submitBtn">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </main>
+    
+    <footer class="site-footer" id="contact">
+        <div class="container footer-top">
+            <div class="footer-brand">
+                <div class="brand footer-brand-inner">
+                    <span class="brand-icon" style="background: var(--uni-primary); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(2, 16, 36, 0.15);">
+                        <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="UniIntern Logo" style="height: 30px; width: auto; object-fit: contain;">
+                    </span>
+                    <span class="brand-text">
+                        <span class="brand-name">UniIntern</span>
+                        <span class="brand-tag">Launch Your Career</span>
+                    </span>
+                </div>
+                <p>Smarter internships for students and recruiters. Building the future of early careers.</p>
+            </div>
+
+            <nav class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#contact">Contact Us</a>
+    <a href="/admin/login">Admin Portal</a>
+</nav>
+
+            <div class="social-links">
+                <a href="#" aria-label="Twitter">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c.1.8.1 1.6.1 2.4 0 7.3-5.6 15.7-15.7 15.7A15.6 15.6 0 0 1 2 20.4a11 11 0 0 0 8-2.2 5.5 5.5 0 0 1-5.1-3.8 5.7 5.7 0 0 0 2.5-.1A5.5 5.5 0 0 1 3 9v-.1a5.5 5.5 0 0 0 2.5.7A5.5 5.5 0 0 1 3.8 2.8a15.6 15.6 0 0 0 11.3 5.7 5.5 5.5 0 0 1 9.3-5A11 11 0 0 0 22 4Z"></path></svg>
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6Z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="#" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-7A5.4 5.4 0 0 0 20 4.8 5 5 0 0 0 19.9 1S18.7.7 16 2.5a13.4 13.4 0 0 0-7 0C6.3.7 5.1 1 5.1 1A5 5 0 0 0 5 4.8 5.4 5.4 0 0 0 3.8 8.5c0 5.5 3.1 6.7 6.1 7a3.4 3.4 0 0 0-.9 2.6V22"></path></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p>© 2026 UniIntern. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+    
+<script>
+    // UX for File Upload Zone
+    const fileInput = document.getElementById('resumeFile');
+    const uploadZone = document.getElementById('cvUploadZone');
+    const uploadText = document.getElementById('uploadText');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            uploadText.innerHTML = `Selected File: <strong style="color: var(--uni-secondary);">${this.files[0].name}</strong>`;
+            uploadZone.style.borderColor = 'var(--uni-primary)';
+            uploadZone.style.background = 'rgba(193, 232, 255, 0.2)';
+        } else {
+            uploadText.innerText = 'Click or drag file to this area to upload';
+            uploadZone.style.borderColor = '';
+            uploadZone.style.background = '';
+        }
+    });
+
+    // Form Submission: Carry details to registration
+    document.getElementById('internshipApplicationForm').addEventListener('submit', function(e) {
+        // We don't want to block the natural GET submission, 
+        // but we want to make sure skills and experience are included as params.
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = 'Saving details and redirecting...';
+        btn.style.opacity = '0.7';
+    });
+
+    // Reveal Animation on load
+    document.addEventListener("DOMContentLoaded", () => {
+        const reveals = document.querySelectorAll('.reveal');
+        setTimeout(() => {
+            reveals.forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            });
+        }, 100);
+    });
+</script>
+<script th:src="@{/admin/js/home.js}" src="/admin/js/home.js"></script>
+</body>
+</html>

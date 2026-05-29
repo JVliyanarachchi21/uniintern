@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification | UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body class="auth-body">
+
+<div class="auth-shell">
+    
+    <!-- Left Sidebar -->
+    <div class="auth-left">
+        <div class="brand-row">
+            <div class="brand-logo" style="background:none; color:white;">
+                <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 54px; height: auto; border-radius: 4px;">
+            </div>
+            <div class="brand-column">
+                <div class="brand-text" style="font-family: 'Plus Jakarta Sans', sans-serif;">UniIntern</div>
+                <div class="brand-subtext" style="font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #A7F3D0; margin-top: -2px;">LAUNCH YOUR CAREER</div>
+            </div>
+        </div>
+
+        <div class="auth-pill" style="margin-top: 50px;">
+            Smarter internships for students
+        </div>
+
+        <div class="auth-copy">
+            <h1 style="font-family: 'Plus Jakarta Sans', sans-serif;">Find the best path for your career</h1>
+            <p>Create your student profile, apply for top internships, and manage your applications — all in one place.</p>
+        </div>
+
+        <div class="auth-features-list">
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Track & manage applications
+            </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Secure university verification
+            </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                One central student portal
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Form Pane -->
+    <div class="auth-right">
+        <div class="auth-card" style="max-width: 440px;">
+            
+            <div class="auth-card-header" style="text-align:center; margin-bottom: 32px;">
+                <div style="background:#052659; width:54px; height:54px; border-radius:16px; display:inline-flex; align-items:center; justify-content:center; color:white; margin-bottom:16px; box-shadow: 0 8px 20px rgba(5,38,89,0.15);">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 800; color: #0F172A; margin: 0 0 8px;">Verify your Email</h2>
+                <p style="color: #64748B; font-size: 15px;">We've sent a 6-digit OTP to your inbox</p>
+            </div>
+
+            <!-- OTP Hint (Developer Mode) -->
+            <div th:if="${otpHint}" style="background:#fffbeb; color:#b45309; padding:12px; border-radius:12px; font-size:13px; font-weight:700; margin-bottom:24px; border:1px dashed #f59e0b; text-align:center;">
+                Security Code: <span style="font-size: 16px; letter-spacing: 2px;">[[${otpHint}]]</span>
+            </div>
+
+            <form method="post" th:action="@{/student/verify-otp}" class="auth-form">
+                <input type="hidden" name="email" th:value="${email}">
+                <input type="hidden" name="target" th:value="${target}">
+                
+                <div class="form-group">
+                    <label>OTP Code</label>
+                    <div class="input-with-icon">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        <input id="otp" type="text" name="otp" placeholder="Enter 6-digit code" maxlength="6" required style="letter-spacing: 2px; font-weight: 700;">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn" style="background:#052659; box-shadow: 0 4px 12px rgba(5,38,89,0.2);">Verify Account</button>
+            </form>
+
+            <div class="auth-footer" style="margin-top: 32px; font-size: 14px; color: #64748B; text-align: center;">
+                Didn’t receive OTP? <a href="#" style="color:#1D4ED8; font-weight: 700; text-decoration: none;">Resend</a>
+                <div style="margin-top: 24px;">
+                    <a th:href="@{/}" style="font-size: 13px; color: #94A3B8; text-decoration: none;">← Back to Home</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = () => document.getElementById('otp').focus();
+    // Numeric only validation
+    document.getElementById('otp').addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
+</script>
+
+</body>
+</html>

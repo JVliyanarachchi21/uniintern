@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Results | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('courses')"></div>
+
+<main class="main dashboard-main-content">
+  <div th:replace="fragments/student-topbar :: studentTopbar(${userName})"></div>
+
+  <section class="dashboard-page-container">
+    
+    <div class="dashboard-greeting">
+      <h1 th:text="${passed} ? 'Congratulations!' : 'Quiz Results'">Results</h1>
+      <p th:text="${passed} ? 'You have successfully completed the course!' : 'Keep practicing and try again.'">Result message</p>
+    </div>
+
+    <!-- Results Card -->
+    <div class="panel-card" style="max-width: 600px; margin: 0 auto;">
+      <!-- Header -->
+      <div th:if="${passed}" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; padding: 2rem; text-align: center; border-radius: 1rem 1rem 0 0;">
+        <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 40px; height: 40px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem;">Course Completed!</h2>
+        <p th:text="'You passed ' + ${courseTitle}">You passed the course</p>
+      </div>
+      <div th:unless="${passed}" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 2rem; text-align: center; border-radius: 1rem 1rem 0 0;">
+        <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 40px; height: 40px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+          </svg>
+        </div>
+        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem;">Quiz Failed</h2>
+        <p>You need 45% to pass. Keep practicing!</p>
+      </div>
+
+      <!-- Stats -->
+      <div style="padding: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+          <div style="background: var(--bg-secondary); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color);">
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Final Score</div>
+            <div th:text="${score} + '%'" th:style="${passed} ? 'font-size: 2.5rem; font-weight: 700; color: #2563eb;' : 'font-size: 2.5rem; font-weight: 700; color: #dc2626;'">0%</div>
+          </div>
+          <div style="background: var(--bg-secondary); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color);">
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Grade</div>
+            <div th:text="${grade}" th:style="${passed} ? 'font-size: 2rem; font-weight: 700; color: #2563eb;' : 'font-size: 2rem; font-weight: 700; color: #dc2626;'">F</div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 2rem; padding: 1.5rem 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); margin-bottom: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #d1fae5; color: #059669; display: flex; align-items: center; justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </div>
+            <div>
+              <div th:text="${correctCount}" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">0</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Correct</div>
+            </div>
+          </div>
+          <div style="width: 1px; background: var(--border-color);"></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <div>
+              <div th:text="${incorrectCount}" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">0</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Incorrect</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <th:block th:if="${passed}">
+            <a th:href="@{/student/courses/certificate(courseId=${courseId})}" class="btn-dashboard btn-primary" style="justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+              Get Certificate
+            </a>
+            <a th:href="@{/student/courses/dashboard}" class="btn-dashboard btn-outline" style="justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+              Back to Courses
+            </a>
+          </th:block>
+          <th:block th:unless="${passed}">
+            <a th:href="@{/student/courses/quiz(courseId=${courseId})}" class="btn-dashboard btn-primary" style="justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+              Try Again
+            </a>
+            <a th:href="@{/student/courses/view/{id}(id=${courseId})}" class="btn-dashboard btn-outline" style="justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 0 1 0 1.971l-11.54 6.347a1.125 1.125 0 0 1-1.667-.985V5.653Z" /></svg>
+              Review Video
+            </a>
+          </th:block>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>

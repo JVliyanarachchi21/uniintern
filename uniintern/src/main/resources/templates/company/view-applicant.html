@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="company/layout/layout :: layout(
+        pageTitle='Applicant Profile',
+        content=~{::body/content()})">
+
+<body>
+<section class="page-shell" style="padding: 40px 0;">
+
+    <div class="profile-container" style="max-width: 1100px; margin: 0 auto;">
+        
+        <!-- Top Navigation -->
+        <div style="margin-bottom: 30px;">
+            <a th:href="@{/company/applicants}" style="text-decoration: none; color: #64748b; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; transition: all 0.2s;">
+                <i class="bi bi-chevron-left"></i> Back to Talent Pool
+            </a>
+        </div>
+
+        <div class="profile-header" style="background: white; border-radius: 24px; padding: 40px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+            <div style="display: flex; align-items: center; gap: 30px;">
+                <div style="width: 100px; height: 100px; background: #EEF2FF; color: #4F46E5; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 800; border: 2px solid #E0E7FF;" th:text="${student != null ? #strings.substring(student.fullName, 0, 1) : 'S'}">
+                    D
+                </div>
+                <div>
+                    <h1 style="margin: 0; font-size: 32px; font-weight: 800; color: #111827; letter-spacing: -0.5px;" th:text="${student?.fullName ?: 'John Doe'}">Dilanka Jayadewa</h1>
+                    <div style="display: flex; gap: 15px; margin-top: 8px; align-items: center;">
+                        <span style="color: #6366F1; font-weight: 700; font-size: 15px;" th:text="${student?.university ?: 'University Name'}">SLIIT</span>
+                        <span style="color: #CBD5E1;">•</span>
+                        <span style="color: #64748B; font-weight: 500;" th:text="${student?.degreeProgram ?: 'Degree Program'}">BSc in Software Engineering</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: right;">
+                <div style="font-size: 12px; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Match Index</div>
+                <div style="font-size: 40px; font-weight: 900; color: #10B981;" th:text="${app.score != null ? app.score.intValue() + '%' : 'N/A'}">85%</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 380px; gap: 30px; margin-top: 30px;">
+            
+            <!-- Left Column: Details -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                
+                <!-- Experience -->
+                <div style="background: white; border-radius: 24px; padding: 35px; border: 1px solid #e2e8f0;">
+                    <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="bi bi-person-lines-fill" style="color: #6366F1;"></i> Professional Background
+                    </h3>
+                    <div id="experience-container" th:data-raw="${student?.experience}">
+                        <!-- Fallback or parsed content will go here -->
+                        <p style="color: #4B5563; line-height: 1.7; font-size: 15.5px; margin: 0;" th:text="${student?.experience ?: 'Candidate has not provided professional history yet.'}">
+                            No experience data...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div style="background: white; border-radius: 24px; padding: 35px; border: 1px solid #e2e8f0;">
+                    <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="bi bi-star-fill" style="color: #F59E0B;"></i> Key Expertise
+                    </h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <span th:each="skill : ${#strings.arraySplit(student.skills ?: 'None', ',')}" 
+                              style="background: #F3F4F6; color: #374151; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; border: 1px solid #E5E7EB;"
+                              th:text="${skill.trim()}">Java</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Sidebar / CV -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                
+                <!-- CV Download Card -->
+                <div style="background: #111827; border-radius: 24px; padding: 35px; color: white; box-shadow: 0 20px 40px -10px rgba(17, 24, 39, 0.3);">
+                    <div style="text-align: center;">
+                        <div style="width: 70px; height: 70px; background: rgba(255,255,255,0.1); color: #EF4444; border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        </div>
+                        <h3 style="margin: 0 0 5px; font-size: 20px; font-weight: 700;">Curriculum Vitae</h3>
+                        <p style="color: #9CA3AF; font-size: 14px; margin-bottom: 25px;">Verified Professional Resume</p>
+                        
+                        <div th:if="${student?.cvFilePath != null}">
+                            <a th:href="${student.cvFilePath.startsWith('/') ? student.cvFilePath : '/' + student.cvFilePath}" 
+                               class="cv-btn" 
+                               target="_blank" 
+                               download 
+                               style="display: block; background: #6366F1; color: white; text-decoration: none; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 15px; transition: all 0.2s;">
+                                <i class="bi bi-download" style="margin-right: 8px;"></i> Download Resume
+                            </a>
+                        </div>
+                        <div th:unless="${student?.cvFilePath != null}" style="color: #F87171; font-weight: 600; font-size: 14px; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                            <i class="bi bi-exclamation-circle"></i> CV File Not Found
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Info -->
+                <div style="background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0;">
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 12px; color: #94A3B8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">GPA Performance</div>
+                        <div style="font-size: 24px; font-weight: 800; color: #111827;" th:text="${student?.gpa ?: 'N/A'}">3.80</div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 12px; color: #94A3B8; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Academic Year</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #111827;" th:text="${student?.academicYear ?: 'Not Set'}">4th Year</div>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #F1F5F9; margin: 20px 0;">
+                    <div style="display: flex; align-items: center; gap: 10px; color: #64748B; font-size: 14px;">
+                        <i class="bi bi-envelope"></i>
+                        <span th:text="${student?.email}">student@email.com</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<style>
+    .cv-btn:hover { background: #4F46E5 !important; transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4); }
+    .cv-btn:active { transform: translateY(0); }
+    .exp-item { padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid #F1F5F9; border-left: 3px solid #6366F1; padding-left: 15px; }
+    .exp-item:last-child { border-bottom: none; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('experience-container');
+        if (!container) return;
+        
+        const rawData = container.getAttribute('data-raw');
+        
+        try {
+            if (rawData && (rawData.trim().startsWith('[') || rawData.trim().startsWith('{'))) {
+                const experiences = JSON.parse(rawData);
+                let html = '';
+                const expArray = Array.isArray(experiences) ? experiences : [experiences];
+                
+                expArray.forEach(exp => {
+                    html += `
+                        <div class="exp-item">
+                            <div style="font-weight: 700; color: #111827; font-size: 16px;">${exp.role || exp.title || 'Professional Role'}</div>
+                            <div style="color: #6366F1; font-weight: 600; font-size: 14px; margin-top: 2px;">
+                                ${exp.company || 'Company'} 
+                                <span style="color: #94A3B8; font-weight: 500; font-size: 13px;">• ${exp.duration || exp.period || ''}</span>
+                            </div>
+                            <p style="color: #64748B; font-size: 14px; margin-top: 8px; line-height: 1.5;">${exp.desc || exp.description || ''}</p>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+        } catch (e) {
+            console.error('Experience parsing skipped - not valid JSON');
+        }
+    });
+</script>
+</body>
+</html>

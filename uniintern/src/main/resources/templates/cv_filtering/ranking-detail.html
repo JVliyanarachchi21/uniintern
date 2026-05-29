@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{cv_filtering/fragments/layout :: head('Ranking Detail')}"></head>
+<body class="flex h-screen w-full bg-slate-50 overflow-hidden font-sans">
+    <div th:replace="~{cv_filtering/fragments/layout :: main('RankingDetail', ~{::content})}">
+        <div th:fragment="content" class="space-y-10 animate-fade-in pb-20">
+            <!-- Header section with Back link -->
+            <div class="flex justify-between items-center">
+                <div class="space-y-2">
+                    <a th:href="@{${userRole == 'admin' ? '/admin/cv/results' : '/company/cv/results'}}" class="group flex items-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#22418c] transition-colors mb-2">
+                        <i class="bi bi-arrow-left-short text-xl group-hover:-translate-x-1 transition-transform"></i>
+                        Back to All Analysis
+                    </a>
+                    <h2 class="text-4xl font-black text-slate-900 tracking-tight">Ranking Matrix</h2>
+                    <p class="text-slate-500 font-bold text-lg" th:if="${run != null}" 
+                       th:text="${run.internshipTitle} + ' — ' + ${run.finishedAt != null ? #temporals.format(run.finishedAt, 'MMM dd, yyyy') : 'Recently Completed'}">Internship Analysis</p>
+                </div>
+                
+                <!-- Status Bar -->
+                <div class="flex items-center space-x-4">
+                    <span th:class="'inline-block px-6 py-2 text-[10px] font-black uppercase rounded-full tracking-widest shadow-sm ' + 
+                        (${run.status == 'completed' || run.status == 'approved' || run.status == 'pending_approval'} ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100')"
+                          th:text="${run.status == 'pending_approval' ? 'SUCCESS' : run.status}">Status</span>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div th:if="${run != null}" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 relative overflow-hidden group text-center">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Analysis Status</span>
+                    <span class="text-xl font-black text-emerald-600 uppercase tracking-widest" th:text="${run.status == 'pending_approval' ? 'SUCCESS' : run.status}">Success</span>
+                </div>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 text-center">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Applicants Processed</span>
+                    <span class="text-3xl font-black text-slate-900" th:text="${run.applicantsProcessed}">8</span>
+                </div>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 text-center">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Talent Quota (Top N)</span>
+                    <span class="text-3xl font-black text-[#22418c]" th:text="${run.topN}">3</span>
+                </div>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-xl shadow-slate-200/40 text-center">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Minimum Threshold</span>
+                    <span class="text-3xl font-black text-slate-900" th:text="${run.minimumThreshold != null ? run.minimumThreshold + '%' : '60%'}">60%</span>
+                </div>
+            </div>
+
+            <!-- Detailed Table -->
+            <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/40 border border-gray-50 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100">
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Rank</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Candidate Info</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Score Breakdown (S / G / E / C)</th>
+                                <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aggregated Score</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr th:if="${#lists.isEmpty(results)}">
+                                <td colspan="4" class="px-10 py-20 text-center text-slate-400 font-bold italic">No ranking metrics discovered for this run.</td>
+                            </tr>
+                            <tr th:each="result : ${results}" th:class="${result.topN} ? 'bg-blue-50/20' : ''">
+                                <td class="px-10 py-8">
+                                    <div th:class="${result.rankNumber <= 3} ? 'w-12 h-12 rounded-2xl bg-[#22418c] text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-100' : 'w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center font-black text-xl border border-slate-100'"
+                                         th:text="${result.rankNumber}">1</div>
+                                </td>
+                                <td class="px-10 py-8">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center font-black border border-slate-200/50 shadow-sm transition-transform hover:rotate-6">
+                                            <span th:text="${result.studentName != null and !result.studentName.isEmpty() ? #strings.substring(result.studentName, 0, 1) : '?'}">S</span>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-black text-slate-900" th:text="${result.studentName ?: 'Unknown Candidate'}">Student Name</div>
+                                            <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-loose" th:text="${result.university ?: 'N/A'}">University Information</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-10 py-8">
+                                    <div class="flex items-center justify-center space-x-3">
+                                        <!-- Skill -->
+                                        <div class="flex flex-col items-center px-4 py-2 bg-white border border-gray-100 rounded-2xl shadow-sm min-w-[3.5rem] hover:border-blue-200 transition-colors">
+                                            <span class="text-[8px] font-black text-[#5483B3] uppercase tracking-tighter">Skill</span>
+                                            <span class="text-xs font-black text-[#22418c]" th:text="${#numbers.formatDecimal(result.skillScore, 1, 0)}">20</span>
+                                        </div>
+                                        <i class="bi bi-plus text-slate-200 text-lg"></i>
+                                        <!-- GPA -->
+                                        <div class="flex flex-col items-center px-4 py-2 bg-white border border-gray-100 rounded-2xl shadow-sm min-w-[3.5rem] hover:border-emerald-200 transition-colors">
+                                            <span class="text-[8px] font-black text-emerald-400 uppercase tracking-tighter">GPA</span>
+                                            <span class="text-xs font-black text-emerald-700" th:text="${#numbers.formatDecimal(result.gpaScore, 1, 0)}">20</span>
+                                        </div>
+                                        <i class="bi bi-plus text-slate-200 text-lg"></i>
+                                        <!-- Exp -->
+                                        <div class="flex flex-col items-center px-4 py-2 bg-white border border-gray-100 rounded-2xl shadow-sm min-w-[3.5rem] hover:border-amber-200 transition-colors">
+                                            <span class="text-[8px] font-black text-amber-400 uppercase tracking-tighter">Exp</span>
+                                            <span class="text-xs font-black text-amber-700" th:text="${#numbers.formatDecimal(result.experienceScore, 1, 0)}">20</span>
+                                        </div>
+                                        <i class="bi bi-plus text-slate-200 text-lg"></i>
+                                        <!-- Cert -->
+                                        <div class="flex flex-col items-center px-4 py-2 bg-white border border-gray-100 rounded-2xl shadow-sm min-w-[3.5rem] hover:border-purple-200 transition-colors">
+                                            <span class="text-[8px] font-black text-purple-400 uppercase tracking-tighter">Cert</span>
+                                            <span class="text-xs font-black text-purple-700" th:text="${#numbers.formatDecimal(result.certScore, 1, 0)}">20</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-10 py-8 text-right">
+                                    <div class="inline-flex flex-col items-end">
+                                        <div class="text-3xl font-black text-slate-900 tracking-tighter" th:text="${#numbers.formatDecimal(result.totalScore ?: 0, 1, 1)} + '%'">85.5%</div>
+                                        <span th:if="${result.topN}" class="px-3 py-1 bg-[#22418c] text-white text-[9px] font-black rounded-full uppercase tracking-[0.2em] mt-2 shadow-lg shadow-blue-200">Top Choice candidate</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

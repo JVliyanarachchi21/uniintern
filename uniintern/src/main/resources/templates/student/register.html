@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | UniIntern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body class="auth-body">
+
+<div class="auth-shell">
+
+    <div class="auth-left">
+        <div class="brand-row">
+            <div class="brand-logo" style="background:none; color:white;">
+                <img th:src="@{/images/logooo.png}" alt="UniIntern Logo" style="width: 54px; height: auto; border-radius: 4px;">
+            </div>
+            <div class="brand-column">
+                <div class="brand-text" style="font-family: 'Plus Jakarta Sans', sans-serif;">UniIntern</div>
+                <div class="brand-subtext" style="font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #A7F3D0; margin-top: -2px;">LAUNCH YOUR CAREER</div>
+            </div>
+        </div>
+
+        <div class="auth-pill" style="margin-top: 50px;">
+            Smarter internships for students
+        </div>
+
+        <div class="auth-copy">
+            <h1 style="font-family: 'Plus Jakarta Sans', sans-serif;">Find the best path for your career</h1>
+            <p>Create your student profile, apply for top internships, and manage your applications — all in one place.</p>
+        </div>
+
+        <div class="auth-features-list">
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Track & manage applications
+            </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                Secure university verification
+            </div>
+            <div class="feature-list-item">
+                <div class="feature-icon">➔</div>
+                One central student portal
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <div class="auth-card">
+            <div class="auth-card-header" style="text-align:center; margin-bottom: 20px;">
+                <div style="background:var(--color-dark); width:44px; height:44px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; color:white; margin-bottom:10px;">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" width="22" height="22" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                </div>
+                <h2 style="font-size:22px; color:var(--text-dark); margin:0; font-weight:700;">Student Registration</h2>
+            </div>
+            
+            <div class="auth-card-title-row">
+                <svg class="auth-card-title-icon" style="width: 20px; height: 20px; color: var(--color-dark);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                <h2 style="font-size: 17px; color: var(--text-dark);">Create Your Account</h2>
+            </div>
+            
+            <div th:if="${error}" style="background:#fee2e2; color:#ef4444; border-radius:8px; padding:12px; font-size:14px; margin-bottom:16px; display:flex; gap:8px; align-items:center;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form method="post" th:action="@{/student/register}" class="auth-form" novalidate>
+                <!-- Hidden fields to carry over internship application data -->
+                <input type="hidden" name="preSkills" th:value="${skills}">
+                <input type="hidden" name="preExperience" th:value="${experience}">
+                <input type="hidden" name="internshipId" th:value="${internshipId}">
+                <input type="hidden" name="coverLetter" th:value="${coverLetter}">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input id="name" type="text" name="name" placeholder="John Doe" th:value="${name}" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 12px; font-size:13px; outline: none; transition: 0.2s;">
+                    <p class="field-error" th:if="${errorName}" th:text="${errorName}"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">University Email</label>
+                    <input id="email" type="email" name="email" placeholder="student@my.sliit.lk" th:value="${email}" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 12px; font-size:13px; outline: none; transition: 0.2s;">
+                    <p class="field-error" th:if="${errorEmail}" th:text="${errorEmail}"></p>
+                    <p class="live-hint" id="emailHint"></p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <div class="input-with-toggle">
+                            <input id="password" type="password" name="password" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 44px 10px 12px; font-size:13px; outline: none; transition: 0.2s;">
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <svg class="eye-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+                        <span style="font-size:12px; color:#ef4444; margin-top:4px; display:block;">Min 8 characters</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password *</label>
+                        <div class="input-with-toggle">
+                            <input id="confirmPassword" type="password" name="confirmPassword" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 44px 10px 12px; font-size:13px; outline: none; transition: 0.2s;">
+                            <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                <svg class="eye-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="university">University *</label>
+                    <div class="select-wrapper">
+                        <select id="university" name="university" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 12px; font-size:13px; color:var(--text-dark); outline: none; transition: 0.2s; appearance:none;">
+                            <option value="">Select university</option>
+                            <option value="UCSC" th:selected="${university == 'UCSC'}">University of Colombo School of Computing (UCSC)</option>
+                            <option value="UOM" th:selected="${university == 'UOM'}">University of Moratuwa</option>
+                            <option value="SLIIT" th:selected="${university == 'SLIIT'}">Sri Lanka Institute of Information Technology (SLIIT)</option>
+                            <option value="IIT" th:selected="${university == 'IIT'}">Informatics Institute of Technology (IIT)</option>
+                        </select>
+                        <div class="select-arrow">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="degreeProgram">Degree Program *</label>
+                    <div class="select-wrapper">
+                        <select id="degreeProgram" name="degreeProgram" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 12px; font-size:13px; color:var(--text-dark); outline: none; transition: 0.2s; appearance:none;">
+                            <option value="">Select degree program</option>
+                            <option value="BSc (Hons) in Software Engineering" th:selected="${degreeProgram == 'BSc (Hons) in Software Engineering'}">BSc (Hons) in Software Engineering</option>
+                            <option value="BSc (Hons) in Computer Science" th:selected="${degreeProgram == 'BSc (Hons) in Computer Science'}">BSc (Hons) in Computer Science</option>
+                            <option value="BSc (Hons) in Information Technology" th:selected="${degreeProgram == 'BSc (Hons) in Information Technology'}">BSc (Hons) in Information Technology</option>
+                            <option value="BSc (Hons) in Cyber Security" th:selected="${degreeProgram == 'BSc (Hons) in Cyber Security'}">BSc (Hons) in Cyber Security</option>
+                            <option value="BSc (Hons) in Data Science" th:selected="${degreeProgram == 'BSc (Hons) in Data Science'}">BSc (Hons) in Data Science</option>
+                            <option value="BSc (Hons) in Interactive Media" th:selected="${degreeProgram == 'BSc (Hons) in Interactive Media'}">BSc (Hons) in Interactive Media</option>
+                            <option value="BSc (Hons) in Business Management" th:selected="${degreeProgram == 'BSc (Hons) in Business Management'}">BSc (Hons) in Business Management</option>
+                            <option value="BEng (Hons) in Civil Engineering" th:selected="${degreeProgram == 'BEng (Hons) in Civil Engineering'}">BEng (Hons) in Civil Engineering</option>
+                            <option value="BEng (Hons) in Mechanical Engineering" th:selected="${degreeProgram == 'BEng (Hons) in Mechanical Engineering'}">BEng (Hons) in Mechanical Engineering</option>
+                        </select>
+                        <div class="select-arrow">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regNo">Registration Number *</label>
+                        <input id="regNo" type="text" name="regNo" placeholder="CS2021045" th:value="${regNo}" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 12px; font-size:13px; outline: none; transition: 0.2s;">
+                    </div>
+                    <div class="form-group">
+                        <label for="nicNumber">NIC Number *</label>
+                        <input id="nicNumber" type="text" name="nicNumber" placeholder="200112345678" th:value="${nicNumber}" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 12px; font-size:13px; outline: none; transition: 0.2s;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="gpa">GPA (0.00&ndash;4.00) *</label>
+                    <input id="gpa" type="text" name="gpa" placeholder="3.50" th:value="${gpa}" required style="width:100%; border:1px solid var(--border-soft); background:var(--bg-main); border-radius:8px; padding:10px 12px; font-size:13px; outline: none; transition: 0.2s;">
+                    <span style="font-size:12px; color:#ef4444; margin-top:4px; display:block;">Must be 0.00-4.00</span>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">I agree to the Terms & Conditions and Privacy Policy</label>
+                </div>
+
+                <button type="submit" class="auth-btn" style="background:var(--color-dark); border:none; box-shadow:0 4px 12px rgba(5,38,89,0.2);">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <span>Already registered?</span>
+                <a th:href="@{/student/login}" style="color:var(--color-primary);">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Just attaching focus color variables dynamically
+    const inputs = document.querySelectorAll('.form-group input, .form-group select');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.borderColor = "var(--color-primary)";
+            this.style.boxShadow = "0 0 0 3px rgba(84, 131, 179, 0.1)";
+            this.style.background = "var(--bg-white)";
+        });
+        input.addEventListener('blur', function() {
+            this.style.borderColor = "var(--border-soft)";
+            this.style.boxShadow = "none";
+            if(this.value === '') {
+                this.style.background = "var(--bg-main)";
+            }
+        });
+    });
+
+    function setupRestrictedInput(inputId, regex, hintId, message) {
+        const input = document.getElementById(inputId);
+        const hint = document.getElementById(hintId);
+
+        if(!input || !hint) return;
+
+        input.addEventListener("input", function () {
+            const original = this.value;
+            const cleaned = original.split("").filter(ch => regex.test(ch)).join("");
+
+            if (original !== cleaned) {
+                hint.textContent = message;
+                hint.classList.add("show-hint");
+            } else {
+                hint.textContent = "";
+                hint.classList.remove("show-hint");
+            }
+
+            this.value = cleaned;
+        });
+
+        input.addEventListener("paste", function (e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData("text");
+            const cleaned = pasted.split("").filter(ch => regex.test(ch)).join("");
+
+            if (pasted !== cleaned) {
+                hint.textContent = message;
+                hint.classList.add("show-hint");
+            } else {
+                hint.textContent = "";
+                hint.classList.remove("show-hint");
+            }
+
+            document.execCommand("insertText", false, cleaned);
+        });
+
+        input.addEventListener("blur", function () {
+            setTimeout(() => {
+                hint.textContent = "";
+                hint.classList.remove("show-hint");
+            }, 800);
+        });
+    }
+
+    setupRestrictedInput("name", /^[A-Za-z ]$/, "nameHint", "Only letters and spaces allowed.");
+    setupRestrictedInput("regNo", /^[A-Za-z0-9]$/, "regNoHint", "Only letters and numbers allowed.");
+    setupRestrictedInput("university", /^[A-Za-z .,&()-]$/, "universityHint", "Only letters and basic punctuation allowed.");
+
+    const emailInput = document.getElementById("email");
+    const emailHint = document.getElementById("emailHint");
+    const authForm = document.querySelector(".auth-form");
+
+    function validateSliitEmail(email) {
+        // Enforces pattern like IT23123456@my.sliit.lk (2 letters, exactly 8 digits, then domain)
+        const regex = /^[A-Za-z]{2}\d{8}@my\.sliit\.lk$/;
+        return regex.test(email);
+    }
+
+    if (emailInput) {
+        emailInput.addEventListener("input", function() {
+            let val = this.value;
+            const requiredDomain = "@my.sliit.lk";
+
+            if (val.includes("@")) {
+                const domainTyped = val.substring(val.indexOf("@"));
+                
+                // If they are typing a different domain
+                if (!requiredDomain.startsWith(domainTyped) && domainTyped !== requiredDomain) {
+                    emailHint.textContent = "Please use your university email. Personal emails (like " + domainTyped + ") are not accepted.";
+                    emailHint.classList.add("show-hint");
+                } 
+                // If they typed the full domain correctly but prefix is wrong
+                else if (domainTyped === requiredDomain) {
+                    if (!validateSliitEmail(val)) {
+                        emailHint.textContent = "The student ID part is incorrect. It should look like IT23123456@my.sliit.lk.";
+                        emailHint.classList.add("show-hint");
+                    } else {
+                        emailHint.textContent = "";
+                        emailHint.classList.remove("show-hint");
+                    }
+                } 
+                // Still typing the domain correctly
+                else {
+                    emailHint.textContent = "";
+                    emailHint.classList.remove("show-hint");
+                }
+            } else {
+                emailHint.textContent = "";
+                emailHint.classList.remove("show-hint");
+            }
+        });
+
+        emailInput.addEventListener("blur", function() {
+            if (this.value && !validateSliitEmail(this.value)) {
+                emailHint.textContent = "Must be a valid student email (e.g., IT23123456@my.sliit.lk).";
+                emailHint.classList.add("show-hint");
+            }
+        });
+
+        authForm.addEventListener("submit", function(e) {
+            if (!validateSliitEmail(emailInput.value)) {
+                e.preventDefault();
+                emailHint.textContent = "You must provide a valid SLIIT student email to register.";
+                emailHint.classList.add("show-hint");
+                emailInput.focus();
+            }
+        });
+    }
+
+    const passwordInput = document.getElementById("password");
+    const passwordRulesBox = document.getElementById("passwordRulesBox");
+    const ruleLength = document.getElementById("ruleLength");
+    const ruleUpper = document.getElementById("ruleUpper");
+    const ruleLower = document.getElementById("ruleLower");
+    const ruleNumber = document.getElementById("ruleNumber");
+
+    function toggleRule(element, valid) {
+        if(!element) return;
+        element.classList.remove("rule-valid", "rule-invalid");
+        element.classList.add(valid ? "rule-valid" : "rule-invalid");
+    }
+
+    if (passwordInput && passwordRulesBox) {
+        passwordInput.addEventListener("focus", function () {
+            passwordRulesBox.classList.add("show-rules");
+        });
+
+        passwordInput.addEventListener("input", function () {
+            const value = this.value;
+
+            passwordRulesBox.classList.add("show-rules");
+
+            toggleRule(ruleLength, value.length >= 8);
+            toggleRule(ruleUpper, /[A-Z]/.test(value));
+            toggleRule(ruleLower, /[a-z]/.test(value));
+            toggleRule(ruleNumber, /\d/.test(value));
+        });
+
+        passwordInput.addEventListener("blur", function () {
+            const value = this.value;
+            const allValid =
+                value.length >= 8 &&
+                /[A-Z]/.test(value) &&
+                /[a-z]/.test(value) &&
+                /\d/.test(value);
+
+            if (allValid || value.length === 0) {
+                passwordRulesBox.classList.remove("show-rules");
+            }
+        });
+    }
+
+    // Password Visibility Toggle Logic
+    function setupPasswordToggle(toggleId, inputId) {
+        const toggle = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
+        const eyeIcon = toggle.querySelector('.eye-icon');
+
+        if (!toggle || !input || !eyeIcon) return;
+
+        toggle.addEventListener('click', function() {
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            if (type === 'password') {
+                eyeIcon.innerHTML = '<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+            } else {
+                eyeIcon.innerHTML = '<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88L4.22 4.22m15.56 15.56l-5.66-5.66m5.66 5.66l-5.66-5.66M21.543 12A9.97 9.97 0 0012 5c-.75 0-1.465.083-2.148.242M12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7a9.97 9.97 0 01-2.148-.242M3 3l18 18"></path>';
+            }
+        });
+    }
+
+    setupPasswordToggle('togglePassword', 'password');
+    setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
+</script>
+
+</body>
+</html>

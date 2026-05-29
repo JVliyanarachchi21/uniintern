@@ -1,0 +1,54 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+  <h1 class="title">All Companies</h1>
+  <p class="subtitle">View pending, verified, and rejected companies (history).</p>
+
+  <div class="panel" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
+    <a class="btn" th:href="@{/admin/companies/all}"
+       th:classappend="${selectedStatus == null} ? ' btn-active' : ''">All</a>
+
+    <a class="btn" th:href="@{/admin/companies/all(status='PENDING_VERIFICATION')}"
+       th:classappend="${selectedStatus == 'PENDING_VERIFICATION'} ? ' btn-active' : ''">Pending</a>
+
+    <a class="btn" th:href="@{/admin/companies/all(status='VERIFIED')}"
+       th:classappend="${selectedStatus == 'VERIFIED'} ? ' btn-active' : ''">Verified</a>
+
+    <a class="btn" th:href="@{/admin/companies/all(status='REJECTED')}"
+       th:classappend="${selectedStatus == 'REJECTED'} ? ' btn-active' : ''">Rejected</a>
+
+    <div style="margin-left:auto;color:#6B7280;">
+      Total: <b th:text="${#lists.size(companies)}">0</b>
+    </div>
+  </div>
+
+  <div class="panel">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Company Name</th>
+          <th>Email</th>
+          <th>Industry</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:if="${#lists.isEmpty(companies)}">
+          <td colspan="4" style="color:#6B7280;">No companies found.</td>
+        </tr>
+
+        <tr th:each="c : ${companies}">
+          <td th:text="${c.companyName}">Company Name</td>
+          <td th:text="${c.email}">Email</td>
+          <td th:text="${c.industry}">Industry</td>
+          <td>
+            <span th:if="${c.status == 'PENDING_VERIFICATION'}" class="badge badge-pending">Pending</span>
+            <span th:if="${c.status == 'VERIFIED'}" class="badge badge-approved">Verified</span>
+            <span th:if="${c.status == 'REJECTED'}" class="badge badge-rejected">Rejected</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

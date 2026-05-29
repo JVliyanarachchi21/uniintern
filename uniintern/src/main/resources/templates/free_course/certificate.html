@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate | UniIntern</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}">
+  <link rel="stylesheet" th:href="@{/css/student-dashboard.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #certificate-container, #certificate-container * {
+        visibility: visible;
+      }
+      #certificate-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+    }
+    .certificate-border {
+      position: absolute;
+      inset: 0;
+      border: 16px solid #1e3a8a;
+      margin: 1rem;
+    }
+    .certificate-inner-border {
+      position: absolute;
+      inset: 0;
+      border: 2px solid #bfdbfe;
+      margin: 2rem;
+    }
+    .corner-ornament {
+      position: absolute;
+      width: 4rem;
+      height: 4rem;
+      border-color: #3b82f6;
+      border-width: 4px;
+    }
+  </style>
+</head>
+
+<body class="app">
+
+<div th:replace="fragments/student-sidebar :: studentSidebar('courses')"></div>
+
+<main class="main dashboard-main-content">
+  <div th:replace="fragments/student-topbar :: studentTopbar(${userName})"></div>
+
+  <section class="dashboard-page-container">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <a th:href="@{/student/courses/results(courseId=${courseId})}" class="btn-dashboard btn-outline">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+        Back to Results
+      </a>
+      <button onclick="downloadPDF()" id="download-btn" class="btn-dashboard btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+        <span id="btn-text">Download PDF</span>
+      </button>
+    </div>
+
+    <!-- Certificate Container -->
+    <div id="certificate-container" style="width: 100%; max-width: 900px; aspect-ratio: 1.414/1; background: white; position: relative; overflow: hidden; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 8px;">
+      
+      <!-- Decorative Borders -->
+      <div class="certificate-border"></div>
+      <div class="certificate-inner-border"></div>
+      
+      <!-- Corner Ornaments -->
+      <div class="corner-ornament" style="top: 2rem; left: 2rem; border-top-style: solid; border-left-style: solid;"></div>
+      <div class="corner-ornament" style="top: 2rem; right: 2rem; border-top-style: solid; border-right-style: solid;"></div>
+      <div class="corner-ornament" style="bottom: 2rem; left: 2rem; border-bottom-style: solid; border-left-style: solid;"></div>
+      <div class="corner-ornament" style="bottom: 2rem; right: 2rem; border-bottom-style: solid; border-right-style: solid;"></div>
+      
+      <!-- Background Pattern -->
+      <div style="position: absolute; inset: 0; opacity: 0.03; pointer-events: none; background-image: radial-gradient(#1e3a8a 2px, transparent 2px); background-size: 30px 30px;"></div>
+      
+      <!-- Content -->
+      <div style="position: absolute; inset: 3.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 10;">
+        <div style="margin-bottom: 1rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e3a8a; letter-spacing: 0.1em; text-transform: uppercase; font-family: serif; margin: 0;">Uni Intern</h2>
+          <div style="width: 4rem; height: 3px; background: #3b82f6; margin: 0.5rem auto 0;"></div>
+        </div>
+        
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; letter-spacing: -0.01em; font-family: serif;">Certificate of Completion</h1>
+        
+        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 1rem; font-style: italic; font-family: serif;">This is to certify that</p>
+        
+        <h2 id="studentNameDisplay" th:text="${userName} ?: 'Student Name'" style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; padding-left: 2rem; padding-right: 2rem; display: inline-block;">
+          Student Name
+        </h2>
+        
+        <p style="font-size: 1.125rem; color: #475569; margin-bottom: 1rem; width: 100%; max-width: 40rem; letter-spacing: normal; font-family: serif; line-height: normal;">
+          has successfully completed the comprehensive curriculum and passed the final assessment for the course:
+        </p>
+        
+        <h3 id="courseTitleDisplay" th:text="${courseTitle} ?: 'Course Title'" style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 2rem;">Course Title</h3>
+        
+        <!-- Footer details -->
+        <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 2rem; margin-top: auto;">
+          <div style="text-align: center;">
+            <div th:text="${#dates.format(#dates.createNow(), 'MMMM d, yyyy')}" style="font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">Date</div>
+            <div style="width: 8rem; height: 1px; background: #94a3b8; margin-bottom: 0.5rem;"></div>
+            <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Date of Issue</div>
+          </div>
+          
+          <div style="text-align: center;">
+            <div style="width: 5rem; height: 5rem; border-radius: 50%; border: 3px solid #dbeafe; display: flex; align-items: center; justify-content: center; background: white; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); margin-bottom: 0.5rem; margin-left: auto; margin-right: auto;">
+              <div style="text-align: center;">
+                <div style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Grade</div>
+                <div th:text="${grade} ?: 'A'" style="font-size: 1.25rem; font-weight: 700; color: #2563eb;">A</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="text-align: center;">
+            <div style="font-family: serif; font-size: 1.25rem; color: #1e293b; font-style: italic; margin-bottom: 0.25rem;">N.K Hatharasinghe</div>
+            <div style="width: 10rem; height: 1px; background: #94a3b8; margin-bottom: 0.5rem;"></div>
+            <div style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Program Director</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<script>
+  lucide.createIcons();
+
+  async function downloadPDF() {
+    const btn = document.getElementById('download-btn');
+    const btnText = document.getElementById('btn-text');
+    const certificateElement = document.getElementById('certificate-container');
+
+    btn.disabled = true;
+    btnText.textContent = 'Generating...';
+
+    try {
+      const canvas = await html2canvas(certificateElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgWidth = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+      const userName = document.getElementById('studentNameDisplay').textContent.trim().replace(/\s+/g, '_');
+      const courseTitle = document.getElementById('courseTitleDisplay').textContent.trim().replace(/\s+/g, '_');
+      pdf.save(`${userName}_${courseTitle}_Certificate.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btnText.textContent = 'Download PDF';
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results - Uni Intern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            background-color: #f8fafc;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+        <!-- Header Banner -->
+        <div th:class="${passed} ? 'p-8 text-center bg-gradient-to-br from-brand-600 to-blue-800 text-white' : 'p-8 text-center bg-gradient-to-br from-red-500 to-rose-700 text-white'">
+            <div class="w-20 h-20 mx-auto bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm mb-4">
+                <i th:if="${passed}" data-lucide="award" class="w-10 h-10 text-white"></i>
+                <i th:unless="${passed}" data-lucide="x-circle" class="w-10 h-10 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-bold mb-2" th:text="${passed} ? 'Congratulations!' : 'Quiz Failed'">Results</h1>
+            <p class="text-white/80 text-lg" th:text="${passed} ? 'You successfully completed ' + ${courseTitle} : 'You did not pass ' + ${courseTitle}">
+                Result message
+            </p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="p-8">
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100">
+                    <div class="text-sm text-slate-500 font-medium mb-1">Final Score</div>
+                    <div th:class="${passed} ? 'text-5xl font-bold text-brand-600' : 'text-5xl font-bold text-red-500'"
+                         th:text="${score} + '%'">0%</div>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100">
+                    <div class="text-sm text-slate-500 font-medium mb-1">Grade</div>
+                    <div th:class="${passed} ? 'text-3xl font-bold mt-2 text-brand-600' : 'text-3xl font-bold mt-2 text-red-500'"
+                         th:text="${grade}">F</div>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-8 mb-10 border-y border-slate-100 py-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-slate-900" th:text="${correctCount}">0</div>
+                        <div class="text-xs text-slate-500 font-medium uppercase tracking-wider">Correct</div>
+                    </div>
+                </div>
+                <div class="w-px bg-slate-200"></div>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+                        <i data-lucide="x-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-slate-900" th:text="${incorrectCount}">0</div>
+                        <div class="text-xs text-slate-500 font-medium uppercase tracking-wider">Incorrect</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <th:block th:if="${passed}">
+                    <a th:href="@{/certificate(courseId=${courseId})}"
+                        class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                        Get Certificate
+                    </a>
+                    <a th:href="@{/dashboard}"
+                        class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        Dashboard
+                    </a>
+                </th:block>
+                <th:block th:unless="${passed}">
+                    <a th:href="@{/quiz(courseId=${courseId})}"
+                        class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                        Repeat Exam
+                    </a>
+                    <a th:href="@{/dashboard}"
+                        class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        Dashboard
+                    </a>
+                </th:block>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

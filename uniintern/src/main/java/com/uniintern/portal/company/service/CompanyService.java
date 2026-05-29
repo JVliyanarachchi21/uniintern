@@ -1,0 +1,214 @@
+package com.uniintern.portal.company.service;
+
+import com.uniintern.portal.company.dto.CompanyRegistrationDto;
+import com.uniintern.portal.company.entity.Company;
+import com.uniintern.portal.company.repository.CompanyRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+
+@Service
+public class CompanyService {
+    
+    private final CompanyRepository companyRepository;
+    private final EmailService emailService;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.company.repository.InternshipRepository internshipRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.company.repository.PromotionRepository promotionRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.student.repository.StudentApplicationRepository studentApplicationRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.uniintern.portal.student.repository.ApplicationScoreRepository applicationScoreRepository;
+
+    public CompanyService(CompanyRepository companyRepository, @org.springframework.beans.factory.annotation.Qualifier("companyEmailService") EmailService emailService) {
+        this.companyRepository = companyRepository;
+        this.emailService = emailService;
+    }
+
+    public Company findById(Long id) {
+        return companyRepository.findById(id).orElse(null);
+    }
+
+    public java.util.List<Company> getAllCompanies() {
+        return companyRepository.findAll();
+    }
+
+    public Company findByEmail(String email) {
+        return companyRepository.findByEmail(email).orElse(null);
+    }
+
+    public Company getOrCreateMockCompany() {
+        return companyRepository.findAll().stream().findFirst().orElseGet(() -> {
+            Company dummy = new Company();
+            dummy.setCompanyName("TechCorp Lanka");
+            dummy.setEmail("hr@techcorp.lk");
+            dummy.setIndustry("Information Technology");
+            dummy.setPhone("+94 77 123 4567");
+            dummy.setWebsite("www.techcorp.lk");
+            dummy.setAddress("Colombo, Sri Lanka");
+            dummy.setDescription("TechCorp Lanka is a growing technology company focused on software engineering, innovation, and digital transformation. We provide internship opportunities for students to gain practical industry experience.");
+            dummy.setLogoPath(null);
+            dummy.setStatus("ACTIVE");
+            return companyRepository.save(dummy);
+        });
+    }
+
+    public void updateProfile(Long id, String companyName, String industry, String email, String phone, String website, String address, String description, String logoPath) {
+        Company company = findById(id);
+        if (company == null) {
+            throw new IllegalArgumentException("Company not found with ID: " + id);
+        }
+        
+        company.setCompanyName(companyName);
+        company.setIndustry(industry);
+        company.setEmail(email);
+        company.setPhone(phone);
+        company.setWebsite(website);
+        company.setAddress(address);
+        company.setDescription(description);
+        
+        if (logoPath != null) {
+            company.setLogoPath(logoPath);
+        }
+        
+        companyRepository.save(company);
+    }
+
+    public void registerCompany(CompanyRegistrationDto dto) {
+        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+        if (companyRepository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Email already registered");
+        }
+
+        Company company = new Company();
+        company.setCompanyName(dto.getCompanyName());
+        company.setEmail(dto.getEmail());
+        company.setIndustry(dto.getIndustry());
+        company.setDescription(dto.getDescription());
+        company.setPassword(dto.getPassword());
+        company.setStatus("PENDING_VERIFICATION");
+        company.setCreatedAt(LocalDateTime.now());
+        
+        // Generate OTP
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        company.setVerificationCode(otp);
+        company.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        company.setEmailVerified(false);
+
+        companyRepository.save(company);
+        
+        // Send OTP via email
+        emailService.sendVerificationOtp(company.getEmail(), otp);
+    }
+    
+    public boolean verifyOtp(String email, String otp) {
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found for email: " + email));
+                
+        if (company.isEmailVerified()) {
+            throw new IllegalArgumentException("Email is already verified");
+        }
+        
+        if (company.getVerificationCodeExpiresAt() == null || company.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("OTP has expired. Please request a new one.");
+        }
+        
+        if (!otp.equals(company.getVerificationCode())) {
+            throw new IllegalArgumentException("Invalid OTP");
+        }
+        
+        // OTP matches, mark as verified (Wait for Admin Approval)
+        company.setEmailVerified(true);
+        company.setVerificationCode(null);
+        company.setVerificationCodeExpiresAt(null);
+        companyRepository.save(company);
+        
+        return true;
+    }
+
+    public void generatePasswordResetOtp(String email) {
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found with email: " + email));
+
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        company.setVerificationCode(otp);
+        company.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        companyRepository.save(company);
+
+        emailService.sendPasswordResetOtp(email, otp);
+    }
+
+    public boolean verifyPasswordResetOtp(String email, String otp) {
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+
+        if (company.getVerificationCodeExpiresAt() == null || company.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("OTP has expired. Please request a new one.");
+        }
+
+        if (!otp.equals(company.getVerificationCode())) {
+            throw new IllegalArgumentException("Invalid OTP");
+        }
+
+        return true;
+    }
+
+    public void resetPassword(String email, String newPassword) {
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+
+        company.setPassword(newPassword);
+        company.setVerificationCode(null);
+        company.setVerificationCodeExpiresAt(null);
+        companyRepository.save(company);
+    }
+
+    public void updatePassword(Long companyId, String currentPassword, String newPassword) {
+        Company company = findById(companyId);
+        if (company == null) {
+            throw new IllegalArgumentException("Company not found");
+        }
+        
+        // Simple password comparison (Plain text since no hashing used in this project)
+        if (!company.getPassword().equals(currentPassword)) {
+            throw new IllegalArgumentException("Current password does not match");
+        }
+        
+        company.setPassword(newPassword);
+        companyRepository.save(company);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteCompany(Long companyId) {
+        // 1. Find all internships for the company
+        java.util.List<com.uniintern.portal.company.entity.Internship> internships = internshipRepository.findByCompanyId(companyId);
+        
+        for (com.uniintern.portal.company.entity.Internship internship : internships) {
+            Long internshipId = internship.getId();
+            
+            // a. Delete Promotions
+            promotionRepository.deleteByInternshipId(internshipId);
+            
+            // b. Cleanup Student Applications and their Scores
+            java.util.List<com.uniintern.portal.student.model.StudentApplication> applications = studentApplicationRepository.findByInternshipId(internshipId);
+            for (com.uniintern.portal.student.model.StudentApplication app : applications) {
+                applicationScoreRepository.deleteByApplicationId(app.getId());
+            }
+            studentApplicationRepository.deleteByInternshipId(internshipId);
+            
+            // c. Delete Internship
+            internshipRepository.deleteById(internshipId);
+        }
+        
+        // 2. Finally delete the company
+        companyRepository.deleteById(companyId);
+    }
+}
